@@ -17,12 +17,12 @@ That's it. After installation, four skills are available under the `mf` namespac
 
 ## The four skills
 
-| Skill        | When                  | What it does                                                                                                                                                |
-| ------------ | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/mf:setup`  | Once per machine      | Seed `~/.mindfunnel/` with editable scaffolding: `AGENTS.md`, `SOUL.md`, `PROJECT.md.example`, and a `CLAUDE.md → AGENTS.md` symlink. Never overwrites.     |
-| `/mf:prime`  | Once per project      | In the current project root: symlink `CLAUDE.md` / `AGENTS.md` / `SOUL.md` into `~/.mindfunnel/`, touch an empty `PROJECT.md`, `.gitignore` `SOUL.md`.      |
-| `/mf:spinup` | Start of each session | Read auto-memory in priority order and emit a tight "where we are + next action" brief. **Read-only** — stops and waits for direction.                      |
-| `/mf:dump`   | End / mid-session     | Consolidate the session's non-derivable state into `~/.claude/projects/<slug>/memory/`. Updates `MEMORY.md`. Rarely proposes `SOUL.md` / `AGENTS.md` edits. |
+| Skill        | When                  | What it does                                                                                                                                                    |
+| ------------ | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/mf:setup`  | Once per machine      | Seed `~/.mindfunnel/` with editable scaffolding: `AGENTS.md`, `SOUL.md`, `PROJECT.md.example`, and a `CLAUDE.md → AGENTS.md` symlink. Never overwrites.         |
+| `/mf:prime`  | Once per project      | In the current project root: symlink `CLAUDE.md` / `AGENTS.md` / `SOUL.md` into `~/.mindfunnel/`, touch an empty `PROJECT.md`, `.gitignore` all three symlinks. |
+| `/mf:spinup` | Start of each session | Read auto-memory in priority order and emit a tight "where we are + next action" brief. **Read-only** — stops and waits for direction.                          |
+| `/mf:dump`   | End / mid-session     | Consolidate the session's non-derivable state into `~/.claude/projects/<slug>/memory/`. Updates `MEMORY.md`. Rarely proposes `SOUL.md` / `AGENTS.md` edits.     |
 
 ## Typical rhythm
 
@@ -57,11 +57,11 @@ After `/mf:setup`, open `~/.mindfunnel/SOUL.md` and replace the example scaffold
 - **What to avoid** — specific anti-patterns you've hit before.
 - **Technical environment** — shell, venvs, cluster paths, internal libraries.
 
-`SOUL.md` is intentionally _not_ checked into source control by `/mf:prime` (it gets added to per-project `.gitignore`). It's your private trait file and shapes every session on every project.
+`SOUL.md` is intentionally _not_ checked into source control by `/mf:prime` (it gets added to per-project `.gitignore`). It's your private trait file and shapes every session on every project. The same `.gitignore` entry also covers `CLAUDE.md` and `AGENTS.md` — both are symlinks into `~/.mindfunnel/`, a per-machine path, and committing them would leave a dangling pointer for anyone else's clone.
 
 ### Fill in `PROJECT.md` per project
 
-After `/mf:prime`, open the (empty) `PROJECT.md` in the project root and capture project-specific structure, conventions, domain context, and glossary. Unlike `SOUL.md`, `PROJECT.md` _is_ checked in — it belongs to the project.
+After `/mf:prime`, open the (empty) `PROJECT.md` in the project root and capture project-specific structure, conventions, domain context, and glossary. Unlike the three symlinks, `PROJECT.md` _is_ checked in — it's the only real, project-owned file of the four, and it belongs to the project.
 
 ## Uninstall
 

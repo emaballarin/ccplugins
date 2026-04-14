@@ -1,1 +1,0 @@
-/home/emaballarin/.mindfunnel/CLAUDE.md
