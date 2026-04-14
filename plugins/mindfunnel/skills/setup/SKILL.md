@@ -27,13 +27,13 @@ mkdir -p "$HOME/.mindfunnel"
 
 For each pair below, copy from the bundled template to the target **only if the target is absent**.
 
-| Template                                    | Target                            |
-| ------------------------------------------- | --------------------------------- |
-| `${CLAUDE_PLUGIN_ROOT}/templates/AGENTS.md` | `~/.mindfunnel/AGENTS.md`         |
-| `${CLAUDE_PLUGIN_ROOT}/templates/SOUL.md`   | `~/.mindfunnel/SOUL.md`           |
-| `${CLAUDE_PLUGIN_ROOT}/templates/PROJECT.md`| `~/.mindfunnel/PROJECT.md.example`|
+| Template                                     | Target                             |
+| -------------------------------------------- | ---------------------------------- |
+| `${CLAUDE_PLUGIN_ROOT}/templates/AGENTS.md`  | `~/.mindfunnel/AGENTS.md`          |
+| `${CLAUDE_PLUGIN_ROOT}/templates/SOUL.md`    | `~/.mindfunnel/SOUL.md`            |
+| `${CLAUDE_PLUGIN_ROOT}/templates/PROJECT.md` | `~/.mindfunnel/PROJECT.md.example` |
 
-Note the asymmetry: `PROJECT.md` lands as `PROJECT.md.example` in `~/.mindfunnel/` because the live `PROJECT.md` belongs in each *project*, not in the shared scaffolding. The `.example` suffix makes that intent obvious.
+Note the asymmetry: `PROJECT.md` lands as `PROJECT.md.example` in `~/.mindfunnel/` because the live `PROJECT.md` belongs in each _project_, not in the shared scaffolding. The `.example` suffix makes that intent obvious.
 
 Shell form (avoid clobbering):
 

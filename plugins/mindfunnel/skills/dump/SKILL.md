@@ -1,7 +1,6 @@
 ---
 name: dump
-description: Consolidate the current session's progress into the project's auto-memory directory — the "log everything, update state, prepare for resumption" drill. Use when the user says "log everything", "checkpoint", "save progress", "update memory", "dump state", or when a long session is about to end and context is saturated. Works on any project primed with /mf:prime; writes to the Claude Code auto-memory dir under ~/.claude/projects/<slug>/memory/.
-disable-model-invocation: true
+description: Consolidate the current session's progress into the project's auto-memory directory — the "log everything, update state, prepare for resumption" drill. Use when the user says "log everything", "checkpoint", "save progress", "update memory", "dump state", or autonomously when a long session is approaching context saturation, a natural checkpoint has been reached, or substantial non-derivable state has accumulated that would be lost on session end. Works on any project primed with /mf:prime; writes to the Claude Code auto-memory dir under ~/.claude/projects/<slug>/memory/.
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 

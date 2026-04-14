@@ -3,7 +3,7 @@
 > This file is created empty by `/mf:prime`. Edit it to capture
 > project-specific structure, conventions, and domain context that would
 > otherwise have to be re-explained in every session. Unlike SOUL.md, this
-> file *is* checked into source control — it belongs to the project, not to
+> file _is_ checked into source control — it belongs to the project, not to
 > you.
 
 ## What this project is

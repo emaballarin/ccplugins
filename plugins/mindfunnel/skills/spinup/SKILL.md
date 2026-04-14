@@ -1,7 +1,6 @@
 ---
 name: spinup
-description: Read project memory at session start and produce a tight "where we are + next action" brief, then wait for direction. Use when the user says "spin up", "catch up", "resume", "where were we", "get up to speed", or at the beginning of a fresh session on a project that already has memory. Works on any project primed with /mf:prime; reads from the Claude Code auto-memory dir under ~/.claude/projects/<slug>/memory/.
-disable-model-invocation: true
+description: Read project memory and produce a tight "where we are + next action" brief, then wait for direction. Invoke ONLY when the user explicitly asks to resume, catch up, or get oriented on prior work — e.g. "spin up", "catch up", "resume", "where were we", "get up to speed", "what were we working on". Do NOT auto-fire on general project questions, code edits, or unrelated asks. Works on any project primed with /mf:prime; reads from the Claude Code auto-memory dir under ~/.claude/projects/<slug>/memory/.
 allowed-tools: [Read, Glob, Grep, Bash]
 ---
 
@@ -18,13 +17,14 @@ Get up to speed on a project without starting any new work. Read persistent memo
 
 ## Instructions
 
-### Step 1: Locate the memory directory
+### Step 1: Open `MEMORY.md` directly
 
-Auto-memory lives at `~/.claude/projects/<slug>/memory/` where `<slug>` is `$PWD` with every `/` replaced by `-`.
+Auto-memory lives at `~/.claude/projects/<slug>/memory/` where `<slug>` is `$PWD` with every `/` replaced by `-` (deterministic — form the path inline, no shell call needed). On the happy path, go straight to `Read ~/.claude/projects/<slug>/memory/MEMORY.md`. If that read succeeds, you've simultaneously located the dir and loaded the index — skip the rest of this step.
 
-```bash
-bash -c 'echo ~/.claude/projects/$(echo "$PWD" | sed "s|/|-|g")/memory'
-```
+Only fall back to diagnostics if the read fails:
+
+- **ENOENT on `MEMORY.md`** but the memory dir itself exists → treat as "primed but no memory yet" (step 2 behaviour).
+- **ENOENT on the memory dir** → the slug convention may differ on this host. Run `ls ~/.claude/projects/ | grep <project_name_fragment>` to find the actual dir; if multiple matches exist, prefer the one with the most recent `MEMORY.md`.
 
 ### Step 2: Verify the project is primed
 
@@ -100,7 +100,7 @@ Do **not** start work. Do **not** propose new experiments. Do **not** offer unso
 
 **Actions:**
 
-1. Compute memory dir, confirm project priming, read `MEMORY.md`.
+1. Read `MEMORY.md` directly at the conventional path. It exists — no dir-probing needed.
 2. Read `project_state.md` — finds current-state + pending action.
 3. Read `user_prefs.md` and `collaboration_style.md` — short, read both.
 4. Skim `MEMORY.md` descriptions for feedback entries that look relevant to the pending action; read the one that matches.

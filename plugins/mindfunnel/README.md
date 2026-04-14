@@ -17,12 +17,12 @@ That's it. After installation, four skills are available under the `mf` namespac
 
 ## The four skills
 
-| Skill         | When                  | What it does                                                                                                                                              |
-| ------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/mf:setup`   | Once per machine      | Seed `~/.mindfunnel/` with editable scaffolding: `AGENTS.md`, `SOUL.md`, `PROJECT.md.example`, and a `CLAUDE.md → AGENTS.md` symlink. Never overwrites.   |
-| `/mf:prime`   | Once per project      | In the current project root: symlink `CLAUDE.md` / `AGENTS.md` / `SOUL.md` into `~/.mindfunnel/`, touch an empty `PROJECT.md`, `.gitignore` `SOUL.md`.    |
-| `/mf:spinup`  | Start of each session | Read auto-memory in priority order and emit a tight "where we are + next action" brief. **Read-only** — stops and waits for direction.                    |
-| `/mf:dump`    | End / mid-session     | Consolidate the session's non-derivable state into `~/.claude/projects/<slug>/memory/`. Updates `MEMORY.md`. Rarely proposes `SOUL.md` / `AGENTS.md` edits.|
+| Skill        | When                  | What it does                                                                                                                                                |
+| ------------ | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/mf:setup`  | Once per machine      | Seed `~/.mindfunnel/` with editable scaffolding: `AGENTS.md`, `SOUL.md`, `PROJECT.md.example`, and a `CLAUDE.md → AGENTS.md` symlink. Never overwrites.     |
+| `/mf:prime`  | Once per project      | In the current project root: symlink `CLAUDE.md` / `AGENTS.md` / `SOUL.md` into `~/.mindfunnel/`, touch an empty `PROJECT.md`, `.gitignore` `SOUL.md`.      |
+| `/mf:spinup` | Start of each session | Read auto-memory in priority order and emit a tight "where we are + next action" brief. **Read-only** — stops and waits for direction.                      |
+| `/mf:dump`   | End / mid-session     | Consolidate the session's non-derivable state into `~/.claude/projects/<slug>/memory/`. Updates `MEMORY.md`. Rarely proposes `SOUL.md` / `AGENTS.md` edits. |
 
 ## Typical rhythm
 
@@ -57,11 +57,11 @@ After `/mf:setup`, open `~/.mindfunnel/SOUL.md` and replace the example scaffold
 - **What to avoid** — specific anti-patterns you've hit before.
 - **Technical environment** — shell, venvs, cluster paths, internal libraries.
 
-`SOUL.md` is intentionally *not* checked into source control by `/mf:prime` (it gets added to per-project `.gitignore`). It's your private trait file and shapes every session on every project.
+`SOUL.md` is intentionally _not_ checked into source control by `/mf:prime` (it gets added to per-project `.gitignore`). It's your private trait file and shapes every session on every project.
 
 ### Fill in `PROJECT.md` per project
 
-After `/mf:prime`, open the (empty) `PROJECT.md` in the project root and capture project-specific structure, conventions, domain context, and glossary. Unlike `SOUL.md`, `PROJECT.md` *is* checked in — it belongs to the project.
+After `/mf:prime`, open the (empty) `PROJECT.md` in the project root and capture project-specific structure, conventions, domain context, and glossary. Unlike `SOUL.md`, `PROJECT.md` _is_ checked in — it belongs to the project.
 
 ## Uninstall
 
@@ -83,7 +83,7 @@ Per-project symlinks created by `/mf:prime` become dangling after that — clean
 
 - **Skills are generic by design.** They reference Claude Code's auto-memory system (which is global) and the `/mf:prime` convention (which ships in this plugin). No domain-specific vocabulary, no single-project assumptions.
 - **Personal customisation lives in `SOUL.md`.** The skills don't need to know who you are; `SOUL.md` tells them.
-- **`disable-model-invocation: true`** on all four skills. These are user-triggered rituals, never autonomous behaviour. Claude won't decide to dump state or prime a project without an explicit `/mf:...` invocation.
+- **Side-effect skills stay user-only.** `/mf:setup` and `/mf:prime` set `disable-model-invocation: true` — both mutate the filesystem (writing `~/.mindfunnel/`, creating symlinks in a project root), and the user always drives them. `/mf:dump` and `/mf:spinup` are model-invocable: dump can fire at natural checkpoints or approaching context saturation, and spinup has a narrow trigger (explicit resume / catch-up phrasing only) so it won't bloat trivial asks with a brief.
 - **Self-contained.** Templates live inside the plugin at `templates/`. `/mf:setup` copies them to `~/.mindfunnel/` on first run. No separate install script, no cloning, no `chmod`.
 - **Idempotent everywhere.** Re-running `/mf:setup` or `/mf:prime` after the fact is safe. Destructive operations (replacing a real file) always ask first.
 

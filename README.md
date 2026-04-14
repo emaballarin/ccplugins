@@ -14,8 +14,8 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 
 ## Plugins
 
-| Name | Description                                                                                                                                                                | Docs                                              |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Name | Description                                                                                                                                                                 | Docs                                               |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | `mf` | **mindfunnel** — project-agnostic session management. Four skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back. | [plugins/mindfunnel](plugins/mindfunnel/README.md) |
 
 ## Install a plugin
