@@ -74,7 +74,7 @@ This removes the plugin skills from Claude Code. It does **not** touch `~/.mindf
 To also remove the machine-wide scaffolding:
 
 ```
-rm -rf ~/.mindfunnel/  ~/.claude/SOUL.md
+rm -rf ~/.mindfunnel/
 ```
 
 Per-project symlinks created by `/mf:prime` become dangling after that — clean them up manually in each affected project root if you care.

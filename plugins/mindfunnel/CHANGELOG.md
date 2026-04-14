@@ -3,6 +3,10 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.2.0
+
+- `/mf:prime` no longer touches `~/.claude/`. Removed the legacy global `~/.claude/SOUL.md` convenience symlink; the skill's scope is now strictly the current project root and `~/.mindfunnel/`.
+
 ## 0.1.0 — initial release
 
 - `/mf:setup` — one-time bootstrap of `~/.mindfunnel/` from bundled templates.

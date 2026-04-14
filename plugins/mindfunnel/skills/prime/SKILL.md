@@ -100,20 +100,7 @@ fi
 
 Don't do this if the project isn't a git repo — the file is pointless otherwise.
 
-### Step 6: Global `~/.claude/SOUL.md` convenience symlink
-
-Claude Code also looks for a global `SOUL.md` under `~/.claude/`. If that file doesn't exist yet, create it as a symlink to the shared one:
-
-```bash
-if [ ! -e "$HOME/.claude/SOUL.md" ] && [ -e "$HOME/.mindfunnel/SOUL.md" ]; then
-    mkdir -p "$HOME/.claude"
-    ln -s "$HOME/.mindfunnel/SOUL.md" "$HOME/.claude/SOUL.md"
-fi
-```
-
-This is a one-shot global courtesy — it happens at most once per machine, and subsequent `/mf:prime` runs skip it.
-
-### Step 7: Report
+### Step 6: Report
 
 Emit a short summary, ≤ 10 lines. For each symlink: **created**, **already correct** (no-op), **replaced** (user approved), or **skipped** (user declined or source missing). For `PROJECT.md` and `.gitignore`: one-liner each.
 
