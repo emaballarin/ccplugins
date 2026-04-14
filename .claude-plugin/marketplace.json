@@ -1,0 +1,18 @@
+{
+    "name": "ccplugins",
+    "owner": {
+        "name": "Emanuele Ballarin"
+    },
+    "metadata": {
+        "description": "Emanuele Ballarin's personal Claude Code plugin marketplace."
+    },
+    "plugins": [
+        {
+            "name": "mf",
+            "source": "./plugins/mindfunnel",
+            "description": "mindfunnel: project-agnostic Claude Code session management. /mf:dump consolidates session state into auto-memory; /mf:spinup reads it back; /mf:setup and /mf:prime handle first-time and per-project scaffolding.",
+            "category": "productivity",
+            "keywords": ["memory", "session", "workflow", "mindfunnel", "auto-memory"]
+        }
+    ]
+}
