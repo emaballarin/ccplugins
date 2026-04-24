@@ -1,9 +1,12 @@
 # SOUL.md: Who you're working with
 
-> Copy this file to `SOUL.md` (or run `/mf:setup` which does it automatically
-> if no existing `SOUL.md` is found) and fill in the sections below. This
-> file describes *you* to the agent — your role, your workflow, your
-> preferences, the things that trip you up. It's gitignored by default.
+> `/mf:setup` copies this template to `~/.mindfunnel/SOUL.md` (non-
+> destructive — it skips if the file already exists) and symlinks
+> `~/.claude/SOUL.md` and `~/.codex/SOUL.md` to it. Fill in the
+> sections below. `SOUL.md` describes *you* to the agent — your role,
+> your workflow, your preferences, the things that trip you up. It's
+> user-global, never stamped into project roots, never committed
+> anywhere.
 
 ## Who
 
@@ -31,6 +34,10 @@
   - I will call out bullshit directly. When I say "you are still bullshitting
     me", STOP. Re-examine every assumption from scratch.
   - I will interrupt with corrections mid-stream. Listen immediately.
+  - Interrupt me the moment I build on a wrong premise or misstate a fact.
+    Let me finish a thought only when I'm narrating a chain of reasoning
+    that hasn't committed to an action yet — ride out wording, ordering,
+    and tone.
 -->
 
 ## How to communicate with me
@@ -73,14 +80,28 @@
     a fix.
 -->
 
+## Locale & conventions
+
+<!-- Language, locale, date/time formats the agent should match. -->
+<!-- Examples:
+  - Language: British English / American English / …
+  - Locale: `en_GB.UTF-8`, `C.UTF-8`, mixed, etc.
+  - Date format: DD/MM/YYYY or YYYY-MM-DD.
+  - Time format: HH:mm 24-hour, or h:mm AM/PM.
+-->
+
 ## Technical environment
 
 <!-- Tools, libraries, paths, cluster info. Internal packages, private
-     indexes, custom optimisers, cluster mount points, etc. -->
+     indexes, custom optimisers, cluster mount points, etc. Split into
+     "Personal libraries / packages" and "Compute environment" if that
+     helps. -->
 <!-- Examples:
   - Language: Python 3.X, run with `python -O`, usually from `src/`.
   - DL stack: PyTorch, JAX, … (whatever you use daily).
   - Internal libraries: `<your-lib>` at `<private-index-url>`.
   - Cluster: `<hostname>:/<path>`. Partition: `<name>`.
   - Shell: <bash|zsh|fish>. Alias quirks: <list what trips you up>.
+  - Heavy commands (builds, training, long runs): where do they belong?
+    Local? Remote? Do you want them executed or only printed?
 -->

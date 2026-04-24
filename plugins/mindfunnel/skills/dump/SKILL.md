@@ -11,8 +11,8 @@ Write the current session's non-derivable state to the project's auto-memory dir
 ## Important
 
 1. **Never proliferate files.** Update existing memory first; create new files only when a topic genuinely deserves its own dossier.
-2. **Only log non-derivable signal.** Facts recoverable from `git log`, current code, or `CLAUDE.md` do not belong in memory.
-3. **SOUL.md and CLAUDE.md are sacred.** Propose edits, never apply silently, and only when the insight is genuinely general.
+2. **Only log non-derivable signal.** Facts recoverable from `git log`, current code, or `AGENTS.md` / `PROJECT.md` do not belong in memory.
+3. **SOUL.md and the user-global AGENTS.md are sacred.** Propose edits, never apply silently, and only when the insight is genuinely general. The user-global AGENTS.md lives at `~/.mindfunnel/AGENTS.md` (reached via `~/.claude/CLAUDE.md`); the per-project `./AGENTS.md` is a small project-scoped stub owned by the project — don't treat them as the same file.
 4. **Convert every "today" / "tomorrow" to an absolute date** before writing. Run `date -I` if uncertain.
 
 ## Instructions
@@ -29,7 +29,7 @@ The directory is usually already created by Claude Code. If not, create it befor
 
 ### Step 2: Verify the project is primed
 
-Confirm `CLAUDE.md`, `SOUL.md`, `PROJECT.md` exist in the project root (these are set up by `/mf:prime`). If any are missing:
+Confirm `AGENTS.md` and `PROJECT.md` exist in the project root (these are set up by `/mf:prime`; under 0.3.0+ they're real committed files, under older versions they may be symlinks — either counts). If either is missing:
 
 - **Flag it** and offer to run `/mf:prime` from the project root.
 - **Do not run `/mf:prime` silently** — pre-existing files with the same name matter.
@@ -82,21 +82,23 @@ Update `<memory_dir>/MEMORY.md` with one line per entry:
 
 Before writing: for any file you're about to modify, read it first to preserve load-bearing context. Duplication is a smell — if the same fact appears in two files, pick one canonical home and cross-reference.
 
-### Step 8: (Rare) Propose SOUL.md / CLAUDE.md edits
+### Step 8: (Rare) Propose user-global SOUL.md / AGENTS.md / USER.md edits
 
-If the session surfaced a **general** guideline or preference worth propagating to every future session on any project, propose an edit to:
+If the session surfaced a **general** guideline or preference worth propagating to every future session on any project, propose an edit to one of the user-global files:
 
-- `SOUL.md` at `~/.mindfunnel/SOUL.md` — user traits, collaboration style, communication preferences.
-- `CLAUDE.md` at `~/.mindfunnel/AGENTS.md` (the `CLAUDE.md` symlink points there) — general engineering guidelines.
+- `~/.mindfunnel/SOUL.md` — user traits, collaboration style, communication preferences.
+- `~/.mindfunnel/AGENTS.md` — general, agent-neutral engineering guidelines. This is the maintainer's user-global AGENTS.md, auto-loaded via `~/.claude/CLAUDE.md` and `~/.codex/instructions.md`. It is not the per-project `./AGENTS.md` (which is a small project-scoped stub owned by the project).
+- `~/.mindfunnel/USER.md` — per-machine user preferences: shell, Python defaults, formatter paths, multi-agent hook bridges.
 
 **Guardrails:**
 
 - **Propose, never apply silently.** Show the proposed passage, explain _why_ it's general, wait for explicit approval, then apply.
 - **Budget**: 0 proposals in the common case, 1 every 5–10 dumps at most.
 - **Three conditions must all hold**: genuinely general (applies to any project), stable (not contradicted elsewhere), actionable (a concrete rule, not a vibe).
-- **Never edit the `CLAUDE.md` symlink directly** — always edit the underlying `AGENTS.md`.
+- **Write to `~/.mindfunnel/` directly** — never to the per-project `./AGENTS.md` or to the symlink aliases (`~/.claude/CLAUDE.md`, `~/.codex/instructions.md`). The user-global content has one canonical home.
+- **Pick the right file.** Agent-neutral engineering style → AGENTS.md. Personal style / who the user is → SOUL.md. Machine-specific tooling → USER.md.
 
-If in doubt, skip. SOUL.md and CLAUDE.md churn creates noise.
+If in doubt, skip. User-global file churn creates noise.
 
 ### Step 9: Report
 
@@ -109,7 +111,7 @@ Updated:
 Created:
   - <file> — <one-line reason>
 Index (MEMORY.md): refreshed | unchanged
-Proposed SOUL.md / CLAUDE.md edits: none | <one-line summary, pending approval>
+Proposed SOUL.md / AGENTS.md / USER.md edits: none | <one-line summary, pending approval>
 ```
 
 If nothing was worth logging, say "no new signal; memory is current" and do nothing.
@@ -128,7 +130,7 @@ If nothing was worth logging, say "no new signal; memory is current" and do noth
 4. Update `project_state.md` with the new "where we are + next action".
 5. Create `results_<experiment>_<date>.md` if the sweep is a major dossier; otherwise append to an existing results file.
 6. Refresh `MEMORY.md` one-liner for each touched file.
-7. No SOUL.md / CLAUDE.md proposals.
+7. No SOUL.md / AGENTS.md / USER.md proposals.
 
 **Result:** One report block listing what was updated, memory ready for the next session.
 
@@ -142,7 +144,7 @@ If nothing was worth logging, say "no new signal; memory is current" and do noth
 2. Skip the dump entirely.
 3. Report: "no new signal since the last dump; memory is current."
 
-### Example 3: General guideline surfaces, worth a CLAUDE.md proposal
+### Example 3: General guideline surfaces, worth a user-global AGENTS.md proposal
 
 **User says:** "Log everything. That lesson about always verifying memory claims before citing them is something I want to keep."
 
@@ -180,7 +182,7 @@ If nothing was worth logging, say "no new signal; memory is current" and do noth
 
 **Solution:** Skip the dump when the conversation contains only tool noise / small Q&A. Say "no new signal; memory is current" and do nothing. Memory is not a commit log.
 
-### Error: Proposed a SOUL.md / CLAUDE.md edit that was rejected
+### Error: Proposed a SOUL.md / AGENTS.md / USER.md edit that was rejected
 
 **Symptom:** The user said "no" to a proposed general-guideline edit.
 
@@ -193,7 +195,7 @@ If nothing was worth logging, say "no new signal; memory is current" and do noth
 - **Don't dump verbatim tool output** — summarise signal, cite key numbers only.
 - **Don't log bug-fix recipes** — the fix is in the code, its context is in the commit. Log _why_ the bug existed if non-obvious.
 - **Don't overwrite** existing content without reading first.
-- **Don't propose SOUL.md / CLAUDE.md edits routinely.** Once every few dumps at most, or if really needed.
+- **Don't propose SOUL.md / AGENTS.md / USER.md edits routinely.** Once every few dumps at most, or if really needed.
 - **Don't create a new file** when an existing one can absorb the update.
 - **Don't list every tool call you made** — memory is for signal, not process.
 - **Don't re-run experiments or verify against current code** — that's spinup's job. Dump is mostly write.

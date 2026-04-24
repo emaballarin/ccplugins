@@ -28,7 +28,9 @@ Only fall back to diagnostics if the read fails:
 
 ### Step 2: Verify the project is primed
 
-Confirm `CLAUDE.md`, `SOUL.md`, `PROJECT.md` exist in the project root. If any are missing:
+Memory-dir existence under `~/.claude/projects/<slug>/memory/` is the authoritative "has this session been worked on before" signal. `AGENTS.md` and `PROJECT.md` in the project root are the secondary "is this project wired up for mindfunnel" signal.
+
+Confirm `AGENTS.md` and `PROJECT.md` exist in the project root (real files under the 0.3.0 split model; for projects primed by older versions they may still be symlinks — either works for this check). If either is missing:
 
 - **Flag it** and suggest running `/mf:prime` from the project root.
 - **Do not run `/mf:prime` silently** — pre-existing files with the same name matter.
@@ -116,7 +118,7 @@ Do **not** start work. Do **not** propose new experiments. Do **not** offer unso
 **Actions:**
 
 1. Memory dir doesn't exist yet, or is empty except for a placeholder.
-2. Report: "This project has no stored memory. The conventional priming files (CLAUDE.md, SOUL.md, PROJECT.md) **are/are not** present. Describe the task you want help with and I'll start fresh."
+2. Report: "This project has no stored memory. The conventional priming files (AGENTS.md, PROJECT.md) **are/are not** present. Describe the task you want help with and I'll start fresh."
 3. Stop. Do not infer context from the file tree.
 
 ### Example 3: Spin up for a specific topic, not everything
