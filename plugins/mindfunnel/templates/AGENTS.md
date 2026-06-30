@@ -40,6 +40,12 @@ each project owns a small project-scoped `AGENTS.md` (authored from
 - **Follow conventions.** Follow relevant, established best practices
   where they exist; when no convention applies, pick one and stay
   consistent across the change.
+- **Functional by default.** When no clear convention or consolidated
+  practice pulls the other way, prefer pure functions, immutable data,
+  and explicit state-passing over in-place mutation. Not a hard rule —
+  follow the ecosystem's established idiom (e.g. `nn.Module`
+  subclassing in PyTorch, dataclass-as-state in Equinox) when that's
+  the consolidated practice.
 - **Design for resilience.** Validate at system boundaries (user input,
   I/O, external APIs). Trust internal invariants. Invite defensive
   programming where silent failures or data corruption are possible;
@@ -70,6 +76,16 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   `mindfunnel` memory (if available) and in a source-committed Markdown
   log file — e.g. `experiment_params_todo.md`, `CHANGELOG.md`,
   `NOTES.md`, whatever the project uses — before starting the next thing.
+- **No "the user" in written artifacts.** When writing into logs,
+  docstrings, comments, Markdown notes, commit messages, PR
+  descriptions, plan files, or any prose deliverable, don't frame
+  work as _"since the user asked..."_, _"given the user's experience
+  with..."_, _"as the user requested..."_, or any equivalent
+  third-person framing of the conversational origin. State the fact,
+  decision, or motivation directly — that information is still useful
+  for _deciding_ what to do; it just must not leak into the artifact.
+  An external reader encountering the file later does not care which
+  conversational turn prompted the work.
 
 ## Planning & execution
 
