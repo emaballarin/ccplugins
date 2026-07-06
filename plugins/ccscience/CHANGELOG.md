@@ -3,7 +3,7 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## 0.1.0 — initial release
+## 0.2.0 — initial release
 
 Research and scientific-computing building blocks adapted from Claude Science
 for stock Claude Code. Every `host.*` dependency was replaced with a standard
