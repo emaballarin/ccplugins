@@ -1,6 +1,6 @@
 # ccsci
 
-Research and scientific-computing building blocks from [Claude Science](https://claude.ai/science),
+Research and scientific-computing building blocks from [Claude Science](https://claude.com/product/claude-science),
 adapted to run on **stock Claude Code** — every `host.*` runtime dependency swapped for a
 standard Claude Code tool (`Task` / `Read` / `Write` / `Bash` / env-var) or plain prose.
 
@@ -19,11 +19,43 @@ From any Claude Code session:
 After installation, eight skills are available under the `ccsci` namespace and two subagents
 (`computational-scientist`, `deep-researcher`) become delegatable.
 
+## Setup
+
+Nothing is required to *install* the plugin. Set what the skills you actually use need:
+
+**Environment variables**
+
+- **`LITREVIEW_CONTACT_EMAIL`** — your email address, sent in the User-Agent for the
+  Crossref / doi.org **"polite pool"** (faster, more reliable lookups). Defaults to the
+  placeholder `example@example.com`; **set it to a real address you own** before running
+  literature reviews. `literature-review` reads it directly.
+  ```bash
+  export LITREVIEW_CONTACT_EMAIL="you@example.org"
+  ```
+- **`OPENALEX_API_KEY`** — optional; raises OpenAlex's per-request rate budget. Without it,
+  OpenAlex calls still work unauthenticated (subject to shared limits). `literature-review`
+  reads it directly.
+  ```bash
+  export OPENALEX_API_KEY="…"
+  ```
+
+Put these in your shell profile (or a per-project `.envrc`) so every session picks them up.
+
+**Optional dependencies** (install only what the skills you use need)
+
+| For | Install |
+| --- | --- |
+| `literature-review` (`.bib` export) | `npm install -g bibtex-tidy` |
+| `pdf-explore` | `pip install pypdfium2 pillow` |
+| `figure-style` / `figure-composer` / `paper-narrative` | `pip install matplotlib pillow` |
+| `canvas-design` | a PDF/PNG renderer — `pip install matplotlib` (or `reportlab` / `weasyprint`) |
+| `web-artifacts-builder` | Node 18+ and `npm` |
+
 ## Skills
 
 | Skill | When | What it does | External deps |
 | --- | --- | --- | --- |
-| **literature-review** | "find the seminal paper for X", a full review, grounding a claim | Retrieve → verify → synthesise scientific literature with **no fabricated DOIs**. All-STEM (arXiv / DBLP / Semantic Scholar / alphaXiv first-class, plus OpenAlex / Crossref / PubMed); walks the citation graph; flags superseded / withdrawn / **refuted** work; ends with a resolve-published → dedupe → `.bib` → `bibtex-tidy` export. DOI kept everywhere by default. | `bibtex-tidy` (npm); optional `OPENALEX_API_KEY`; `LITREVIEW_CONTACT_EMAIL` (Crossref polite pool, defaults to the maintainer's) |
+| **literature-review** | "find the seminal paper for X", a full review, grounding a claim | Retrieve → verify → synthesise scientific literature with **no fabricated DOIs**. All-STEM (arXiv / DBLP / Semantic Scholar / alphaXiv first-class, plus OpenAlex / Crossref / PubMed); walks the citation graph; flags superseded / withdrawn / **refuted** work; ends with a resolve-published → dedupe → `.bib` → `bibtex-tidy` export. DOI kept everywhere by default. | `bibtex-tidy` (npm); optional `OPENALEX_API_KEY`; `LITREVIEW_CONTACT_EMAIL` (Crossref polite pool — set your own, see [Setup](#setup)) |
 | **pdf-explore** | an answer needs content from more than one place in a PDF | Parse a PDF **once**, then read pages as persistent text (`pdf_pages`), build a TOC (`pdf_outline`), or fan whole-doc relevance scans / per-page maps / structured extraction out over **Task subagents** so the pages never fill your own context. Figure crops via `pdf_crop` → `Read`. | `pypdfium2`, `pillow` (pip) |
 | **figure-style** | before drawing any plot | Publication-figure **correctness** checklist (data fidelity, label economy, colour threading, render-then-verify) plus a matplotlib helper kernel (`apply_figure_style`, palettes, panel letters, per-panel crop QA). | matplotlib |
 | **figure-composer** | building one multi-panel figure from a claim + data | Outline (12-col grid) → one `Task` subagent per panel (each loads `figure-style`) → tile + letter → adversarial composite review → regen, ≤3 rounds. | matplotlib, pillow |
@@ -61,9 +93,9 @@ cycle, so it works standalone.
 
 ## Provenance & license
 
-Adapted from the Claude Science skills (Apache-2.0, © Anthropic PBC). The adaptation and the new
-`computational-scientist` agent are © Emanuele Ballarin. Ships under **Apache-2.0** — see
-[`LICENSE`](LICENSE).
+Adapted from the Claude Science skills (Apache-2.0, © Anthropic PBC). The adaptations and the new
+agents (`computational-scientist`, and the mindfunnel-optional `deep-researcher`) are © Emanuele
+Ballarin. Ships under **Apache-2.0** — see [`LICENSE`](LICENSE).
 
 > **Font licensing note:** the `canvas-design` typefaces are under the SIL Open Font License by
 > their respective authors, **not** Apache-2.0. Each font ships with its OFL license file in

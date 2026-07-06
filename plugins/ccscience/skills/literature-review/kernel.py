@@ -28,10 +28,11 @@ _UA = "ccsci-literature-review/1.0"
 def litrev_contact() -> str:
     """Contact email for polite-pool API headers (Crossref / doi.org ONLY —
     never sent to OpenAlex, which takes no contact email). Reads
-    LITREVIEW_CONTACT_EMAIL, falling back to a maintainer default."""
+    LITREVIEW_CONTACT_EMAIL, falling back to a placeholder (set the env var to
+    a real address you own for the Crossref/doi.org polite pool)."""
     import os
 
-    return os.environ.get("LITREVIEW_CONTACT_EMAIL") or "emanuele@ballarin.cc"
+    return os.environ.get("LITREVIEW_CONTACT_EMAIL") or "example@example.com"
 
 
 def litrev_openalex_key() -> str | None:

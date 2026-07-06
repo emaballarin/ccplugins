@@ -17,11 +17,13 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 | Name | Description                                                                                                                                                                 | Docs                                               |
 | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | `mf` | **mindfunnel** — project-agnostic session management. Four skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back. | [plugins/mindfunnel](plugins/mindfunnel/README.md) |
+| `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, plus the `computational-scientist` and `deep-researcher` subagents. | [plugins/ccscience](plugins/ccscience/README.md) |
 
 ## Install a plugin
 
 ```
 /plugin install mf@ccplugins
+/plugin install ccsci@ccplugins
 ```
 
 ## Layout
@@ -33,19 +35,28 @@ ccplugins/
 ├── README.md                             # this file
 ├── LICENSE                               # MIT
 └── plugins/
-    └── mindfunnel/
+    ├── mindfunnel/                          # plugin name: mf
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md
+    │   ├── CHANGELOG.md
+    │   ├── skills/{setup,prime,dump,spinup}/SKILL.md
+    │   └── templates/{AGENTS,SOUL,PROJECT}.md
+    └── ccscience/                           # plugin name: ccsci
         ├── .claude-plugin/plugin.json
-        ├── README.md
-        ├── CHANGELOG.md
-        ├── skills/{setup,prime,dump,spinup}/SKILL.md
-        └── templates/{AGENTS,SOUL,PROJECT}.md
+        ├── README.md  CHANGELOG.md  LICENSE  # Apache-2.0
+        ├── agents/{computational-scientist,deep-researcher}.md
+        └── skills/{literature-review,pdf-explore,figure-style,
+                    figure-composer,paper-narrative,canvas-design,
+                    doc-coauthoring,web-artifacts-builder}/
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+The marketplace and the `mf` plugin are MIT — see [LICENSE](LICENSE). The `ccsci`
+plugin is **Apache-2.0** with its own [plugins/ccscience/LICENSE](plugins/ccscience/LICENSE)
+(its bundled `canvas-design` typefaces are under the SIL Open Font License).
 
 ## Contact
 

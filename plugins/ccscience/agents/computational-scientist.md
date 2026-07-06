@@ -10,7 +10,7 @@ description: >-
   task that should leave behind saved outputs. Pairs with the deep-researcher
   agent — that one researches, this one computes.
 model: inherit
-effort: high
+effort: xhigh
 memory: user
 ---
 
