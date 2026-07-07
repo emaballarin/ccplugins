@@ -3,32 +3,32 @@ name: literature-review
 description: Find, verify, and synthesize STEM literature across every field — from "what's the seminal paper for X" through full multi-source reviews. Treats journal articles, arXiv/preprints, and conference proceedings as first-class; grounds every claim in a retrieved source, never fabricates DOIs, checks for superseded/withdrawn/refuted work, calibrates confidence to evidence strength (including SOTA/reproduction/ablation caveats for CS and ML), and emits a tidy DOI-pinned BibTeX reference list. Pairs with the deep-researcher agent.
 license: Apache-2.0
 metadata:
-  # Sends the user's query to Crossref (with a polite-pool contact email from
-  # LITREVIEW_CONTACT_EMAIL), OpenAlex (with OPENALEX_API_KEY when set — no
-  # email is ever sent to OpenAlex), the arXiv API, DBLP, and Semantic Scholar.
-  # BibTeX is fetched from doi.org via content negotiation. The alphaXiv MCP
-  # (mcp__alphaxiv__*) is the preprint retrieval/reading path when wired in.
-  third_party:
-    - kind: service
-      name: Crossref
-      info_url: https://www.crossref.org/documentation/retrieve-metadata/
-      privacy_url: https://www.crossref.org/operations-and-sustainability/privacy/
-    - kind: service
-      name: OpenAlex
-      terms_url: https://openalex.org/OpenAlex_termsofservice.pdf
-      privacy_url: https://openalex.org/OpenAlex_privacy_policy.pdf
-    - kind: service
-      name: arXiv
-      info_url: https://info.arxiv.org/help/api/index.html
-    - kind: service
-      name: DBLP
-      info_url: https://dblp.org/faq/How+to+use+the+dblp+search+API.html
-    - kind: service
-      name: Semantic Scholar
-      info_url: https://api.semanticscholar.org/api-docs/
-    - kind: service
-      name: alphaXiv
-      info_url: https://www.alphaxiv.org/
+    # Sends the user's query to Crossref (with a polite-pool contact email from
+    # LITREVIEW_CONTACT_EMAIL), OpenAlex (with OPENALEX_API_KEY when set — no
+    # email is ever sent to OpenAlex), the arXiv API, DBLP, and Semantic Scholar.
+    # BibTeX is fetched from doi.org via content negotiation. The alphaXiv MCP
+    # (mcp__alphaxiv__*) is the preprint retrieval/reading path when wired in.
+    third_party:
+        - kind: service
+          name: Crossref
+          info_url: https://www.crossref.org/documentation/retrieve-metadata/
+          privacy_url: https://www.crossref.org/operations-and-sustainability/privacy/
+        - kind: service
+          name: OpenAlex
+          terms_url: https://openalex.org/OpenAlex_termsofservice.pdf
+          privacy_url: https://openalex.org/OpenAlex_privacy_policy.pdf
+        - kind: service
+          name: arXiv
+          info_url: https://info.arxiv.org/help/api/index.html
+        - kind: service
+          name: DBLP
+          info_url: https://dblp.org/faq/How+to+use+the+dblp+search+API.html
+        - kind: service
+          name: Semantic Scholar
+          info_url: https://api.semanticscholar.org/api-docs/
+        - kind: service
+          name: alphaXiv
+          info_url: https://www.alphaxiv.org/
 ---
 
 # Literature review
@@ -37,7 +37,7 @@ A literature question has two halves: finding the papers a domain expert would p
 
 ## Read the request for what it's actually asking
 
-"What's the paper for X" wants one or two specific citations; "what's the evidence on X" wants a synthesis; "compare A and B" wants a comparison, not two adjacent summaries; "where are the gaps" wants the gaps, with the survey as supporting material. A two-word lay query wants you to choose the scope a domain expert would default to and say so up front — "I'll read this as the transformer *architecture* paper, not the earlier attention mechanism it builds on" or "I'll take this as human RCT evidence; the animal literature is separate." Ask a clarifier only when the answer would genuinely change what you do.
+"What's the paper for X" wants one or two specific citations; "what's the evidence on X" wants a synthesis; "compare A and B" wants a comparison, not two adjacent summaries; "where are the gaps" wants the gaps, with the survey as supporting material. A two-word lay query wants you to choose the scope a domain expert would default to and say so up front — "I'll read this as the transformer _architecture_ paper, not the earlier attention mechanism it builds on" or "I'll take this as human RCT evidence; the animal literature is separate." Ask a clarifier only when the answer would genuinely change what you do.
 
 ## Load the helpers
 
@@ -64,7 +64,7 @@ For broad-survey, where-are-the-gaps, and compare-methods requests, the first mo
 - **PubMed and domain connectors** — for life sciences and clinical work, PubMed and connectors like ClinicalTrials.gov or bioRxiv. Run a scan of the available MCP tools once at the start (the tool list names them, e.g. `mcp__*`) and use whichever literature/data server fits the field.
 - **Web search** — for grey literature, very recent work, blog-first results, and disambiguation.
 
-A real survey usually carries on the order of fifteen or more distinct primary-paper DOIs, because each claim is anchored to the paper that established it; a handful of review citations is a reading list, not a synthesis. When the question is after a *specific* paper — "the original," "the seminal," a named model, trial, or method — find the highly-cited primary publication that the follow-ups all cite, not a review or news piece about it.
+A real survey usually carries on the order of fifteen or more distinct primary-paper DOIs, because each claim is anchored to the paper that established it; a handful of review citations is a reading list, not a synthesis. When the question is after a _specific_ paper — "the original," "the seminal," a named model, trial, or method — find the highly-cited primary publication that the follow-ups all cite, not a review or news piece about it.
 
 That applies even when you know the answer cold. Resolving the DOI for a paper you're certain of — the Transformer paper, ResNet, a textbook constant, a landmark trial — is a one-second tool call, and it's the difference between a citation and a claim about a citation. Verification is something that happens in your tool trace, not a sentence in your reply. **A DOI you emit either resolves to a real paper that says what you claim, or it's a fabrication, and the difference is checkable in five seconds.** When you have author/year/venue but not the DOI, look it up via Crossref, OpenAlex, DBLP, or Semantic Scholar rather than pattern-completing one; when even those details are hazy, that's a search query, not a citation. For recent developments, contested findings, or anything you "remember" from near or after your knowledge cutoff, retrieval isn't optional.
 
@@ -83,7 +83,7 @@ After the citation-graph expansion and before you write the reference list, norm
 
 ## Superseded, withdrawn, refuted
 
-Sensational or surprising results are findable *because* they were sensational, and some did not hold up: a retracted paper, a withdrawn preprint, a flawed proof, a benchmark result no one could reproduce, an effect that failed to replicate. The discipline is the same across fields — before you build on a high-profile or surprising finding, check what happened to it. Crossref's `update-to` field flags retractions (and `verify_dois` surfaces a `retraction` flag on Crossref hits); withdrawals, errata, corrigenda, and expressions of concern ride in that same `update-to` field and warrant a direct look. For preprints, check whether a later version withdrew or substantially revised the claim, and whether the published version of record even exists. For computational and theoretical work, "REFUTED" is the operative word: a proof with a known gap, a result later shown incorrect, a method whose headline number was a benchmark artifact. The related trap is the question whose honest answer is "no such paper exists": when someone asks for "the paper showing X" and X fell apart or was never established, name the claim, say what happened to it, and point to what the actual evidence shows — not the closest-matching citation.
+Sensational or surprising results are findable _because_ they were sensational, and some did not hold up: a retracted paper, a withdrawn preprint, a flawed proof, a benchmark result no one could reproduce, an effect that failed to replicate. The discipline is the same across fields — before you build on a high-profile or surprising finding, check what happened to it. Crossref's `update-to` field flags retractions (and `verify_dois` surfaces a `retraction` flag on Crossref hits); withdrawals, errata, corrigenda, and expressions of concern ride in that same `update-to` field and warrant a direct look. For preprints, check whether a later version withdrew or substantially revised the claim, and whether the published version of record even exists. For computational and theoretical work, "REFUTED" is the operative word: a proof with a known gap, a result later shown incorrect, a method whose headline number was a benchmark artifact. The related trap is the question whose honest answer is "no such paper exists": when someone asks for "the paper showing X" and X fell apart or was never established, name the claim, say what happened to it, and point to what the actual evidence shows — not the closest-matching citation.
 
 ## Synthesis is comparison, not summary
 
@@ -91,11 +91,11 @@ A list of papers with one-sentence summaries is a bibliography. The useful layer
 
 ## Making the prose carry its weight
 
-A review paragraph earns its place by opening on *your* synthetic claim and then spending citations to back it, not by opening on a citation and reporting what it found. "Chen 2019 reported a 40% reduction; Park 2020 reported 35%" is two index cards. "The effect is real but modest, with pooled estimates clustering at 35-40% (Chen 2019; Park 2020)" is a review. The diagnostic: read only the first sentence of each paragraph in sequence; if they form your argument, you've written a synthesis; if they form a list of author names, you've written an annotated bibliography in paragraph costume.
+A review paragraph earns its place by opening on _your_ synthetic claim and then spending citations to back it, not by opening on a citation and reporting what it found. "Chen 2019 reported a 40% reduction; Park 2020 reported 35%" is two index cards. "The effect is real but modest, with pooled estimates clustering at 35-40% (Chen 2019; Park 2020)" is a review. The diagnostic: read only the first sentence of each paragraph in sequence; if they form your argument, you've written a synthesis; if they form a list of author names, you've written an annotated bibliography in paragraph costume.
 
 ## Write prose, not a bulleted bibliography
 
-The artifact should read like a section of a referee-grade review: paragraphs of connected argument, each making one claim and anchoring it with an inline citation, transitioning to the next. A page that is 80% bullet points is a reading list dressed up as a review — it tells the reader *that* papers exist, not what they collectively show. Reserve bullets for places a list is genuinely the right structure (a reference appendix, a head-to-head comparison table, an enumerated set of named methods); the synthesis itself is prose. If you find yourself starting consecutive lines with `- Author Year showed…`, that's a paragraph that hasn't been written yet.
+The artifact should read like a section of a referee-grade review: paragraphs of connected argument, each making one claim and anchoring it with an inline citation, transitioning to the next. A page that is 80% bullet points is a reading list dressed up as a review — it tells the reader _that_ papers exist, not what they collectively show. Reserve bullets for places a list is genuinely the right structure (a reference appendix, a head-to-head comparison table, an enumerated set of named methods); the synthesis itself is prose. If you find yourself starting consecutive lines with `- Author Year showed…`, that's a paragraph that hasn't been written yet.
 
 ## Calibrating to evidence
 
@@ -110,9 +110,9 @@ Computational, engineering, and ML work needs its own calibration, because a res
 
 ## Put the answer in the answer — and open on the substance
 
-The review — prose, citations, bottom line — belongs in your response text, where the reader sees it. For anything beyond a one-paper lookup, also save the full review to a Markdown file with the `Write` tool so the reader has a clean, linkable document; the chat reply *is* the answer, and any pointer to the saved file goes at the end of it, never as a "Report saved:" opener. A reply that is *only* "I've saved a 14-paper review, all DOIs verified" is not an answer — write the substance in the chat, then mention the file.
+The review — prose, citations, bottom line — belongs in your response text, where the reader sees it. For anything beyond a one-paper lookup, also save the full review to a Markdown file with the `Write` tool so the reader has a clean, linkable document; the chat reply _is_ the answer, and any pointer to the saved file goes at the end of it, never as a "Report saved:" opener. A reply that is _only_ "I've saved a 14-paper review, all DOIs verified" is not an answer — write the substance in the chat, then mention the file.
 
-The first sentence should be content the reader came for: the finding, the paper, the comparison. "Here's the synthesis," "All DOIs verified against Crossref; no retraction flags," "I've verified every citation," "the report is current as of today" — these are process narration, and they don't belong in the chat reply *or* the saved file. Verification happens in your tool trace; the reader infers it from citations that resolve and claims that hold up. Do not write a "DOIs verified / no retractions" line anywhere in the output — not as an opener, not as a footer, not as an italic subtitle under the title. The saved file follows exactly the same rule as the chat reply: open on substance, close on substance. The register to aim for is a tight methods paragraph or a referee-grade mini-review: lead with the key result, lay out the supporting evidence with inline DOIs, address the obvious counterpoint or limitation, and close on what's still open. A reader who only gets your first paragraph should already have the answer.
+The first sentence should be content the reader came for: the finding, the paper, the comparison. "Here's the synthesis," "All DOIs verified against Crossref; no retraction flags," "I've verified every citation," "the report is current as of today" — these are process narration, and they don't belong in the chat reply _or_ the saved file. Verification happens in your tool trace; the reader infers it from citations that resolve and claims that hold up. Do not write a "DOIs verified / no retractions" line anywhere in the output — not as an opener, not as a footer, not as an italic subtitle under the title. The saved file follows exactly the same rule as the chat reply: open on substance, close on substance. The register to aim for is a tight methods paragraph or a referee-grade mini-review: lead with the key result, lay out the supporting evidence with inline DOIs, address the obvious counterpoint or limitation, and close on what's still open. A reader who only gets your first paragraph should already have the answer.
 
 Cite inline as a markdown link — `[Author Year](https://doi.org/10.xxxx/xxxxxx)` — so the rendered prose reads `(Author Year)` and the DOI rides in the href where a reader can click it and a regex can still extract it. Prefer the published version of record's DOI over the arXiv id when both exist (that's what `resolve_published` is for); when a work is genuinely preprint-only, link its arXiv DOI and mark it a preprint. If the DOI itself contains parentheses (some publishers use PII-style suffixes, e.g. `Sxxxx-xxxx(NN)nnnnn-n`), URL-encode them as `%28` and `%29` in the href so the markdown link does not break in simpler renderers. Do not use numbered `[1][2][3]` references (they desync the moment a paragraph is reordered), and reserve the raw `(DOI: 10.xxxx/...)` form for plain-text-only output; a sentence whose visible text is half identifier is not referee-grade prose. The author names in the link text come from the retrieved record, never from recall — keep `authors` riding alongside year and DOI in whatever working notes you draft from (the lookup helpers return it for exactly this reason; only degraded fallback paths go without). A note that carries the DOI but not the names leaves `(Author Year)` to be filled from memory at prose time, and memory supplies plausible names, not the paper's. Section headings are short noun phrases (six words or fewer); when you have five or more topics, group them under two or three parent `##` headings and demote the rest to `###`. The goal is that a domain expert reading your review nods along, finds the papers they'd have named themselves, and doesn't catch you in a single claim you can't back.
 

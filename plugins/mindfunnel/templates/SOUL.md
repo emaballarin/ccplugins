@@ -3,7 +3,7 @@
 > `/mf:setup` copies this template to `~/.mindfunnel/SOUL.md` (non-
 > destructive — it skips if the file already exists) and symlinks
 > `~/.claude/SOUL.md` and `~/.codex/SOUL.md` to it. Fill in the
-> sections below. `SOUL.md` describes *you* to the agent — your role,
+> sections below. `SOUL.md` describes _you_ to the agent — your role,
 > your workflow, your preferences, the things that trip you up. It's
 > user-global, never stamped into project roots, never committed
 > anywhere.

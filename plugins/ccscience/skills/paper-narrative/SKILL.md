@@ -4,17 +4,17 @@ description: "Judge and reshape the STORY a paper's figures tell. Input is the w
 license: Apache-2.0
 ---
 
-
 # paper-narrative
 
-**Outermost tier.** Judge and reshape the *story* a paper's figures tell. Input is
+**Outermost tier.** Judge and reshape the _story_ a paper's figures tell. Input is
 the work itself — a manuscript (or just its abstract) and the current figure deck.
 No hand-written brief required.
 
 ## When to load
+
 Paper writing or revision. You have a draft and a set of figures and you want to
 know: is Figure 1 a hook? Is content in the right figure? What's missing? What
-should die? Load this *before* `figure-composer` — the arc it returns tells you
+should die? Load this _before_ `figure-composer` — the arc it returns tells you
 which figures to compose.
 
 ## Loading the kernel
@@ -55,17 +55,18 @@ the model work is done by you (inline) or a `Task` subagent.
    subagent on the FULL deck; it returns JSON matching
    `narrative_review_schema()`.
 3. **Act on the output, don't just report it:**
-   - `arc[]` → the main-figure order. Anything not on it → supplement.
-   - `figure_moves[]` → move panels between figures.
-   - `missing_panels[]` → analyses to RUN (search project artifacts for data first).
-   - `kill_list[]` → demote or delete.
-   - `boldest_defensible_fig1` → the new Fig 1 claim handed to `figure-composer`.
+    - `arc[]` → the main-figure order. Anything not on it → supplement.
+    - `figure_moves[]` → move panels between figures.
+    - `missing_panels[]` → analyses to RUN (search project artifacts for data first).
+    - `kill_list[]` → demote or delete.
+    - `boldest_defensible_fig1` → the new Fig 1 claim handed to `figure-composer`.
 4. **Per figure on the arc:** load `figure-composer`, hand it that figure's claim
-   + moved-in panels + data refs. It runs the outer (figure) loop.
+    - moved-in panels + data refs. It runs the outer (figure) loop.
 5. **Re-run step 2** on the new deck. Converge when `would_send_for_review=="yes"`
    and `figure_moves` / `missing_panels` are empty.
 
 ## Minimal invocation
+
 > Load `paper-narrative`. Manuscript: `@manuscript.tex`. Figures:
 > `@all_figures.pdf`. Run it.
 

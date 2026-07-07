@@ -4,12 +4,11 @@ description: "Publication-grade figure correctness and legibility rules. Load be
 license: Apache-2.0
 ---
 
-
 # Publication-Grade Figure Rules
 
-*A checklist for correct, legible, internally-consistent scientific figures. This
+_A checklist for correct, legible, internally-consistent scientific figures. This
 skill does not impose a visual house style — frame, font, and palette are
-parameters. Load it and call `apply_figure_style()` before any plot.*
+parameters. Load it and call `apply_figure_style()` before any plot._
 
 ## §0 Scope
 
@@ -51,9 +50,9 @@ variable fixed states the fixed value — in the panel or, when §2 budget is
 tight, in the caption.
 
 **1.6 Reference structure is reference.** A tree, ordering, or topology drawn as
-*context* (a scale bar, a category strip) uses an established reference, not
+_context_ (a scale bar, a category strip) uses an established reference, not
 one inferred from the plotted data. Infer the structure only when the structure
-*is* the result.
+_is_ the result.
 
 **1.7 One number per claim.** A quantitative claim (runtime, accuracy, count)
 has exactly one canonical value across every panel, caption, and the abstract.
@@ -67,8 +66,8 @@ The figure shows the pattern; the **caption** carries the context. Design for a
 general scientific reader, not the author.
 
 **2.1 Floor (non-removable).** Every distinct mark, series, glyph, or comparator
-must be identifiable from the figure alone. The caption explains *why it
-matters*, not *what it is*. A label is non-removable if deleting it leaves a
+must be identifiable from the figure alone. The caption explains _why it
+matters_, not _what it is_. A label is non-removable if deleting it leaves a
 reader asking "what is that?"; it is removable only if the question becomes "why
 is that there?". Comparator labels name the thing ("prior method", "no joint
 training"), never a bare role word ("baseline", "previous"). Any term a general
@@ -77,7 +76,7 @@ scientist can't parse gets a one-word gloss.
 **2.2 Ceiling.** Per panel: title + axis labels + tick labels + series identity
 (labelled once per row of small multiples) + at most 2–3 result annotations.
 Count the strings; >6 beyond axes/ticks means you're over. The ceiling counts
-*narrative* annotations (callouts, value labels, brackets) — identity labels are
+_narrative_ annotations (callouts, value labels, brackets) — identity labels are
 floor, not budget.
 
 **2.3 Move to the caption:** n=, what's-held-fixed, abbreviation expansions,
@@ -85,7 +84,7 @@ non-comparable footnotes, exclusion rationale, methodological caveats.
 
 **2.4 Titles are takeaways.** A reader seeing only the title knows what the
 panel shows. "Robust to gene dropout" passes; "Fewer genes" fails. Test: read it
-aloud cold — if the listener asks "fewer genes *what*?", rewrite. For a row of
+aloud cold — if the listener asks "fewer genes _what_?", rewrite. For a row of
 small multiples that vary one thing, drop per-panel titles for one row-header.
 
 **2.5 Value-on-mark only for the headline number** — the one a reader would
@@ -136,7 +135,7 @@ they were before.
 
 **4.1 Threading.** Once a colour is bound to an entity (a method, a feature, a
 condition), reuse that exact colour for every mark representing that entity
-across the figure — line, fill, marker, text, heatmap row. Colour *is* the
+across the figure — line, fill, marker, text, heatmap row. Colour _is_ the
 cross-reference; a reader should never have to consult a legend twice.
 
 **4.2 Limit hues.** Use as few distinct hues as the data require. When the
@@ -171,7 +170,7 @@ systems, each legend sits adjacent to the first panel where its palette applies.
 regular weight, left-aligned. Metric names go on the axis, not in the title.
 
 **5.2 Role-mapped size ladder.** A figure uses **at most three** font sizes,
-mapped to *role* not space: titles/axis-labels/series-identity at the base size;
+mapped to _role_ not space: titles/axis-labels/series-identity at the base size;
 legend/annotation text one step down; tick labels one step further. Panel
 letters are the only exception (bold, larger). If a label doesn't fit at its
 role's size, fix the layout or shorten the text — don't reach for an
@@ -191,7 +190,7 @@ contrast; if it doesn't, place the text outside the mark.
 
 **5.6 No internal codes.** Axis labels use plain-language names; codebase
 abbreviations appear only in parentheses after the readable name or in the
-caption. Comparator series are labelled with what they *are*, not a role word.
+caption. Comparator series are labelled with what they _are_, not a role word.
 
 **5.7 Panel letters.** Bold, top-left, outside the axes box. Case follows the
 target venue's convention; `panel_letter(ax, 'a', case=...)` handles either.
@@ -296,6 +295,7 @@ These are correctness failures, not style preferences:
 After `fig.savefig(...)`, before you present the figure as final:
 
 **9.1 Geometric (bbox) check.**
+
 ```python
 r = fig.canvas.get_renderer()
 texts = [(t, t.get_window_extent(r)) for t in fig.findobj(mpl.text.Text)
@@ -309,13 +309,15 @@ overlaps += [(t, s) for t, bt in texts for s, bs in spines
              if bt.overlaps(bs) and t not in ticklabels[s.axes]]
 # assert: overlaps == [] and every text box lies within fig.bbox
 ```
-Overlap is defined between *visible* boxes, and a tick label sitting on its own
+
+Overlap is defined between _visible_ boxes, and a tick label sitting on its own
 spine is not a finding. Fix (move, shorten, stagger) and re-save until clean.
 
 **9.2 Perceptual check.** The bbox check is geometric, not perceptual — it will
 not catch a low-contrast label, a leader that crosses three others, or a series
 colour mistakable for another. Crop the saved PNG to each panel, then open each
 crop with the `Read` tool and look:
+
 ```python
 from PIL import Image
 fig.savefig("figure.png")
@@ -323,11 +325,13 @@ img = Image.open("figure.png")
 for letter, box in panel_crops(fig).items():
     img.crop(box).save(f"figure_panel_{letter}.png")   # then Read each crop to inspect it
 ```
+
 For each crop: Is every glyph and mark legible against its background? Does the
 smallest plotted element have a stroke or stub? Do any leaders cross? Could any
 series colour be mistaken for another? Does the legend sit beside what it keys?
 A perceptual defect that passes §9.1 is still a defect.
 
 ---
-*When in doubt: fewer hues, more direct labels, raw data over summary stats, and
-state what is being measured before showing the result.*
+
+_When in doubt: fewer hues, more direct labels, raw data over summary stats, and
+state what is being measured before showing the result._

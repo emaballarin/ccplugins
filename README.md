@@ -14,10 +14,10 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 
 ## Plugins
 
-| Name | Description                                                                                                                                                                 | Docs                                               |
-| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `mf` | **mindfunnel** — project-agnostic session management. Four skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back. | [plugins/mindfunnel](plugins/mindfunnel/README.md) |
-| `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, plus the `computational-scientist` and `deep-researcher` subagents. | [plugins/ccscience](plugins/ccscience/README.md) |
+| Name    | Description                                                                                                                                                                                                                                                                                                  | Docs                                               |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| `mf`    | **mindfunnel** — project-agnostic session management. Four skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back.                                                                                                                                  | [plugins/mindfunnel](plugins/mindfunnel/README.md) |
+| `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, plus the `computational-scientist` and `deep-researcher` subagents. | [plugins/ccscience](plugins/ccscience/README.md)   |
 
 ## Install a plugin
 

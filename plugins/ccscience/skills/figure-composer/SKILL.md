@@ -4,7 +4,6 @@ description: "Compose one publication-grade multi-panel figure. Entry from a one
 license: Apache-2.0
 ---
 
-
 # Figure Composer — narrative → panels → compose → adversarial loop
 
 **Step 0.** Load `figure-style` alongside this skill — that is the design rules
@@ -46,7 +45,7 @@ panel renders) need `pip install pillow` (+ matplotlib for the panels).
 **inner tier** is `figure-style` (loaded by every panel Task subagent — and
 load it yourself if you draw anything locally). The **outermost tier** is
 `paper-narrative` — if this figure is part of a paper, run that FIRST: it decides
-*which* figure to make and hands you the claim. For a standalone figure, start at
+_which_ figure to make and hands you the claim. For a standalone figure, start at
 step 1.
 
 ## Entry points (pick one)
@@ -74,6 +73,7 @@ Produce a `panel_outline` (validate against `figure_outline_schema()`):
 ```
 
 Outline rules (figure-style §7.1):
+
 - **a is the hook** — schematic/hero, full width, assumes zero reader context.
 - **b carries the claim** — the chart that alone makes the sentence true.
 - Remaining panels are evidence, ordered by how much they strengthen b.
@@ -151,7 +151,7 @@ colour-identity confusion, legend binding), plus two compose-specific checks:
   slot — is any text visibly aliased or any hairline lost?
 
 Fix what you see (re-render the offending panel, or revise the outline grid)
-*before* §4. The reviewer Task subagent will crop-and-look again independently;
+_before_ §4. The reviewer Task subagent will crop-and-look again independently;
 this pass is so the obvious defects never reach it.
 
 ## 4. Adversarial self-review loop (two-tier, design rules held fixed)
@@ -188,5 +188,5 @@ exceptions to the previous round — that's the over-labelling signal.
 
 - Don't regenerate clean panels (invites regression). Don't read absolute
   violation counts (min-floor 5→4→3). Anchor-verify on the composite, not just
-  per panel. Hyper-labelling check: would a reader *with* field context find any
+  per panel. Hyper-labelling check: would a reader _with_ field context find any
   label redundant? Strip it.

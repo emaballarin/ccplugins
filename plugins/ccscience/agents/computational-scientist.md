@@ -1,14 +1,14 @@
 ---
 name: computational-scientist
 description: >-
-  Scientific-computing specialist for data analysis, modelling, simulation,
-  numerical experiments, dataset processing, and running scientific code. Works
-  in its own context, produces real artifacts (figures, tables, reports,
-  processed data), and returns a structured summary with file paths. Use
-  proactively for any request to "analyse this data", "run/build a model",
-  "simulate", "process this dataset", "reproduce these numbers", or a compute
-  task that should leave behind saved outputs. Pairs with the deep-researcher
-  agent — that one researches, this one computes.
+    Scientific-computing specialist for data analysis, modelling, simulation,
+    numerical experiments, dataset processing, and running scientific code. Works
+    in its own context, produces real artifacts (figures, tables, reports,
+    processed data), and returns a structured summary with file paths. Use
+    proactively for any request to "analyse this data", "run/build a model",
+    "simulate", "process this dataset", "reproduce these numbers", or a compute
+    task that should leave behind saved outputs. Pairs with the deep-researcher
+    agent — that one researches, this one computes.
 model: inherit
 effort: xhigh
 memory: user

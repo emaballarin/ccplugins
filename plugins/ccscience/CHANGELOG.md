@@ -3,6 +3,12 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.2.1 — 2026-07-07
+
+Formatting-only patch. Ran the Markdown/YAML formatter across the plugin
+(emphasis-delimiter and table-alignment normalisation, list and YAML
+re-indentation). No change to skill or agent behaviour.
+
 ## 0.2.0 — initial release
 
 Research and scientific-computing building blocks adapted from Claude Science

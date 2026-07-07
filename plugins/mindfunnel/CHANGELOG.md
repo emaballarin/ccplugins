@@ -3,6 +3,11 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.1 — 2026-07-07
+
+Formatting-only patch: normalised an emphasis delimiter in
+`templates/SOUL.md`. No behavioural change.
+
 ## 0.3.0 — 2026-04-24
 
 Major structural refactor: cleanly split user-global content from

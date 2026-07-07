@@ -56,16 +56,16 @@ terms apply.) `path` can be a workspace path or a `~/`-expanded path.
 
 ## Which helper — inline vs Task fan-out
 
-| helper | when | how the model work happens |
-|---|---|---|
-| **`Read(pages=[...])`** (built-in, no skill) | one-off look at 1–4 pages you quote in your *very next* reply | ephemeral vision, ≤20/turn, dropped after the turn |
-| **`k.pdf_pages(path, pages=[...], mode="text")`** | several pages/sections at once — summaries, comparisons, any multi-range answer | **inline**: you read the text and answer |
-| **`k.pdf_outline(path)`** | structured doc (paper, report, book) with an embedded TOC | **inline**: free, instant, no model |
-| **`k.pdf_outline_prepare` / `_assemble`** | build a TOC when there is **no** embedded outline | **fan-out** (one subagent for text ≤150pp, per-page otherwise) |
-| **`k.pdf_scan_prepare` / `_assemble`** | semantic query → the K most relevant pages | few pages **inline**; many pages **fan-out** |
-| **`k.pdf_map_prepare` / `_assemble`** | free-text answer of *every* page (transcript, slide dump) | **fan-out** |
-| **`k.pdf_extract_prepare` / `_assemble`** | **exhaustive list of X across the whole doc** (datasets, citations, table rows) | **fan-out** |
-| **`k.pdf_pages(mode="image")` → `k.pdf_crop` → `Read`** | read a small value/label/legend off a **figure** | you `Read` the saved crop |
+| helper                                                  | when                                                                            | how the model work happens                                     |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **`Read(pages=[...])`** (built-in, no skill)            | one-off look at 1–4 pages you quote in your _very next_ reply                   | ephemeral vision, ≤20/turn, dropped after the turn             |
+| **`k.pdf_pages(path, pages=[...], mode="text")`**       | several pages/sections at once — summaries, comparisons, any multi-range answer | **inline**: you read the text and answer                       |
+| **`k.pdf_outline(path)`**                               | structured doc (paper, report, book) with an embedded TOC                       | **inline**: free, instant, no model                            |
+| **`k.pdf_outline_prepare` / `_assemble`**               | build a TOC when there is **no** embedded outline                               | **fan-out** (one subagent for text ≤150pp, per-page otherwise) |
+| **`k.pdf_scan_prepare` / `_assemble`**                  | semantic query → the K most relevant pages                                      | few pages **inline**; many pages **fan-out**                   |
+| **`k.pdf_map_prepare` / `_assemble`**                   | free-text answer of _every_ page (transcript, slide dump)                       | **fan-out**                                                    |
+| **`k.pdf_extract_prepare` / `_assemble`**               | **exhaustive list of X across the whole doc** (datasets, citations, table rows) | **fan-out**                                                    |
+| **`k.pdf_pages(mode="image")` → `k.pdf_crop` → `Read`** | read a small value/label/legend off a **figure**                                | you `Read` the saved crop                                      |
 
 "Inline" = you read the page text (or figure crop) yourself and produce the
 answer in the same turn. "Fan-out" = the two-phase protocol below.
@@ -81,9 +81,9 @@ subagents read.
    and `items` = `[{pages, text_file, image_paths}, ...]`. Only this small
    manifest lands in your context.
 2. **FAN OUT** — for each `item`, launch a **Task** subagent. Its prompt =
-   the manifest's `instruction` (+ `query` / `schema`) + *"Read `text_file`
+   the manifest's `instruction` (+ `query` / `schema`) + _"Read `text_file`
    (and Read each non-null `image_paths` entry), then return ONLY the JSON
-   the `return_spec` describes."* Each subagent returns a short JSON array —
+   the `return_spec` describes."_ Each subagent returns a short JSON array —
    one object per page it handled. Launch the subagents in parallel.
 3. **ASSEMBLE** — concatenate every subagent's array into one flat list, save
    it to `results.json`, and call the matching `*_assemble` helper. It ranks /
@@ -116,13 +116,13 @@ PY
 
 2. Read the manifest. For each `item`, launch a Task subagent, e.g.:
 
-   > `{instruction}` `{query}` — Read the page text at `{text_file}`. For each
-   > page in it, score relevance in [0,1] and write one sentence on what the
-   > page contains. Return ONLY a JSON array `[{"page":N,"score":x,"summary":"…"}]`,
-   > nothing else.
+    > `{instruction}` `{query}` — Read the page text at `{text_file}`. For each
+    > page in it, score relevance in [0,1] and write one sentence on what the
+    > page contains. Return ONLY a JSON array `[{"page":N,"score":x,"summary":"…"}]`,
+    > nothing else.
 
-   Collect the arrays, concatenate them, and `Write` the flat list to
-   `results.json`.
+    Collect the arrays, concatenate them, and `Write` the flat list to
+    `results.json`.
 
 ```bash
 # 3. ASSEMBLE
@@ -204,7 +204,7 @@ obviously answer ("where do they discuss limitations"), use the scan protocol.
 
 A full rendered page downsamples to ≤1568px on attach, so a dense figure ends
 up illegible no matter the DPI. **Render at high DPI, crop the figure, then
-`Read` the crop** — more legible *and* cheaper (~400 vision tokens vs ~1,600):
+`Read` the crop** — more legible _and_ cheaper (~400 vision tokens vs ~1,600):
 
 ```bash
 python3 - <<'PY'
@@ -285,10 +285,10 @@ pages, collect them all up front into **one** `pdf_pages(pages=[...])` call
 ## When NOT to use this skill
 
 - **A one-off look at 1–4 pages you quote immediately**: `Read(file_path=...,
-  pages=[...])` is fine — but only if you write your answer that same turn.
+pages=[...])` is fine — but only if you write your answer that same turn.
 - **Literal keyword search**: grep the extracted text —
   `[p for p in k.pdf_pages(path) if "Harmony" in p["text"]]`. The scan
-  protocol earns its cost on *semantic* queries only.
+  protocol earns its cost on _semantic_ queries only.
 
 ## Mode (scanned PDFs)
 
