@@ -1,6 +1,6 @@
 {
     "name": "mf",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "mindfunnel — project-agnostic Claude Code session management. Four slash-command skills: /mf:setup seeds ~/.mindfunnel/ (AGENTS, SOUL, USER, PROJECT templates) and the ~/.claude/ + ~/.codex/ symlinks to the user-global personal files; /mf:prime stamps a committed project-scoped AGENTS.md + intra-repo CLAUDE.md symlink + empty PROJECT.md in the current project; /mf:dump consolidates session state into Claude Code's auto-memory dir; /mf:spinup reads it back at the start of the next session.",
     "author": {
         "name": "Emanuele Ballarin"

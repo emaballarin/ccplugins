@@ -70,6 +70,11 @@ each project owns a small project-scoped `AGENTS.md` (authored from
 - **Understand WHY before fixing.** Explain causation, not just
   correlation.
 - **Don't second-guess data with theory.** The data is what it is.
+- **Small-sample signals are hypotheses, not results.** A trend from a
+  handful of seeds/runs can reverse at the planned scale (a striking
+  "outlier" may be one unlucky draw of three). Flag such signals as
+  provisional and confirm at full sample size before reframing the
+  narrative.
 - **Momentum.** After logging results, immediately suggest the next
   experiment.
 - **Log before moving on.** Record results and decisions both in
@@ -98,6 +103,15 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   shift, dead-code path, stale cache, and so on). For each, name the
   minimal diagnostic that would catch it. Wait for user confirmation
   before editing.
+- **Use a to-do list for anything multi-step.** Any request that
+  decomposes into a list of tasks — or that is complex enough to have
+  intermediate states — gets tracked in the agent's native to-do /
+  task-list mechanism, created up front and kept current as work
+  proceeds. If the harness exposes no such tool, keep an explicit
+  checklist in the reply instead. Only genuinely one-off, single-action
+  tasks are exempt. This is in-session working state, not persisted
+  memory — it does not replace `mindfunnel` memory or the project's
+  log file.
 
 ## Autonomy and asking
 
@@ -120,6 +134,14 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   confidently-wrong assumptions that surface at runtime as deep rework.
   Same rule in one sentence: **search and investigate before guessing**,
   and if search is not feasible, ask.
+- **Specs are authoritative — never silently reconcile a spec-vs-reality
+  mismatch.** When an authoritative source (spec, design doc, ticket,
+  stated requirement) conflicts with what you observe, do **not** amend
+  the source to fit your observations, and do **not** quietly adapt the
+  work to whatever you happen to find. Treat the conflict as a signal that
+  something is _off_ — more often a problem of context or environment than
+  a wrong spec — surface it, and ask. Reconciling the two is the user's
+  call, not yours.
 - **Don't re-derive settled decisions.** Check existing logs, records,
   and memory first.
 

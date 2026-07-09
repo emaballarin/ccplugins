@@ -3,6 +3,48 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.2 — 2026-07-09
+
+Content patch to `templates/AGENTS.md`. No skill logic changed.
+
+### New guidance — to-do lists for multi-step work
+
+`## Planning & execution` gains a third bullet: any request that
+decomposes into a list of tasks, or that is complex enough to carry
+intermediate state, is tracked in the agent's native to-do / task-list
+mechanism, created up front and kept current as work proceeds. Only
+genuinely one-off, single-action tasks are exempt; harnesses exposing
+no such tool fall back to an explicit checklist in the reply.
+
+The bullet deliberately names no concrete tool. `AGENTS.md` is
+agent-neutral, and harness tool names churn across releases. It also
+states outright that a to-do list is in-session working state rather
+than persisted memory, so it cannot be misread as contradicting
+`/mf:dump`'s standing "don't create TODO lists in memory" anti-pattern.
+
+### Template drift repaired
+
+Two bullets present in a live `~/.mindfunnel/AGENTS.md` had never been
+reflected back into the template, so a fresh `/mf:setup` seeded an
+incomplete file. Both now ship in `templates/AGENTS.md`:
+
+- **Small-sample signals are hypotheses, not results.**
+  (`## Communication style`) — a trend across a handful of seeds or runs
+  can reverse at the planned scale. Flag such signals as provisional and
+  confirm at full sample size before reframing the narrative.
+- **Specs are authoritative — never silently reconcile a spec-vs-reality
+  mismatch.** (`## Autonomy and asking`) — when an authoritative source
+  conflicts with what is observed, surface the conflict and ask. Do not
+  amend the source to fit the observations, and do not quietly adapt the
+  work to whatever happens to be there.
+
+### No automatic migration
+
+`/mf:setup` seeds with `cp -n` and never overwrites an existing
+`~/.mindfunnel/AGENTS.md`. Machines bootstrapped under any earlier
+release keep their current file untouched; merge the three bullets by
+hand to pick them up. Fresh machines get them from the template.
+
 ## 0.3.1 — 2026-07-07
 
 Formatting-only patch: normalised an emphasis delimiter in
