@@ -3,6 +3,43 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.0 — 2026-07-07
+
+### `pdf-explore` — tables and embedded figures
+
+Two additive kernel helpers, closing gaps the skill previously conceded in its
+own prose (it told you to pay a vision model to transcribe ruled tables, and
+could only reach a figure by cropping a downsampled page raster).
+
+- **`pdf_tables`** — deterministic table extraction with **per-table page
+  provenance**. No model, no vision, no fan-out: pdfplumber reads the grid off
+  the page geometry. The full table is written to a CSV under the cache dir and
+  only a capped preview is returned, so a 300-row table never enters the agent's
+  context. `min_rows`/`min_cols` (2×2) reject the n×1 "tables" that ruled-line
+  detection produces from boxed captions. `table_settings` passes through for
+  whitespace-aligned tables. This is the one helper on a second backend —
+  PDFium exposes no table API — so **pdfplumber is a new optional dependency**,
+  lazily imported and needed only when `pdf_tables` is called.
+- **`pdf_images`** — extract embedded raster figures at their **native
+  resolution**, via pypdfium2 (**no new dependency**). On a typical paper the
+  page-1 figure is embedded at 2372×1359, where a crop from a 100-dpi page
+  render yields ~570×326 — roughly 4× the linear detail, for less work.
+  Byte-identical images are deduplicated (a per-page logo collapses to one entry
+  listing its pages) and sub-`min_px` decoration is dropped. Defaults to
+  `render=True`, saving the image as pdfium composites it, because pdfium's raw
+  extraction path ignores alpha masks and can silently mis-render a transparent
+  figure; `render=False` still offers lossless JPEG/JPEG-2000 passthrough.
+  Only raster XObjects are visible to it — vector figures (TikZ, pgfplots,
+  matplotlib-PDF) are drawing operations, not images, and still need the
+  render-and-crop path, which the skill now documents as the explicit fallback.
+
+Both write into the existing `.cache/pdf-explore/{sha8}-{mtime}/` convention
+(`img/`, `tables/`), keyed on mtime — scratch assets for the agent to `Read`,
+not a deliverable directory.
+
+`SKILL.md` additionally documents a `uv run --with …` invocation, so the kernel
+runs with no install at all.
+
 ## 0.2.1 — 2026-07-07
 
 Formatting-only patch. Ran the Markdown/YAML formatter across the plugin

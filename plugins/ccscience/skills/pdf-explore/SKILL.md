@@ -1,6 +1,6 @@
 ---
 name: pdf-explore
-description: "Use this skill when the user has attached or pointed to a PDF, paper, report, or other document and the answer needs content from more than one place in it: summarize the methods or any other section, compare sections, find where a topic is discussed, read a value or label off a figure or chart, or find/list/extract every instance of something across the whole document (datasets, benchmarks, citations, figures, table rows, accession numbers — including appendices). It parses the PDF once in Python: pdf_pages (pages as persistent text), pdf_outline (TOC), and prepare/assemble helpers that fan whole-doc relevance scans / per-page maps / structured extraction out over Task subagents so the pages never fill your own context. Complementary to the built-in Read(pages=...), which attaches ≤20 PDF pages as ephemeral vision dropped after one turn — reach for this skill for persistent text, whole-doc sweeps, and structured extraction Read can't do. For PDF creation/manipulation use reportlab/pypdf directly. Deps: pip install pypdfium2 pillow."
+description: "Use this skill when the user has attached or pointed to a PDF, paper, report, or other document and the answer needs content from more than one place in it: summarize the methods or any other section, compare sections, find where a topic is discussed, read a value or label off a figure or chart, pull tables out as CSV, or find/list/extract every instance of something across the whole document (datasets, benchmarks, citations, figures, table rows, accession numbers — including appendices). It parses the PDF once in Python: pdf_pages (pages as persistent text), pdf_outline (TOC), pdf_tables (deterministic table extraction with per-table page provenance), pdf_images (embedded figures at native resolution), and prepare/assemble helpers that fan whole-doc relevance scans / per-page maps / structured extraction out over Task subagents so the pages never fill your own context. Complementary to the built-in Read(pages=...), which attaches ≤20 PDF pages as ephemeral vision dropped after one turn — reach for this skill for persistent text, whole-doc sweeps, tables, figures, and structured extraction Read can't do. For PDF creation/manipulation use reportlab/pypdf directly. Deps: pip install pypdfium2 pillow (plus pdfplumber for tables)."
 license: Apache-2.0
 ---
 
@@ -48,11 +48,25 @@ a **fresh process** — the in-memory page cache does not survive between them,
 but page renders are cached on disk and re-extracting the text layer is cheap,
 so re-parsing the same file in a later call is fast.
 
-If a call raises `ImportError`, run `pip install pypdfium2 pillow` and retry.
-(Backend note: the default backend is pypdfium2 — Google PDFium, permissive
+**Invocation.** The recipes below all open with `python3 - <<'PY'`, which is
+right when the deps are importable from your `python3`. If they aren't — or you
+would rather not install anything — prefix with `uv`, which fetches them into a
+throwaway env:
+
+```bash
+uv run --with pypdfium2 --with pillow --with pdfplumber python - <<'PY'
+```
+
+(Drop `--with pdfplumber` unless you're calling `pdf_tables`.) Otherwise
+`pip install pypdfium2 pillow` — plus `pdfplumber` for tables — and use plain
+`python3 -`.
+
+Backend note: the default backend is pypdfium2 — Google PDFium, permissive
 Apache-2.0/BSD-3-Clause. PyMuPDF is honored as a fallback if already installed,
 but it is AGPL-3.0; if you embed it in a network service, AGPL's source-sharing
-terms apply.) `path` can be a workspace path or a `~/`-expanded path.
+terms apply. `pdf_tables` is the one helper on a second backend (pdfplumber),
+because PDFium exposes no table API at all. `path` can be a workspace path or a
+`~/`-expanded path.
 
 ## Which helper — inline vs Task fan-out
 
@@ -65,7 +79,9 @@ terms apply.) `path` can be a workspace path or a `~/`-expanded path.
 | **`k.pdf_scan_prepare` / `_assemble`**                  | semantic query → the K most relevant pages                                      | few pages **inline**; many pages **fan-out**                   |
 | **`k.pdf_map_prepare` / `_assemble`**                   | free-text answer of _every_ page (transcript, slide dump)                       | **fan-out**                                                    |
 | **`k.pdf_extract_prepare` / `_assemble`**               | **exhaustive list of X across the whole doc** (datasets, citations, table rows) | **fan-out**                                                    |
-| **`k.pdf_pages(mode="image")` → `k.pdf_crop` → `Read`** | read a small value/label/legend off a **figure**                                | you `Read` the saved crop                                      |
+| **`k.pdf_tables(path)`**                                | **tables** — deterministic parse, page provenance, full table → CSV             | **inline**: no model, no vision                                |
+| **`k.pdf_images(path)`** → `Read`                       | a **raster** figure/photo/plot, at its native resolution                        | you `Read` the extracted image                                 |
+| **`k.pdf_pages(mode="image")` → `k.pdf_crop` → `Read`** | a **vector** figure, or any region `pdf_images` can't see                       | you `Read` the saved crop                                      |
 
 "Inline" = you read the page text (or figure crop) yourself and produce the
 answer in the same turn. "Fan-out" = the two-phase protocol below.
@@ -203,8 +219,40 @@ obviously answer ("where do they discuss limitations"), use the scan protocol.
 ## Recipe — read a figure in detail
 
 A full rendered page downsamples to ≤1568px on attach, so a dense figure ends
-up illegible no matter the DPI. **Render at high DPI, crop the figure, then
-`Read` the crop** — more legible _and_ cheaper (~400 vision tokens vs ~1,600):
+up illegible no matter the DPI. There are two ways out, and **which one works
+depends on how the figure was drawn**.
+
+### First try `pdf_images` — the figure at its native resolution
+
+If the figure is a **raster** (a photo, a screenshot, an exported PNG/JPEG plot
+— most non-LaTeX papers), it is embedded in the PDF as an image object and you
+can pull the original pixels straight out. That beats cropping a page render,
+because the page render already threw resolution away:
+
+```bash
+python3 - <<'PY'
+... load k ...
+for e in k.pdf_images("paper.pdf", pages=[5]):
+    print(f"p{e['page']} idx{e['index']} {e['px_size']} {e['bbox']} -> {e['image_path']}")
+PY
+```
+
+Then `Read(file_path="<image_path>")`. Results come back largest-first, so the
+real figures lead and decoration trails. A logo repeated on every page collapses
+to one entry whose `pages` lists them all; anything with a side under `min_px`
+(64) is dropped as decoration.
+
+Concretely, on a typical paper the page-1 figure is embedded at **2372×1359**,
+while the whole page rendered at 100 dpi is only 788×1075 — so a crop of that
+figure would be roughly 570×326. Same figure, ~4× the linear detail, for less
+work.
+
+### Fall back to render + crop for vector figures
+
+**`pdf_images` only sees raster objects.** A TikZ / pgfplots / matplotlib-PDF
+figure is _drawing operations_, not an image — it will not appear, and
+`pdf_images` returning `[]` on a figure-rich LaTeX paper is the expected,
+correct answer, not a bug. For those, rasterize the page yourself and crop:
 
 ```bash
 python3 - <<'PY'
@@ -217,10 +265,53 @@ print("crop:", crop)
 PY
 ```
 
-Then `Read(file_path="<crop path>")`. First `Read` the full page render to
-locate the figure if you don't know its box; crop one panel at a time for
-multi-panel figures. Always crop from the `.cache/` render, never from a
-previously attached (downsampled) view.
+Then `Read(file_path="<crop path>")` — more legible _and_ cheaper than the full
+page (~400 vision tokens vs ~1,600). First `Read` the full page render to locate
+the figure if you don't know its box; crop one panel at a time for multi-panel
+figures. Always crop from the `.cache/` render, never from a previously attached
+(downsampled) view.
+
+### Fidelity note
+
+`pdf_images` defaults to `render=True`, saving the image **as pdfium composites
+it** — alpha and masks applied, so what you `Read` is what the page shows. Pass
+`render=False` to write the original encoded bytes instead (lossless for
+JPEG/JPEG-2000, and much smaller), but pdfium's raw extraction **ignores alpha
+masks**, so a figure with transparency can come out visibly wrong. Prefer the
+default when you are going to _read_ the figure; use `render=False` when you
+want the original asset.
+
+## Recipe — extract tables
+
+`pdf_tables` parses tables **deterministically** — no model, no vision, no
+fan-out — and every table comes back tagged with the page it came from:
+
+```bash
+python3 - <<'PY'
+... load k ...   # needs pdfplumber: uv run --with pdfplumber ...
+for t in k.pdf_tables("paper.pdf"):
+    print(f"p{t['page']} #{t['index']}  {t['n_rows']}×{t['n_cols']}  -> {t['csv_path']}")
+    for row in t["rows"]:                      # preview only, capped
+        print("   ", row)
+PY
+```
+
+The **full** table is written to `csv_path`; only a `preview_rows`-capped
+preview comes back inline, so a 300-row table never lands in your context. When
+you actually need all of it, `Read` the CSV (or `pandas.read_csv` it) — same
+rule as the rest of the skill: bulk goes to a file, not into the conversation.
+
+Detection defaults to ruled lines. For a whitespace-aligned table with no rules,
+pass `table_settings={"vertical_strategy": "text", "horizontal_strategy": "text"}`.
+Ruled-line detection also fires readily on boxed captions and framed paragraphs,
+which arrive as n×1 "tables" — the `min_rows`/`min_cols` floor (2×2) drops those;
+lower `min_cols=1` if you genuinely want single-column boxes.
+
+**Prefer this over a schema fan-out for tables.** A `pdf_extract_prepare` sweep
+with `{rows:[{col1,col2}]}` pays a model per page to re-derive structure that
+pdfplumber reads off the page geometry for free — and gets ruled tables wrong
+often enough to matter. Reach for the fan-out only when what you want isn't the
+table grid but a _judgment_ about it.
 
 ## Recipe — map every page
 
@@ -269,11 +360,12 @@ merely cited"`. The per-page subagent applies it for you; leaving it out means
 re-reading pages later to apply it yourself.
 
 **Schemas that work well**: `{figures:[{label,caption}]}`, `{citations:[str]}`,
-`{section_headings:[str]}`, `{gene_symbols:[str]}` (entity lists),
-`{rows:[{col1,col2,...}]}` (whitespace-aligned text tables parse cleanly; for
-rendered/image tables pass `mode="image"`). **Schemas that don't**: anything
-needing judgment about "key" vs "all" (`{key_claims:[str]}` returns ~10/page,
-unusable) — per-page extraction is recall-complete but precision-noisy.
+`{section_headings:[str]}`, `{gene_symbols:[str]}` (entity lists). **Schemas
+that don't**: anything needing judgment about "key" vs "all"
+(`{key_claims:[str]}` returns ~10/page, unusable) — per-page extraction is
+recall-complete but precision-noisy. **And not table grids** — use
+[`pdf_tables`](#recipe--extract-tables), which reads the structure off the page
+geometry for free instead of paying a model per page to guess at it.
 
 **The sweep already read every page.** Don't follow it with `Read(pages=...)`
 loads to "check for missed items" — that re-spends the tokens the sweep saved.
@@ -311,7 +403,17 @@ kernel (the calls run inside subagents), so `pdf_scan_cost` reports only
 ## Caching
 
 `pdf_pages` caches on `(abs_path, mtime, mode, dpi)` **within a single Python
-process**. Page renders and fan-out work files persist on disk under
-`./.cache/pdf-explore/{sha8}-{mtime}/` (renders in `dpi{N}/p{NNN}.png`, work
-files in `work/{job}/`), so a re-render or a re-prepare after a crash is cheap.
-The dir is keyed on mtime, so editing the PDF invalidates stale renders.
+process**. Derived assets persist on disk under
+`./.cache/pdf-explore/{sha8}-{mtime}/`:
+
+| subdir        | written by                     |
+| ------------- | ------------------------------ |
+| `dpi{N}/`     | page renders (`p{NNN}.png`)    |
+| `img/`        | `pdf_images` extracted figures |
+| `tables/`     | `pdf_tables` full-table CSVs   |
+| `work/{job}/` | fan-out work files             |
+
+so a re-render, a re-extract, or a re-prepare after a crash is cheap. The dir is
+keyed on mtime, so editing the PDF invalidates every stale asset. These are
+scratch artifacts for the agent to `Read`, not a deliverable — nothing is
+written outside `.cache/` unless you ask for it.

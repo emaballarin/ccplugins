@@ -370,6 +370,257 @@ def pdf_crop(image_path, box, out_path=None):
     return out_path
 
 
+PDF_IMAGE_MIN_PX = 64
+"""Default minimum side (px) for :func:`pdf_images`. Below this an embedded
+XObject is almost always decoration — a rule, bullet, icon, or publisher logo
+— rather than a figure worth looking at."""
+
+
+def _pdf_cache_dir(abspath, *parts):
+    """Per-document cache subdir ``.cache/pdf-explore/{sha8}-{mtime}/*parts``.
+    Keyed on mtime, so editing the PDF invalidates every derived asset."""
+    sha8 = hashlib.sha1(abspath.encode()).hexdigest()[:8]
+    mtime = os.stat(abspath).st_mtime_ns
+    d = os.path.join(os.getcwd(), ".cache", "pdf-explore", f"{sha8}-{mtime}", *parts)
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
+def _pdf_image_ext(data):
+    """Sniff an image file extension from magic bytes (JPEG/JPEG-2000/PNG)."""
+    if data[:2] == b"\xff\xd8":
+        return "jpg"
+    if data[:4] == b"\x89PNG":
+        return "png"
+    if data[4:8] == b"jP  " or data[:4] == b"\xff\x4f\xff\x51":
+        return "jp2"
+    return "bin"
+
+
+def pdf_images(
+    path,
+    pages=None,
+    min_px=PDF_IMAGE_MIN_PX,
+    render=True,
+    dedupe=True,
+    cache=True,
+):
+    """Extract embedded raster images (figures, photos, plots) at their NATIVE
+    resolution, for the agent to ``Read()`` selectively.
+
+    Returns ``[{"page", "pages", "index", "image_path", "px_size", "bbox",
+    "dpi", "bpp", "filters", "n_bytes", "error"?}, ...]``, largest first. Only
+    this small metadata list comes back — the pixels live in the cache dir, so
+    nothing bulky enters the calling agent's context.
+
+    Why this beats cropping a page render: a figure embedded at 2372×1359 is
+    only ~570×326 inside a 100-dpi page raster. Pulling the XObject gives the
+    original pixels, so labels and axis ticks stay legible.
+
+    **Only finds RASTER XObjects.** A vector figure (TikZ, pgfplots, a
+    matplotlib PDF) is drawing operations, not an image, and yields nothing
+    here — fall back to ``pdf_pages(mode='image', dpi=200)`` + :func:`pdf_crop`.
+    This complements that path; it does not replace it.
+
+    ``render=True`` (default) saves the image as pdfium composites it — masks
+    and alpha applied, appearance guaranteed correct. ``render=False`` writes
+    the original encoded bytes instead (lossless for JPEG/JPEG-2000, faster),
+    but pdfium's raw extraction **ignores alpha masks**, so a transparent
+    figure can come out visibly wrong. Correct-looking beats byte-exact when
+    the point is to read the figure, hence the default.
+
+    ``min_px`` drops anything whose shorter side is below it (decoration).
+    ``dedupe`` collapses byte-identical images — a logo repeated on every page
+    becomes one entry whose ``pages`` lists them all.
+    """
+    path = pdf_resolve(path)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"pdf_images: {path!r} not found")
+    try:
+        import pypdfium2 as pdfium
+        import pypdfium2.raw as pdfium_raw
+    except ImportError as e:
+        raise ImportError(
+            "pdf_images requires pypdfium2 (+ pillow). Install with "
+            "`pip install pypdfium2 pillow`, or run the whole snippet under "
+            "`uv run --with pypdfium2 --with pillow python - <<'PY'`."
+        ) from e
+    try:
+        import PIL.Image
+    except ImportError as e:
+        raise ImportError(
+            "pdf_images requires pillow for PNG encoding. Install with `pip install pypdfium2 pillow` and re-run."
+        ) from e
+
+    import io
+
+    abspath = os.path.abspath(path)
+    out_dir = _pdf_cache_dir(abspath, "img")
+    want = None if pages is None else {int(p) for p in pages}
+
+    found = {}  # sha1(bytes) → entry, for dedupe
+    out = []
+    doc = pdfium.PdfDocument(abspath)
+    try:
+        for i in range(len(doc)):
+            pno = i + 1
+            if want is not None and pno not in want:
+                continue
+            page = doc[i]
+            for idx, obj in enumerate(page.get_objects(filter=[pdfium_raw.FPDF_PAGEOBJ_IMAGE])):
+                # Broad catches below are deliberate: a single malformed
+                # XObject must not abort the sweep, but it is REPORTED (an
+                # entry carrying "error") rather than silently dropped — a
+                # figure the agent expected and never got is the worse failure.
+                try:
+                    px = tuple(obj.get_px_size())
+                except Exception as e:  # noqa: BLE001
+                    out.append({
+                        "page": pno,
+                        "pages": [pno],
+                        "index": idx,
+                        "image_path": None,
+                        "px_size": (0, 0),
+                        "error": f"{type(e).__name__}: {e}",
+                    })
+                    continue
+                if min(px) < min_px:
+                    continue
+
+                entry = {
+                    "page": pno,
+                    "pages": [pno],
+                    "index": idx,
+                    "image_path": None,
+                    "px_size": px,
+                    "bbox": tuple(round(float(v), 1) for v in obj.get_bounds()),
+                    "dpi": None,
+                    "bpp": None,
+                    "filters": list(obj.get_filters()),
+                    "n_bytes": 0,
+                }
+                with contextlib.suppress(Exception):
+                    md = obj.get_metadata()
+                    entry["dpi"] = (round(md.horizontal_dpi, 1), round(md.vertical_dpi, 1))
+                    entry["bpp"] = md.bits_per_pixel
+
+                # Materialize the bytes once: needed for the dedupe hash and
+                # for the file we write. Failures are reported per-image, never
+                # silently dropped — a missing figure the agent expected to see
+                # is worse than a loud one it can route around.
+                buf = io.BytesIO()
+                try:
+                    if render:
+                        obj.get_bitmap(render=True).to_pil().save(buf, format="PNG")
+                        ext = "png"
+                    else:
+                        obj.extract(buf)
+                        ext = _pdf_image_ext(buf.getvalue())
+                except Exception as e:  # noqa: BLE001
+                    entry["error"] = f"{type(e).__name__}: {e}"
+                    out.append(entry)
+                    continue
+
+                data = buf.getvalue()
+                digest = hashlib.sha1(data).hexdigest()
+                if dedupe and digest in found:
+                    found[digest]["pages"].append(pno)
+                    continue
+
+                dest = os.path.join(out_dir, f"p{pno:03d}-{idx}-{digest[:8]}.{ext}")
+                if not (cache and os.path.exists(dest)):
+                    with open(dest, "wb") as f:
+                        f.write(data)
+                entry["image_path"] = dest
+                entry["n_bytes"] = len(data)
+                found[digest] = entry
+                out.append(entry)
+    finally:
+        doc.close()
+
+    out.sort(key=lambda e: e["px_size"][0] * e["px_size"][1], reverse=True)
+    return out
+
+
+def pdf_tables(
+    path,
+    pages=None,
+    preview_rows=8,
+    table_settings=None,
+    csv=True,
+    min_rows=2,
+    min_cols=2,
+):
+    """Extract tables with per-table PAGE PROVENANCE, deterministically.
+
+    Returns ``[{"page", "index", "bbox", "n_rows", "n_cols", "rows",
+    "csv_path", "truncated"}, ...]``. ``rows`` is a preview capped at
+    ``preview_rows``; the FULL table is written to ``csv_path`` under the
+    cache dir. Same contract as the rest of the kernel — a 300-row table goes
+    to a file, not into the agent's context. ``Read`` the CSV (or load it with
+    pandas) when the whole thing is actually needed.
+
+    Backed by pdfplumber: pdfium exposes no table API, so this is the one
+    helper on a second backend. Pass ``table_settings`` straight through to
+    tune detection — the default finds ruled tables; for whitespace-aligned
+    ones try ``{"vertical_strategy": "text", "horizontal_strategy": "text"}``.
+
+    ``min_rows`` / ``min_cols`` reject degenerate detections. Ruled-line
+    detection readily fires on a boxed caption or a framed paragraph, which
+    arrives as an n×1 "table"; the 2×2 floor drops those. Lower ``min_cols``
+    to 1 only when you actually want single-column boxes.
+
+    ``csv=False`` skips writing the CSVs (metadata + preview only).
+    """
+    path = pdf_resolve(path)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"pdf_tables: {path!r} not found")
+    try:
+        import pdfplumber
+    except ImportError as e:
+        raise ImportError(
+            "pdf_tables requires pdfplumber (pdfium has no table API). "
+            "Install with `pip install pdfplumber`, or run the whole snippet "
+            "under `uv run --with pdfplumber python - <<'PY'`."
+        ) from e
+
+    import csv as csv_mod
+
+    abspath = os.path.abspath(path)
+    out_dir = _pdf_cache_dir(abspath, "tables") if csv else None
+    want = None if pages is None else {int(p) for p in pages}
+
+    out = []
+    with pdfplumber.open(abspath) as doc:
+        for page in doc.pages:
+            pno = page.page_number  # pdfplumber is already 1-indexed here
+            if want is not None and pno not in want:
+                continue
+            for idx, tbl in enumerate(page.find_tables(table_settings or {})):
+                rows = [[("" if c is None else c) for c in row] for row in tbl.extract()]
+                if not rows:
+                    continue
+                n_cols = max(len(r) for r in rows)
+                if len(rows) < min_rows or n_cols < min_cols:
+                    continue
+                csv_path = None
+                if csv:
+                    csv_path = os.path.join(out_dir, f"p{pno:03d}-{idx}.csv")
+                    with open(csv_path, "w", newline="") as f:
+                        csv_mod.writer(f).writerows(rows)
+                out.append({
+                    "page": pno,
+                    "index": idx,
+                    "bbox": tuple(round(float(v), 1) for v in tbl.bbox),
+                    "n_rows": len(rows),
+                    "n_cols": n_cols,
+                    "rows": rows[:preview_rows],
+                    "csv_path": csv_path,
+                    "truncated": len(rows) > preview_rows,
+                })
+    return out
+
+
 PDF_CLASSIFY_SYSTEM = (
     "You classify single PDF pages for relevance to a query. Most pages in "
     "any document are NOT direct answers — they're introduction, related "

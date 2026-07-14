@@ -1,2 +1,7 @@
 .claude/
 SOUL.md
+
+# pdf-explore writes derived assets (page renders, extracted figures, table
+# CSVs, fan-out work files) into ./.cache/ of whatever CWD it runs in.
+.cache/
+__pycache__/
