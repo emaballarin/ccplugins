@@ -1,0 +1,19 @@
+name: validate
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    tier1:
+        name: Tier-1 static validation
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+            - name: Install test deps
+              run: pip install -r tests/requirements.txt
+            - name: Run Tier-1 suite
+              run: python -m pytest tests/ -q

@@ -5,3 +5,5 @@ SOUL.md
 # CSVs, fan-out work files) into ./.cache/ of whatever CWD it runs in.
 .cache/
 __pycache__/
+.pytest_cache/
+.ruff_cache/
