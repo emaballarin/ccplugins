@@ -14,16 +14,18 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 
 ## Plugins
 
-| Name    | Description                                                                                                                                                                                                                                                                                                  | Docs                                               |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
-| `mf`    | **mindfunnel** — project-agnostic session management. Four skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back.                                                                                                                                  | [plugins/mindfunnel](plugins/mindfunnel/README.md) |
-| `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, plus the `computational-scientist` and `deep-researcher` subagents. | [plugins/ccscience](plugins/ccscience/README.md)   |
+| Name    | Description                                                                                                                                                                                                                                                                                                  | Docs                                                   |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| `mf`    | **mindfunnel** — project-agnostic session management. Four skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back.                                                                                                                                  | [plugins/mindfunnel](plugins/mindfunnel/README.md)     |
+| `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, plus the `computational-scientist` and `deep-researcher` subagents. | [plugins/ccscience](plugins/ccscience/README.md)       |
+| `ar`    | **autoresearch** — an autonomous experiment loop for any numeric objective. Five skills (`/ar:start`, `/ar:resume`, `/ar:status`, `/ar:report`, `/ar:stop`) that propose one change, measure it, and keep it only if it beats the measured noise floor.                                                      | [plugins/autoresearch](plugins/autoresearch/README.md) |
 
 ## Install a plugin
 
 ```
 /plugin install mf@ccplugins
 /plugin install ccsci@ccplugins
+/plugin install ar@ccplugins
 ```
 
 ## Layout
@@ -41,13 +43,20 @@ ccplugins/
     │   ├── CHANGELOG.md
     │   ├── skills/{setup,prime,dump,spinup}/SKILL.md
     │   └── templates/{AGENTS,SOUL,PROJECT}.md
-    └── ccscience/                           # plugin name: ccsci
+    ├── ccscience/                           # plugin name: ccsci
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md  CHANGELOG.md  LICENSE  # Apache-2.0
+    │   ├── agents/{computational-scientist,deep-researcher}.md
+    │   └── skills/{literature-review,pdf-explore,figure-style,
+    │               figure-composer,paper-narrative,canvas-design,
+    │               doc-coauthoring,web-artifacts-builder}/
+    └── autoresearch/                        # plugin name: ar
         ├── .claude-plugin/plugin.json
-        ├── README.md  CHANGELOG.md  LICENSE  # Apache-2.0
-        ├── agents/{computational-scientist,deep-researcher}.md
-        └── skills/{literature-review,pdf-explore,figure-style,
-                    figure-composer,paper-narrative,canvas-design,
-                    doc-coauthoring,web-artifacts-builder}/
+        ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
+        ├── skills/{setup,resume,status,report,stop}/SKILL.md
+        ├── references/{protocol,statistics,state-schema,resume-loop}.md
+        └── templates/{ar.config.json,benchmark.sh,checks.sh,
+                       evaluator.py,ar-loop.sh}
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.
@@ -56,7 +65,10 @@ New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marke
 
 The marketplace and the `mf` plugin are MIT — see [LICENSE](LICENSE). The `ccsci`
 plugin is **Apache-2.0** with its own [plugins/ccscience/LICENSE](plugins/ccscience/LICENSE)
-(its bundled `canvas-design` typefaces are under the SIL Open Font License).
+(its bundled `canvas-design` typefaces are under the SIL Open Font License). The
+`ar` plugin is **MIT** with its own [LICENSE](plugins/autoresearch/LICENSE) and a
+[NOTICE](plugins/autoresearch/NOTICE) crediting the three MIT upstreams whose
+protocol behaviour it re-implements.
 
 ## Contact
 

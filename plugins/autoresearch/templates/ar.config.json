@@ -1,0 +1,14 @@
+{
+    "goal": "TODO: one sentence stating what is being optimised and against what",
+    "metric": "val_loss",
+    "direction": "minimize",
+    "contract": "metric",
+    "command": "TODO: exact command that emits the METRIC line, e.g. bash ./.ar/benchmark.sh",
+    "maxRuns": 100,
+    "maxSeconds": 28800,
+    "targetMetric": null,
+    "baselineRepeats": 5,
+    "noiseFloorMultiple": 1.0,
+    "borderlineSeeds": [0, 1, 2],
+    "lockedPaths": ["benchmark.sh", "checks.sh", "evaluator.py"]
+}

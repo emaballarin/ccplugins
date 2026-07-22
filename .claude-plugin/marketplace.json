@@ -20,6 +20,21 @@
             "description": "Research & scientific-computing skills adapted from Claude Science for stock Claude Code: literature-review, pdf-explore, figure-style, figure-composer, paper-narrative, canvas-design, doc-coauthoring, web-artifacts-builder, plus computational-scientist and deep-researcher subagents.",
             "category": "productivity",
             "keywords": ["science", "research", "literature-review", "bibtex", "pdf", "figures", "scientific-computing"]
+        },
+        {
+            "name": "ar",
+            "source": "./plugins/autoresearch",
+            "description": "autoresearch: a skill-only autonomous experiment loop — propose → measure → keep winners → repeat, against any numeric objective, with noise-floor gating so nothing is banked on noise. /ar:start, /ar:resume, /ar:status, /ar:report, /ar:stop. State stays in the target repo's ./.ar/. No hooks, no MCP.",
+            "category": "productivity",
+            "keywords": [
+                "autoresearch",
+                "experiment",
+                "optimisation",
+                "benchmark",
+                "ablation",
+                "research-loop",
+                "statistics"
+            ]
         }
     ]
 }

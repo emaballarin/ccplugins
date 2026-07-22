@@ -1,0 +1,22 @@
+autoresearch (ccplugins) — a skill-only autonomous experiment loop.
+
+This work re-implements protocol behaviour derived from prior MIT-licensed
+projects:
+
+  • drivelineresearch/autoresearch-claude-code (MIT) — noise-floor gating, the
+    METRIC name=number contract, MAD confidence, locked eval harness, checks
+    gate, budget caps, and JSONL + git-branch winner tracking.
+  • wjgoarxiv/autoresearch-skill (MIT) — file-based state model, the
+    {"pass": bool, "score": number} evaluator contract, multi-level plateau
+    pivots, and cross-agent portability idioms.
+  • uditgoenka/autoresearch (MIT) — the thin-router + lazy-loaded reference-file
+    architecture adopted for context economy.
+
+Ultimately inspired by karpathy/autoresearch.
+
+Behaviour was re-implemented from the described protocols; no source files were
+copied from any of the above.
+
+Original copyright notices for the above remain with their respective authors.
+This derivative retains attribution as required by the MIT License. No
+endorsement by the original authors is implied.
