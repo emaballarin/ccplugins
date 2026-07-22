@@ -34,6 +34,8 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 ccplugins/
 ├── .claude-plugin/
 │   └── marketplace.json
+├── .github/workflows/validate.yml        # CI: Tier-1 static validation
+├── tests/                                # pytest Tier-1 suite (+ requirements.txt)
 ├── README.md                             # this file
 ├── LICENSE                               # MIT
 └── plugins/
@@ -42,6 +44,7 @@ ccplugins/
     │   ├── README.md
     │   ├── CHANGELOG.md
     │   ├── skills/{setup,prime,dump,spinup}/SKILL.md
+    │   ├── references/ledger.md
     │   └── templates/{AGENTS,SOUL,PROJECT}.md
     ├── ccscience/                           # plugin name: ccsci
     │   ├── .claude-plugin/plugin.json
@@ -53,13 +56,30 @@ ccplugins/
     └── autoresearch/                        # plugin name: ar
         ├── .claude-plugin/plugin.json
         ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
-        ├── skills/{setup,resume,status,report,stop}/SKILL.md
-        ├── references/{protocol,statistics,state-schema,resume-loop}.md
+        ├── skills/{start,resume,status,report,stop}/SKILL.md
+        ├── references/{protocol,statistics,state-schema,resume-loop,completion-status}.md
         └── templates/{ar.config.json,benchmark.sh,checks.sh,
                        evaluator.py,ar-loop.sh}
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.
+
+## Validation
+
+A dependency-light `pytest` suite keeps the marketplace internally consistent —
+frontmatter validity, `plugin.json` ↔ `CHANGELOG.md` version parity, marketplace
+integrity, README ↔ disk skill-table sync, referenced bundled-path existence, and
+the `ccsci` kernel ↔ SKILL.md entrypoint contract. It reads files only (no plugin
+code runs), so it needs nothing beyond `pytest` + `PyYAML`.
+
+```
+pip install -r tests/requirements.txt
+python -m pytest tests/ -q
+```
+
+CI runs the same on every push and pull request
+([`.github/workflows/validate.yml`](.github/workflows/validate.yml)). Details:
+[`tests/README.md`](tests/README.md).
 
 ## License
 
