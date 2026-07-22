@@ -3,7 +3,7 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## 0.3.0 — 2026-07-07
+## 0.3.0 — 2026-07-14
 
 ### `pdf-explore` — tables and embedded figures
 
