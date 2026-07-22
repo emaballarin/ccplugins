@@ -14,6 +14,7 @@ Write the current session's non-derivable state to the project's auto-memory dir
 2. **Only log non-derivable signal.** Facts recoverable from `git log`, current code, or `AGENTS.md` / `PROJECT.md` do not belong in memory.
 3. **SOUL.md and the user-global AGENTS.md are sacred.** Propose edits, never apply silently, and only when the insight is genuinely general. The user-global AGENTS.md lives at `~/.mindfunnel/AGENTS.md` (reached via `~/.claude/CLAUDE.md`); the per-project `./AGENTS.md` is a small project-scoped stub owned by the project — don't treat them as the same file.
 4. **Convert every "today" / "tomorrow" to an absolute date** before writing. Run `date -I` if uncertain.
+5. **Append atomic assertions to the ledger, don't narrate them.** Claims, decisions, and learnings that carry a trust level and provenance go to `ledger.jsonl` (Step 5b); the narrative stays in Markdown. Never double-log one as the other — cross-reference.
 
 ## Instructions
 
@@ -68,6 +69,43 @@ Every memory file has YAML frontmatter with `name`, `description`, `type`. The f
 
 Filename convention: `<type>_<topic>.md` (e.g. `project_state.md`, `results_full_sweep.md`, `feedback_offline_vs_online.md`, `reference_wandb.md`).
 
+### Step 5b: Append atomic entries to the ledger
+
+Alongside the narrative Markdown, append **atomic** claims / decisions / learnings to the append-only ledger. This is where trust and provenance live, so a future session can tell a measured result from an inferred guess — and check whether it has since gone stale.
+
+The full schema, trust ladder, and semantics are in `references/ledger.md` — read it if you have not this session. In short, each line is one JSON object:
+
+```json
+{
+    "id": "<unique>",
+    "ts": "<ISO-8601 UTC>",
+    "kind": "claim|decision|learning",
+    "status": "guaranteed|observed|given|user-inferred|agent-inferred|opinion",
+    "text": "<one sentence>",
+    "sources": ["<path>", "<path@sha>", "<run-id>"],
+    "supersedes": "<id?>",
+    "key": "<optional>"
+}
+```
+
+Rules:
+
+- **Append only.** Never rewrite or delete a line. To revise, append a new entry whose `supersedes` names the old `id`.
+- **Pick the honest trust rung.** `guaranteed` > `observed` > `given` > `user-inferred` > `agent-inferred`; `opinion` for a taste call with no truth claim. Do not inflate an inference to `observed`.
+- **Record provenance.** Put the grounding paths (commit-pinned as `path@<sha>` when the claim is tied to specific code), run-ids, or URLs in `sources`. Omit for a bare preference.
+- **Ledger-worthy only.** One-sentence assertions that carry trust or provenance — a benchmark number, a settled decision, a durable gotcha. Prose state stays in Markdown; do not double-log.
+
+Append with a shell heredoc (the memory dir is the same `<slug>` path as the Markdown files; timestamp via `date -u +%Y-%m-%dT%H:%M:%SZ`):
+
+```bash
+LEDGER=~/.claude/projects/$(echo "$PWD" | sed "s|/|-|g")/memory/ledger.jsonl
+cat >> "$LEDGER" <<'JSON'
+{"id":"20260101-1","ts":"2026-01-01T00:00:00Z","kind":"claim","status":"observed","text":"...","sources":["..."]}
+JSON
+```
+
+If there are no atomic assertions worth pinning this dump, skip — the ledger is not a log of everything.
+
 ### Step 6: Refresh the index
 
 Update `<memory_dir>/MEMORY.md` with one line per entry:
@@ -111,6 +149,7 @@ Updated:
 Created:
   - <file> — <one-line reason>
 Index (MEMORY.md): refreshed | unchanged
+Ledger (ledger.jsonl): +N entries | unchanged
 Proposed SOUL.md / AGENTS.md / USER.md edits: none | <one-line summary, pending approval>
 ```
 

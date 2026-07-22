@@ -3,6 +3,28 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.4.0 — 2026-07-23
+
+### New — the provenance-and-trust ledger
+
+Memory gains a second layer alongside the narrative Markdown: an append-only
+`ledger.jsonl` in the auto-memory dir, holding atomic claims / decisions /
+learnings. Each entry carries an **epistemic trust** level — `guaranteed` >
+`observed` > `given` > `user-inferred` > `agent-inferred`, plus a non-truth-apt
+`opinion` — and its **provenance** in a `sources` array (paths, commit-pinned
+`path@sha`, run-ids, URLs). Supersession is a field (`supersedes`), not a
+separate log: revisions append, and replay takes latest-wins per `key`.
+
+- `/mf:dump` — new **Step 5b** appends ledger-worthy assertions (honest trust
+  rung, real provenance, append-only). Prose state stays in Markdown; no
+  double-logging.
+- `/mf:spinup` — new **Step 3b** replays the ledger (drop superseded, newest per
+  `key`), ranks by trust, and staleness-checks `sources` (`path@sha` changed →
+  possibly-stale; missing `path` → orphaned), refusing to cite stale entries as
+  current fact.
+- Schema, trust ladder, and replay/staleness semantics: bundled
+  `references/ledger.md` (single source of truth for both skills).
+
 ## 0.3.2 — 2026-07-09
 
 Content patch to `templates/AGENTS.md`. No skill logic changed.

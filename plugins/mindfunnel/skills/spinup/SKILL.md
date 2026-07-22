@@ -50,18 +50,29 @@ Read these files in order. **Stop** once you have enough signal to act on the us
 
 If you've read 6 files and still feel you need more, you're over-reading. Stop, summarise what you have, and ask the user where to focus.
 
+### Step 3b: Replay and staleness-check the ledger
+
+If `ledger.jsonl` exists in the memory dir, replay it for trust-ranked, provenance-checked assertions. Schema and full semantics: `references/ledger.md`.
+
+1. Read the lines, then compute the **current view**: drop any entry whose `id` is named in a later entry's `supersedes`, and within each `key` keep only the newest `ts`.
+2. **Rank by trust** — `guaranteed` > `observed` > `given` > `user-inferred` > `agent-inferred`. Treat `opinion` entries as preferences, not facts. A low-trust (`agent-inferred`) claim is a hypothesis to re-check, not a settled fact — say so if you cite it.
+3. **Staleness-check `sources`** — for a `path@<sha>`, compare against the current file (`git log -1 --format=%H -- <path>`, or read it); if it changed, the entry is **possibly-stale**. For a plain `path` that no longer exists, the entry is **orphaned**. Do **not** cite a stale or orphaned entry as current — flag it for re-verification in the brief.
+
+Budget this like any other read: skip entirely if the ledger is absent or empty; otherwise skim to the entries relevant to the user's question.
+
 ### Step 4: Verify claims you're about to cite
 
 For each specific claim you plan to put in the summary:
 
-| Claim type                             | Verification                                            |
-| -------------------------------------- | ------------------------------------------------------- |
-| File path                              | `ls` or `Read` to confirm it exists                     |
-| Function / symbol / flag name          | `grep` for it                                           |
-| Git / branch / commit state            | `git status`, `git log -1`, `git branch --show-current` |
-| Remote-host run results                | **Do not verify.** Flag as "according to memory"        |
-| User preferences / collaboration style | Trust (not time-sensitive)                              |
-| Closed-hypothesis histories            | Trust (not time-sensitive)                              |
+| Claim type                             | Verification                                               |
+| -------------------------------------- | ---------------------------------------------------------- |
+| File path                              | `ls` or `Read` to confirm it exists                        |
+| Function / symbol / flag name          | `grep` for it                                              |
+| Git / branch / commit state            | `git status`, `git log -1`, `git branch --show-current`    |
+| Remote-host run results                | **Do not verify.** Flag as "according to memory"           |
+| User preferences / collaboration style | Trust (not time-sensitive)                                 |
+| Closed-hypothesis histories            | Trust (not time-sensitive)                                 |
+| Ledger claim with a `path@sha` source  | Re-check the source; stale/orphaned → don't cite (Step 3b) |
 
 If verification fails, **don't cite the claim**. If the correction is unambiguous (e.g. file renamed, commit rolled back), update the memory file to reflect current reality. Otherwise flag the drift and ask the user.
 
@@ -88,6 +99,7 @@ which is primary.>
 ## Load-bearing reminders
 
 - <feedback memory directly relevant to the current task, one line>
+- <a possibly-stale or low-trust ledger claim needing re-verification, if any>
 ```
 
 ### Step 6: Stop
