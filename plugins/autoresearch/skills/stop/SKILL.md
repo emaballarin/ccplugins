@@ -40,3 +40,11 @@ Halt cleanly, leaving everything recoverable.
    checked out for inspection.
 3. Stopping is reversible — a later `/ar:resume` opens a new segment and carries
    on from the same state. Say so.
+
+## Completion status
+
+End with a terminal status token as the last line of your reply — `DONE`,
+`DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_CONTEXT` — per
+`references/completion-status.md`. For `/ar:stop`, `DONE` once the
+`status:stopped` sentinel is appended and the report written; `NEEDS_CONTEXT` if
+there is no active run to stop.

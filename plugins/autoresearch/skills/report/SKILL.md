@@ -50,3 +50,11 @@ Turn the record into something a person can read. Do not iterate.
 2. Every number comes from `ar.jsonl` or git. Never recompute or estimate one.
 3. Report failures and null results as prominently as wins. A loop that banked
    noise is a finding; concealing it wastes the next run.
+
+## Completion status
+
+End with a terminal status token as the last line of your reply — `DONE`,
+`DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_CONTEXT` — per
+`references/completion-status.md`. For `/ar:report`, `DONE` once
+`final_report.md` is written and its path reported; `NEEDS_CONTEXT` if `ar.jsonl`
+is absent or empty (nothing to summarise).

@@ -3,7 +3,17 @@
 All notable changes to the `ar` (autoresearch) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## 0.1.0 — 2026-07-22
+## 0.2.0 — 2026-07-23
+
+### New — completion-status protocol
+
+The four action skills (`/ar:start`, `/ar:resume`, `/ar:report`, `/ar:stop`) now
+end with a terminal status token — `DONE`, `DONE_WITH_CONCERNS`, `BLOCKED`, or
+`NEEDS_CONTEXT` — plus a `STATUS / REASON / ATTEMPTED / RECOMMENDATION` shape at
+escalation points. This gives a human, or the unattended `ar-loop.sh` driver, a
+grep-able outcome for each run without parsing the whole reply; it is additive
+and never replaces `ar.jsonl` state or the skill's own output. `/ar:status` is
+read-only and exempt. Shared contract: bundled `references/completion-status.md`.
 
 Initial release. A skill-only autonomous experiment loop: propose one change,
 measure it, keep it only if it beats the noise floor, repeat.

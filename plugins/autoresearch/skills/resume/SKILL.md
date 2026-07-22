@@ -65,3 +65,13 @@ On any stopping condition, write `./.ar/final_report.md` and print — do not ru
 | State reconstruction, overnight runs     | `${CLAUDE_PLUGIN_ROOT}/references/resume-loop.md`  |
 
 Read a reference when the phase that needs it is reached — not up front.
+
+## Completion status
+
+End with a terminal status token as the last line of your reply — `DONE`,
+`DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_CONTEXT` — per
+`references/completion-status.md`. For `/ar:resume`, `DONE` after the iteration
+is measured and kept or reverted (or a stopping condition is hit and the report
+written); `DONE_WITH_CONCERNS` if the harness was flaky or a seed disagreed;
+`BLOCKED` if `checks.sh` or `benchmark.sh` cannot run; `NEEDS_CONTEXT` if the run
+state is missing or `/ar:start` has not run.

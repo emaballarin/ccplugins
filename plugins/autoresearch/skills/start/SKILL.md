@@ -77,3 +77,12 @@ over. Never silently overwrite a run in progress.
 | File formats and metric contracts       | `${CLAUDE_PLUGIN_ROOT}/references/state-schema.md` |
 
 Read a reference when the step that needs it is reached — not up front.
+
+## Completion status
+
+End with a terminal status token as the last line of your reply — `DONE`,
+`DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_CONTEXT` — per
+`references/completion-status.md`. For `/ar:start`, `NEEDS_CONTEXT` is the
+expected outcome at the harness hand-over (step 4, waiting on `benchmark.sh` and
+the config); `DONE` once the noise floor is measured and the config header is
+written; `BLOCKED` if no clean baseline can be established.
