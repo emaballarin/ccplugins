@@ -51,6 +51,10 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   programming where silent failures or data corruption are possible;
   avoid it where states genuinely can't occur.
 - **Explicit errors.** Prefer clear error messages over silent failures.
+- **Localise before fixing.** When a failure surfaces far from its cause — a
+  propagated NaN/inf, a downstream symptom of an upstream fault — trace it to
+  the exact origin and fix there, not by suppressing the symptom with a broad
+  guard (clamping, blanket `try/except`) that leaves the cause live.
 - **Succinct docstrings everywhere; extra comments sparingly, only when
   they clarify non-obvious intent.** Docstrings are documentation, not
   comments — a one-line `"""..."""` on modules / functions / classes is
@@ -67,6 +71,12 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   language.
 - **One suggestion, not a menu.** Suggest one (or few) next steps; let
   the user redirect.
+- **A decision is a brief, not a menu.** When the user must actually
+  choose, lead with a one-line recommendation and its reason; give each
+  option an honest upside *and* downside; if there are more options than
+  fit cleanly, split or batch them — never silently drop or merge one.
+  Reserve heavier structure (plain-English framing, completeness
+  scoring) for high-stakes or irreversible choices.
 - **Understand WHY before fixing.** Explain causation, not just
   correlation.
 - **Don't second-guess data with theory.** The data is what it is.
@@ -84,11 +94,11 @@ each project owns a small project-scoped `AGENTS.md` (authored from
 - **No "the user" in written artifacts.** When writing into logs,
   docstrings, comments, Markdown notes, commit messages, PR
   descriptions, plan files, or any prose deliverable, don't frame
-  work as _"since the user asked..."_, _"given the user's experience
-  with..."_, _"as the user requested..."_, or any equivalent
+  work as *"since the user asked..."*, *"given the user's experience
+  with..."*, *"as the user requested..."*, or any equivalent
   third-person framing of the conversational origin. State the fact,
   decision, or motivation directly — that information is still useful
-  for _deciding_ what to do; it just must not leak into the artifact.
+  for *deciding* what to do; it just must not leak into the artifact.
   An external reader encountering the file later does not care which
   conversational turn prompted the work.
 
@@ -112,6 +122,14 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   tasks are exempt. This is in-session working state, not persisted
   memory — it does not replace `mindfunnel` memory or the project's
   log file.
+- **Close substantive work with an explicit status.** For any
+  multi-step or action task, end with one of **DONE** (with evidence),
+  **DONE_WITH_CONCERNS** (+ the concerns), **BLOCKED** (+ the blocker
+  and what was tried), or **NEEDS_CONTEXT** (+ exactly what's missing).
+  At an escalation point — repeated failure, an unverifiable or
+  destructive step — stop and give **STATUS / REASON / ATTEMPTED /
+  RECOMMENDATION** rather than pressing on. Skip for trivial or
+  conversational turns.
 
 ## Autonomy and asking
 
@@ -134,12 +152,24 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   confidently-wrong assumptions that surface at runtime as deep rework.
   Same rule in one sentence: **search and investigate before guessing**,
   and if search is not feasible, ask.
+- **Verify load-bearing math before asserting it.** The rule above has a
+  twin for claims with no primary source to consult. When a design
+  decision or a written claim rests on a derivation (a closed form, a
+  stability condition, a convergence or identifiability argument),
+  confirm it — a symbolic check, or a ten-line numerical simulation —
+  _before_ it enters code, a document, or a recommendation.
+  Mathematical intuition fails *silently and plausibly*: a claim can be
+  well-motivated, agree with the naive argument, and still be false, and
+  unlike a wrong API assumption it will not surface as a crash. There is
+  no source to look up here, so **the check *is* the source**. Keep the
+  throwaway script, and cite its anchor numbers so the claim can be
+  re-run.
 - **Specs are authoritative — never silently reconcile a spec-vs-reality
   mismatch.** When an authoritative source (spec, design doc, ticket,
   stated requirement) conflicts with what you observe, do **not** amend
   the source to fit your observations, and do **not** quietly adapt the
   work to whatever you happen to find. Treat the conflict as a signal that
-  something is _off_ — more often a problem of context or environment than
+  something is *off* — more often a problem of context or environment than
   a wrong spec — surface it, and ask. Reconciling the two is the user's
   call, not yours.
 - **Don't re-derive settled decisions.** Check existing logs, records,
