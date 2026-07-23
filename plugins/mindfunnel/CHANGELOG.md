@@ -3,6 +3,18 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.4.1 — 2026-07-23
+
+### AGENTS.md template sync + universal guidance
+
+Sync the shipped `templates/AGENTS.md` with the current user-global baseline, and
+carry two universal, agent-neutral guidelines in it: a **decision-brief** rule
+(lead with a recommendation and reason, an honest upside *and* downside per
+option, never silently drop or merge one) and a **completion-status** rule
+(`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`, with a
+`STATUS / REASON / ATTEMPTED / RECOMMENDATION` escalation shape). No skill logic
+changed.
+
 ## 0.4.0 — 2026-07-23
 
 ### New — the provenance-and-trust ledger

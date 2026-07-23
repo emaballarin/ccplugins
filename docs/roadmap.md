@@ -7,7 +7,13 @@ ideas portable into this marketplace turned up two worth building and one worth
 adopting narrowly. Everything here is **skill-only / tooling-only** — no hooks,
 no remote telemetry, no vendored runtime, no auto-running background processes.
 
-Two committed workstreams, buildable in parallel:
+**Status — 2026-07-23: all in-scope work landed.** W1 (Tier-1 validation + CI),
+W2 (provenance/trust ledger, `mf` 0.4.1), and W3 (completion-status protocol,
+`ar` 0.2.1) are committed and pushed; A2 + A3 were additionally generalized as
+universal, agent-neutral guidance in the `mindfunnel` AGENTS.md template. The
+Deferred / Parked / Dropped items below are unchanged.
+
+Two committed workstreams, built in parallel:
 
 1. **Tier-1 static validation + CI** — a fast, free safety net the marketplace
    currently lacks entirely. Catches frontmatter drift, version/CHANGELOG skew,
@@ -25,9 +31,9 @@ Plus a scoped adoption (completion-status protocol) and two parked items.
 
 | Status       | Item                                                                                                                          |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| **IN**       | W1 Tier-1 validation + CI · W2 provenance/trust ledger · W3 completion-status (scoped)                                        |
+| **DONE** (2026-07-23) | W1 Tier-1 validation + CI · W2 ledger (`mf` 0.4.1) · W3 completion-status (`ar` 0.2.1) · A2+A3 generalized as universal `mindfunnel` AGENTS.md guidance |
 | **DEFERRED** | SKILL.md generation from `.tmpl` — build only if ≥3 skills carry the same block verbatim _and_ it changes more than once      |
-| **PARKED**   | AskUserQuestion decision-brief contract (rides on generation) · Codex second-opinion skill (feasible — see note)              |
+| **PARKED**   | Full AskUserQuestion decision-brief ceremony (compressed form adopted universally; full rides on generation) · Codex second-opinion skill (`codex exec` verified — see note) |
 | **DROPPED**  | Importing gstack skills (investigate / health / office-hours / retro / cso / …) — no demonstrated need; would inflate surface |
 
 ---
