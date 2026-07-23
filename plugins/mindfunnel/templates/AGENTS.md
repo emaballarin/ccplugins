@@ -85,6 +85,13 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   "outlier" may be one unlucky draw of three). Flag such signals as
   provisional and confirm at full sample size before reframing the
   narrative.
+- **Dose-response is a result; don't collapse it to pass/fail.** Judge a
+  mechanism by direction and dose-response, not distance-to-target
+  alone. A monotone sweep that stopped at its largest value is
+  *under-tested*, not *failed* — turn the knob further, or show the
+  effect saturates, before writing it off. "Best so far, still
+  unsatisfactory" is a valid verdict; state it in those words, and
+  establish an impossibility claim like any other.
 - **Momentum.** After logging results, immediately suggest the next
   experiment.
 - **Log before moving on.** Record results and decisions both in
@@ -194,6 +201,12 @@ each project owns a small project-scoped `AGENTS.md` (authored from
 - **Don't run builds, long-running commands, or anything that touches
   shared or remote infrastructure unless explicitly told to.** Ask first;
   prefer to print the exact command for the user to run.
+- **Never route around a human-required control.** When a step blocks on
+  a signature, interactive auth, a review gate, or a confirmation, stop
+  and hand it back with the exact command — never disable it, skip it
+  with a flag, or "temporarily" work around it. Its whole value is that
+  it can't be satisfied without the person, and a bypassed control
+  leaves an artifact indistinguishable from a properly attested one.
 - **Save context early and often.** Long sessions hit context limits —
   dump important state defensively.
 

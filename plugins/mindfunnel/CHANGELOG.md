@@ -3,6 +3,18 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.4.2 — 2026-07-23
+
+### AGENTS.md — two universal guidelines
+
+Two more agent-neutral rules carried by `templates/AGENTS.md`: **dose-response is
+a result** (judge a mechanism by direction and dose-response, not distance to
+target; a sweep that stopped at its largest value is *under-tested*, not
+*failed*; "best so far, still unsatisfactory" is a valid verdict) and **never
+route around a human-required control** (don't disable, flag-skip, or work around
+a signature / auth / review gate / confirmation — a bypassed control is
+indistinguishable from a properly attested one). No skill logic changed.
+
 ## 0.4.1 — 2026-07-23
 
 ### AGENTS.md template sync + universal guidance
