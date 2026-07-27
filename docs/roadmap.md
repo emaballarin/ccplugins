@@ -29,12 +29,12 @@ Plus a scoped adoption (completion-status protocol) and two parked items.
 
 ## Scope
 
-| Status       | Item                                                                                                                          |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| **DONE** (2026-07-23) | W1 Tier-1 validation + CI · W2 ledger (`mf` 0.4.1) · W3 completion-status (`ar` 0.2.1) · A2+A3 generalized as universal `mindfunnel` AGENTS.md guidance |
-| **DEFERRED** | SKILL.md generation from `.tmpl` — build only if ≥3 skills carry the same block verbatim _and_ it changes more than once      |
-| **PARKED**   | Full AskUserQuestion decision-brief ceremony (compressed form adopted universally; full rides on generation) · Codex second-opinion skill (`codex exec` verified — see note) |
-| **DROPPED**  | Importing gstack skills (investigate / health / office-hours / retro / cso / …) — no demonstrated need; would inflate surface |
+| Status                | Item                                                                                                                                                                         |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **DONE** (2026-07-23) | W1 Tier-1 validation + CI · W2 ledger (`mf` 0.4.1) · W3 completion-status (`ar` 0.2.1) · A2+A3 generalized as universal `mindfunnel` AGENTS.md guidance                      |
+| **DEFERRED**          | SKILL.md generation from `.tmpl` — build only if ≥3 skills carry the same block verbatim _and_ it changes more than once                                                     |
+| **PARKED**            | Full AskUserQuestion decision-brief ceremony (compressed form adopted universally; full rides on generation) · Codex second-opinion skill (`codex exec` verified — see note) |
+| **DROPPED**           | Importing gstack skills (investigate / health / office-hours / retro / cso / …) — no demonstrated need; would inflate surface                                                |
 
 ---
 

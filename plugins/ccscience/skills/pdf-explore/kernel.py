@@ -768,7 +768,7 @@ def pdf_scan_assemble(path, results, top_k=5, threshold=None, mode="auto", dpi=1
             continue
         try:
             score = float(r.get("score") or 0.0)
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             score = 0.0
         score = max(0.0, min(1.0, score))
         p = by_page.get(pg, {})

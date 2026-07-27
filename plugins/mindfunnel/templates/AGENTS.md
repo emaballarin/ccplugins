@@ -73,7 +73,7 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   the user redirect.
 - **A decision is a brief, not a menu.** When the user must actually
   choose, lead with a one-line recommendation and its reason; give each
-  option an honest upside *and* downside; if there are more options than
+  option an honest upside _and_ downside; if there are more options than
   fit cleanly, split or batch them — never silently drop or merge one.
   Reserve heavier structure (plain-English framing, completeness
   scoring) for high-stakes or irreversible choices.
@@ -88,7 +88,7 @@ each project owns a small project-scoped `AGENTS.md` (authored from
 - **Dose-response is a result; don't collapse it to pass/fail.** Judge a
   mechanism by direction and dose-response, not distance-to-target
   alone. A monotone sweep that stopped at its largest value is
-  *under-tested*, not *failed* — turn the knob further, or show the
+  _under-tested_, not _failed_ — turn the knob further, or show the
   effect saturates, before writing it off. "Best so far, still
   unsatisfactory" is a valid verdict; state it in those words, and
   establish an impossibility claim like any other.
@@ -101,11 +101,11 @@ each project owns a small project-scoped `AGENTS.md` (authored from
 - **No "the user" in written artifacts.** When writing into logs,
   docstrings, comments, Markdown notes, commit messages, PR
   descriptions, plan files, or any prose deliverable, don't frame
-  work as *"since the user asked..."*, *"given the user's experience
-  with..."*, *"as the user requested..."*, or any equivalent
+  work as _"since the user asked..."_, _"given the user's experience
+  with..."_, _"as the user requested..."_, or any equivalent
   third-person framing of the conversational origin. State the fact,
   decision, or motivation directly — that information is still useful
-  for *deciding* what to do; it just must not leak into the artifact.
+  for _deciding_ what to do; it just must not leak into the artifact.
   An external reader encountering the file later does not care which
   conversational turn prompted the work.
 
@@ -165,10 +165,10 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   stability condition, a convergence or identifiability argument),
   confirm it — a symbolic check, or a ten-line numerical simulation —
   _before_ it enters code, a document, or a recommendation.
-  Mathematical intuition fails *silently and plausibly*: a claim can be
+  Mathematical intuition fails _silently and plausibly_: a claim can be
   well-motivated, agree with the naive argument, and still be false, and
   unlike a wrong API assumption it will not surface as a crash. There is
-  no source to look up here, so **the check *is* the source**. Keep the
+  no source to look up here, so **the check _is_ the source**. Keep the
   throwaway script, and cite its anchor numbers so the claim can be
   re-run.
 - **Specs are authoritative — never silently reconcile a spec-vs-reality
@@ -176,7 +176,7 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   stated requirement) conflicts with what you observe, do **not** amend
   the source to fit your observations, and do **not** quietly adapt the
   work to whatever you happen to find. Treat the conflict as a signal that
-  something is *off* — more often a problem of context or environment than
+  something is _off_ — more often a problem of context or environment than
   a wrong spec — surface it, and ask. Reconciling the two is the user's
   call, not yours.
 - **Don't re-derive settled decisions.** Check existing logs, records,

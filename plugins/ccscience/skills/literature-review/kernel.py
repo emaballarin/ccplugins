@@ -508,7 +508,7 @@ def _http_text(url: str, timeout: float = 15, accept: str | None = None) -> str 
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.read().decode("utf-8", "replace")
-    except (urllib.error.URLError, OSError, ValueError):
+    except urllib.error.URLError, OSError, ValueError:
         return None
 
 
@@ -633,7 +633,7 @@ def resolve_published(record: dict) -> dict:
     for name, fn in sources:
         try:
             found = fn()
-        except (RuntimeError, urllib.error.URLError, OSError, ValueError):
+        except RuntimeError, urllib.error.URLError, OSError, ValueError:
             found = None
         if found:
             r["doi"] = _clean_doi(found)

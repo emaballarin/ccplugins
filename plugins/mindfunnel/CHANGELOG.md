@@ -9,8 +9,8 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 
 Two more agent-neutral rules carried by `templates/AGENTS.md`: **dose-response is
 a result** (judge a mechanism by direction and dose-response, not distance to
-target; a sweep that stopped at its largest value is *under-tested*, not
-*failed*; "best so far, still unsatisfactory" is a valid verdict) and **never
+target; a sweep that stopped at its largest value is _under-tested_, not
+_failed_; "best so far, still unsatisfactory" is a valid verdict) and **never
 route around a human-required control** (don't disable, flag-skip, or work around
 a signature / auth / review gate / confirmation — a bypassed control is
 indistinguishable from a properly attested one). No skill logic changed.
@@ -21,7 +21,7 @@ indistinguishable from a properly attested one). No skill logic changed.
 
 Sync the shipped `templates/AGENTS.md` with the current user-global baseline, and
 carry two universal, agent-neutral guidelines in it: a **decision-brief** rule
-(lead with a recommendation and reason, an honest upside *and* downside per
+(lead with a recommendation and reason, an honest upside _and_ downside per
 option, never silently drop or merge one) and a **completion-status** rule
 (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`, with a
 `STATUS / REASON / ATTEMPTED / RECOMMENDATION` escalation shape). No skill logic
