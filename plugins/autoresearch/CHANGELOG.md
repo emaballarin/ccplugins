@@ -3,6 +3,19 @@
 All notable changes to the `ar` (autoresearch) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.4.0 — 2026-07-27
+
+Coordinated marketplace version bump, alongside a repository-wide formatter pass
+and the addition of the `parml` (paretoml) plugin. The formatter normalised the
+newly added files only — this plugin's were already conformant from the `e8fd3cd`
+pass and are byte-unchanged. No skill logic changed.
+
+`parml` sits directly upstream of this plugin: `/parml:plan` reaches an operating
+point under an explicit quality floor and then **offers** the `/ar:start` handoff
+with its cost stated, sharing this plugin's protocol vocabulary — noise floor,
+keep threshold, locked harness — so nothing needs restating across the boundary.
+No change to `ar` was required to support it.
+
 ## 0.3.0 — 2026-07-27
 
 Coordinated marketplace version bump, alongside the `ccsci` 0.4.0 kernel-syntax

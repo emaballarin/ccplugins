@@ -1,0 +1,35 @@
+paretoml (ccplugins) — a read-first advisor for the speed↔quality frontier of a
+training and evaluation pipeline.
+
+No source files were copied from any project. The tier catalogues are original
+prose. Where an entry is graded `measured-elsewhere`, its measurement comes from
+a cited source; the two that supplied the largest share are:
+
+  • KellerJordan/cifar10-airbench (MIT, © 2024 Keller Jordan) and its paper,
+    "94% on CIFAR-10 in 3.29 Seconds on a Single GPU" (arXiv:2404.00498) —
+    the add-to-baseline / remove-from-final ablation protocol, the additivity
+    finding, the frozen-input-transform, near-identity-init, parameter-group
+    learning-rate, derandomised-augmentation, iterate-averaging and multi-view
+    inference results, the run-count-for-significance arithmetic, and the
+    measured calibration cost of test-time augmentation.
+
+  • hiverge/cifar10-speedrun (MIT) — the batched-optimiser, vectorised
+    augmentation, compiled-step, confidence-gated inference and
+    per-change wall-clock attribution results.
+
+Both are MIT-licensed. Original copyright notices remain with their respective
+authors. This derivative retains attribution as required by the MIT License. No
+endorsement by the original authors is implied.
+
+Two corrections to the above sources are carried in this plugin's references and
+are original findings, re-derived numerically:
+
+  • The steady-state Nesterov step amplification is 1/(1−m), not 1 + 1/(1−m)
+    (see `references/tier-a-algorithmic.md`, A10).
+  • A magnitude-target schedule that is immediately followed by an unconditional
+    renormalisation is inert — measured swing ≈ 1×10⁻⁴ relative across a whole
+    run (see `references/pitfalls.md`, P2).
+
+The protocol tier deliberately shares vocabulary with the `ar` (autoresearch)
+plugin in this same marketplace — noise floor, locked harness, keep threshold —
+so that a `/parml:plan` handoff into `/ar:start` needs no translation.

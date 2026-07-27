@@ -19,6 +19,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 | `mf`    | **mindfunnel** — project-agnostic session management. Four skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back.                                                                                                                                  | [plugins/mindfunnel](plugins/mindfunnel/README.md)     |
 | `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, plus the `computational-scientist` and `deep-researcher` subagents. | [plugins/ccscience](plugins/ccscience/README.md)       |
 | `ar`    | **autoresearch** — an autonomous experiment loop for any numeric objective. Five skills (`/ar:start`, `/ar:resume`, `/ar:status`, `/ar:report`, `/ar:stop`) that propose one change, measure it, and keep it only if it beats the measured noise floor.                                                      | [plugins/autoresearch](plugins/autoresearch/README.md) |
+| `parml` | **paretoml** — a read-first advisor for the speed↔quality frontier of a training pipeline. Three skills (`/parml:audit`, `/parml:plan`, `/parml:review`) that price changes in time-to-target-quality rather than throughput, grade the evidence behind each, and name what each would silently break.       | [plugins/paretoml](plugins/paretoml/README.md)         |
 
 ## Install a plugin
 
@@ -26,6 +27,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 /plugin install mf@ccplugins
 /plugin install ccsci@ccplugins
 /plugin install ar@ccplugins
+/plugin install parml@ccplugins
 ```
 
 ## Layout
@@ -53,13 +55,20 @@ ccplugins/
     │   └── skills/{literature-review,pdf-explore,figure-style,
     │               figure-composer,paper-narrative,canvas-design,
     │               doc-coauthoring,web-artifacts-builder}/
-    └── autoresearch/                        # plugin name: ar
+    ├── autoresearch/                        # plugin name: ar
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
+    │   ├── skills/{start,resume,status,report,stop}/SKILL.md
+    │   ├── references/{protocol,statistics,state-schema,resume-loop,completion-status}.md
+    │   └── templates/{ar.config.json,benchmark.sh,checks.sh,
+    │                  evaluator.py,ar-loop.sh}
+    └── paretoml/                            # plugin name: parml
         ├── .claude-plugin/plugin.json
         ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
-        ├── skills/{start,resume,status,report,stop}/SKILL.md
-        ├── references/{protocol,statistics,state-schema,resume-loop,completion-status}.md
-        └── templates/{ar.config.json,benchmark.sh,checks.sh,
-                       evaluator.py,ar-loop.sh}
+        ├── skills/{audit,plan,review}/SKILL.md
+        ├── references/{evidence-grades,tier-a-algorithmic,tier-b-systems,
+        │               tier-c-protocol,modality-map,hardware-notes,pitfalls}.md
+        └── templates/{findings,frontier}.md
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.
@@ -68,9 +77,11 @@ New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marke
 
 A dependency-light `pytest` suite keeps the marketplace internally consistent —
 frontmatter validity, `plugin.json` ↔ `CHANGELOG.md` version parity, marketplace
-integrity, README ↔ disk skill-table sync, referenced bundled-path existence, and
-the `ccsci` kernel ↔ SKILL.md entrypoint contract. It reads files only (no plugin
-code runs), so it needs nothing beyond `pytest` + `PyYAML`.
+integrity, README ↔ disk skill-table sync, referenced bundled-path existence, the
+`ccsci` kernel ↔ SKILL.md entrypoint contract, and the `parml` grading contract
+(every tier-catalogue item carries an evidence grade, every change item also
+declares a quality exposure, and both ladders match the reference). It reads
+files only (no plugin code runs), so it needs nothing beyond `pytest` + `PyYAML`.
 
 ```
 pip install -r tests/requirements.txt

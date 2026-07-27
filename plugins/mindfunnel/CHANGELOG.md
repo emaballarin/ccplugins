@@ -3,6 +3,13 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.6.0 — 2026-07-27
+
+Coordinated marketplace version bump, alongside a repository-wide formatter pass
+and the addition of the `parml` (paretoml) plugin. The formatter normalised the
+newly added files only — this plugin's were already conformant from the `e8fd3cd`
+pass and are byte-unchanged. No skill logic changed.
+
 ## 0.5.0 — 2026-07-27
 
 Coordinated marketplace version bump, alongside the `ccsci` 0.4.0 kernel-syntax

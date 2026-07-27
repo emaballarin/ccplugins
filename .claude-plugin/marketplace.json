@@ -35,6 +35,22 @@
                 "research-loop",
                 "statistics"
             ]
+        },
+        {
+            "name": "parml",
+            "source": "./plugins/paretoml",
+            "description": "paretoml: a read-first advisor for the speed↔quality frontier of a training and evaluation pipeline. Prices every candidate change in time-to-target-quality rather than throughput, grades the evidence behind it, and names what it would silently break. /parml:audit reads a pipeline and ranks graded findings across the algorithmic, systems and protocol tiers; /parml:plan fixes an operating point under an explicit quality floor with gates and a stop rule; /parml:review adversarially checks a change. Modality-agnostic. Willing to recommend changing nothing. No hooks, no MCP.",
+            "category": "productivity",
+            "keywords": [
+                "paretoml",
+                "training-efficiency",
+                "tradeoff",
+                "profiling",
+                "ablation",
+                "benchmark",
+                "machine-learning",
+                "deep-learning"
+            ]
         }
     ]
 }
