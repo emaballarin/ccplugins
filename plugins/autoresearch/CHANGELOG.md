@@ -3,6 +3,11 @@
 All notable changes to the `ar` (autoresearch) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.0 — 2026-07-27
+
+Coordinated marketplace version bump, alongside the `ccsci` 0.4.0 kernel-syntax
+fix. No skill logic changed.
+
 ## 0.2.1 — 2026-07-23
 
 Housekeeping — coordinated marketplace version alignment. No skill logic changed.

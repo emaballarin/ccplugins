@@ -47,6 +47,14 @@ PDF_MAX_FANOUT_PAGES = 512
 you should raise ``batch_size`` (more pages per subagent) or process the
 document in ``pages=`` slices rather than spawning that many subagents."""
 
+_PDF_COERCE_ERRORS = (TypeError, ValueError)
+"""What ``float()``/``int()`` raise on a subagent's malformed JSON value, as a
+named tuple rather than an inline ``except (A, B):``. A py314-targeted formatter
+rewrites the inline form to PEP 758's unparenthesized ``except A, B:``, which is
+a SyntaxError on every earlier interpreter — and this kernel must stay loadable
+under whichever Python the agent's environment happens to provide. A name has no
+parens to strip."""
+
 
 def pdf_check_fanout(items, fn):
     """Guard against an unreasonable number of fan-out work items. ``items``
@@ -768,7 +776,7 @@ def pdf_scan_assemble(path, results, top_k=5, threshold=None, mode="auto", dpi=1
             continue
         try:
             score = float(r.get("score") or 0.0)
-        except TypeError, ValueError:
+        except _PDF_COERCE_ERRORS:
             score = 0.0
         score = max(0.0, min(1.0, score))
         p = by_page.get(pg, {})

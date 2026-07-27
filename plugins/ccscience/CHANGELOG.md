@@ -3,6 +3,24 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.4.0 — 2026-07-27
+
+### Fixed — kernels parse again on Python older than 3.14
+
+`literature-review` and `pdf-explore` each carried `except A, B:` clauses left
+behind by a py314-targeted formatter pass: PEP 758 syntax, accepted only on
+Python 3.14+. Every earlier interpreter raises `SyntaxError` while parsing, so
+both kernels were unloadable on the Python most agent environments actually
+provide, and Tier-1 validation failed against CI's 3.12.
+
+The three exception lists now live in named module-level tuples — `_NET_ERRORS`
+and `_RESOLVER_ERRORS` in `literature-review`, `_PDF_COERCE_ERRORS` in
+`pdf-explore` — instead of an inline `except (A, B):`. A bare name has no
+parentheses for a formatter to strip, so the fix survives a repeat
+`ruff format --target-version py314 --preview` rather than regressing on the
+next reformat. Same exception types caught at the same three sites; no
+behaviour change.
+
 ## 0.3.1 — 2026-07-23
 
 Housekeeping — coordinated marketplace version alignment. No skill logic changed.

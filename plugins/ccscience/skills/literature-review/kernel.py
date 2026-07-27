@@ -24,6 +24,17 @@ import urllib.request
 DOI_PATTERN = r"10\.\d{4,9}/[^\s\"'`\]\}—–&|]+"
 _UA = "ccsci-literature-review/1.0"
 
+_NET_ERRORS = (urllib.error.URLError, OSError, ValueError)
+"""Everything a fetch-and-decode can raise, as a named tuple rather than an
+inline ``except (A, B):``. A py314-targeted formatter rewrites the inline form
+to PEP 758's unparenthesized ``except A, B:``, which is a SyntaxError on every
+earlier interpreter — and this kernel must stay loadable under whichever Python
+the agent's environment happens to provide. A name has no parens to strip."""
+
+_RESOLVER_ERRORS = (RuntimeError, *_NET_ERRORS)
+"""`_NET_ERRORS` plus the RuntimeError a resolver backend raises on a bad
+response body. Same no-inline-tuple rule as above."""
+
 
 def litrev_contact() -> str:
     """Contact email for polite-pool API headers (Crossref / doi.org ONLY —
@@ -508,7 +519,7 @@ def _http_text(url: str, timeout: float = 15, accept: str | None = None) -> str 
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             return r.read().decode("utf-8", "replace")
-    except urllib.error.URLError, OSError, ValueError:
+    except _NET_ERRORS:
         return None
 
 
@@ -633,7 +644,7 @@ def resolve_published(record: dict) -> dict:
     for name, fn in sources:
         try:
             found = fn()
-        except RuntimeError, urllib.error.URLError, OSError, ValueError:
+        except _RESOLVER_ERRORS:
             found = None
         if found:
             r["doi"] = _clean_doi(found)
