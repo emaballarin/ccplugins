@@ -1,6 +1,6 @@
 {
     "name": "parml",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "parml — paretoml: a read-first advisor for the speed↔quality frontier of a training and evaluation pipeline. Prices every candidate change in time-to-target-quality rather than throughput, grades the evidence behind it, and names what it would silently break. Three skills: /parml:audit reads a pipeline and emits ranked, evidence-graded, priced findings across the algorithmic (A), systems (B), and protocol (C) tiers; /parml:plan fixes an operating point under an explicit quality floor and orders the changes with revert triggers and a stop rule; /parml:review adversarially checks a proposed or applied change. Modality-agnostic. No hooks, no MCP, no settings patching.",
     "author": {
         "name": "Emanuele Ballarin",

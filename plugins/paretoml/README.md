@@ -1,5 +1,11 @@
 # parml
 
+> [!WARNING]
+> **Superseded by [`tml` (tuneml)](../tuneml/README.md) as of 0.1.1.** Everything
+> below is carried forward there, alongside the experimental-method material this
+> plugin never covered. Install `tml@ccplugins` and use `/tml:audit`, `/tml:plan`
+> and `/tml:review`. No migration is needed — the two never shared state.
+
 **paretoml** — a read-first advisor for the speed↔quality frontier of a training
 and evaluation pipeline.
 

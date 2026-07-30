@@ -3,6 +3,25 @@
 All notable changes to the `parml` (paretoml) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.1.1 — 2026-07-30
+
+**Superseded by `tml` (tuneml).** Final release of this plugin.
+
+Everything here — the time-to-target currency, the evidence-grade ladder, the
+three cost axes, the tier A/B/C catalogues, the modality map, the hardware
+probes, the pitfall catalogue and both templates — is carried forward into
+`plugins/tuneml` unchanged in substance, alongside the experimental-method
+material (`scientific / nuisance / fixed` hyperparameter roles, study design,
+the diagnostic checklist, step budgets, optimisation-failure triage) that this
+plugin never covered. `tml` additionally adds a Tier D for architecture and
+numerics, a dedicated optimiser reference, a pinned literature index, and an
+explicit execution-regime switch for parallelism and local-vs-remote runs.
+
+There is no migration: `parml` writes to `./.parml/`, `tml` writes to `./.tml/`,
+and the two never shared state. Install `tml@ccplugins` and use `/tml:audit`,
+`/tml:plan` and `/tml:review` in place of the `/parml:` equivalents; the
+skill names and their contracts are unchanged.
+
 ## 0.1.0 — 2026-07-27
 
 Initial release. A read-first advisor for the speed↔quality frontier of a
