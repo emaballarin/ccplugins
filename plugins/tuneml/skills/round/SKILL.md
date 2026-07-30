@@ -76,7 +76,8 @@ scale-like. Bounds are hypotheses and will be checked afterwards.
 
 Sampler follows the phase and the regime (`references/regime.md` §2) — quasi-random
 for exploration, Bayesian/TPE for exploitation, grid only in one or two
-dimensions. If the operator uses Optuna, name the concrete sampler (§2.1).
+dimensions. If the operator uses Optuna, name the concrete sampler
+(`references/regime.md` §2.1).
 
 ### 5. Allocate the budget across the three desiderata
 

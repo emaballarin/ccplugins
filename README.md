@@ -102,8 +102,8 @@ plugin is **Apache-2.0** with its own [plugins/ccscience/LICENSE](plugins/ccscie
 (its bundled `canvas-design` typefaces are under the SIL Open Font License). The
 `ar` plugin is **MIT** with its own [LICENSE](plugins/autoresearch/LICENSE) and a
 [NOTICE](plugins/autoresearch/NOTICE) crediting the three MIT upstreams whose
-protocol behaviour it re-implements. The
-`tml` plugin is **MIT** with its own [LICENSE](plugins/tuneml/LICENSE) and a
+protocol behaviour it re-implements. The `tml` plugin is **MIT** with its own
+[LICENSE](plugins/tuneml/LICENSE) and a
 [NOTICE](plugins/tuneml/NOTICE) that additionally records its adaptation of the
 **CC BY 4.0** Deep Learning Tuning Playbook, with the changes made.
 

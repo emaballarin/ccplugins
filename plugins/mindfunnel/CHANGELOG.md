@@ -3,6 +3,12 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.6.1 — 2026-07-30
+
+Housekeeping — coordinated marketplace version alignment, alongside the addition
+of the `tml` (tuneml) plugin and the removal of `parml`. Nothing in this plugin
+was edited. No skill logic changed.
+
 ## 0.6.0 — 2026-07-27
 
 Coordinated marketplace version bump, alongside a repository-wide formatter pass

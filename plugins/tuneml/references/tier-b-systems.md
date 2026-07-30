@@ -237,7 +237,7 @@ Then measure what you actually got:
 - **Price the one-time cost against `k` runs.** Aggressive autotuning can cost
   minutes. At `k = 1` this item is a _loss_, and the source is explicit that its
   compiled variant exists for amortising over many runs. See `tier-c-protocol.md`
-  §6.
+  C6.
 
 **Pitfall.** A graph break that falls back to eager reports success and delivers
 nothing. So does a compiled region that is recompiled every step. Both are

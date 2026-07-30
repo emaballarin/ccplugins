@@ -209,7 +209,7 @@ clock, whether the comparison still shares a harness. A Tier-B change frequently
 invalidates the instrument that would have measured it.
 
 **A ∩ B ∩ C — the operating point itself.** Which is not a technical question and
-is not the agent's to decide. See `tier-c-protocol.md` §7 and
+is not the agent's to decide. See `tier-c-protocol.md` C7 and
 `templates/frontier.md`.
 
 **Additivity.** Both source pipelines found that independently-measured speedups
@@ -220,7 +220,7 @@ wall-clock attributions summing to the observed total. Treat additivity as a
 **working assumption with a check**, not a law: it is `measured-elsewhere` on two
 vision pipelines, it demonstrably failed for one feature (multi-view inference)
 in the source that measured it, and it should be re-verified after any three
-accepted changes. See `tier-c-protocol.md` §5.
+accepted changes. See `tier-c-protocol.md` C5.
 
 ---
 

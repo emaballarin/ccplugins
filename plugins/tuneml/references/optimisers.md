@@ -90,14 +90,18 @@ batch sizes:
 | ----- | --- | ---- | ---- | ---- | ---- | ----- |
 | steps | 10  | 12.5 | 20   | 50   | 100  | 1000  |
 
-Two consequences worth stating to an operator. Adam's default `β₂ = 0.999`
-averages the squared gradient over ~1000 steps, which is a **long** time — long
-enough that a run of 2000 steps spends a quarter of its life with a
-poorly-warmed denominator, and long enough that a genuine change in gradient
-scale takes ~1000 steps to be reflected. And a horizon fixed in _steps_ is a
-horizon that shrinks in _examples_ when the batch size grows, which is one
-mechanism behind the playbook's rule that changing batch size forces optimiser
-hyperparameters to be re-tuned.
+Three consequences worth stating to an operator. Adam's default `β₂ = 0.999`
+averages the squared gradient over ~1000 steps, which is a **long** time: an EMA
+reaches only about 63 % of its asymptotic weight after one horizon
+(`1 − (1 − 1/H)^H → 1 − 1/e`), so a run of a few thousand steps never reaches
+steady state in that accumulator at all. Bias correction makes the estimate
+unbiased from step one, but it is still an average over roughly `min(t, H)`
+effective samples, so it stays high-variance early. Second, a genuine change in
+gradient scale takes ~1000 steps to be reflected — which is exactly why lowering
+`β₂` is the standard response to loss spikes (§4.3). Third, a horizon fixed in
+_steps_ is a horizon that shrinks in _examples_ when the batch size grows, which
+is one mechanism behind the playbook's rule that changing batch size forces
+optimiser hyperparameters to be re-tuned.
 
 ---
 

@@ -3,6 +3,31 @@
 All notable changes to the `tml` (tuneml) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.1.1 — 2026-07-30
+
+Documentation-integrity patch from a full re-read of the plugin. No skill logic
+changed, and no guidance was altered in substance.
+
+- **Three cross-references into the protocol tier were unresolvable.**
+  `evidence-grades.md` pointed at `tier-c-protocol.md` "§7" and "§5", and
+  `tier-b-systems.md` at "§6", but that catalogue is organised as `C1`…`C9`
+  items and has no numbered sections — so none of the three resolved. Corrected
+  to `C7` (operating point), `C5` (additivity) and `C6` (when speed is the wrong
+  objective), which is what each meant. Inherited from `parml`, where the same
+  three were already broken. As item references they are now covered by Tier-1
+  validation and cannot silently break again.
+- **One ambiguous section reference.** `/tml:round` ended a sentence with a bare
+  "(§2.1)" that meant `references/regime.md` §2.1, not its own §2.1 — which does
+  not exist. Made explicit.
+- **A corrected arithmetic claim.** `optimisers.md` §1.3 asserted that a
+  2000-step run "spends a quarter of its life with a poorly-warmed denominator"
+  at `β₂ = 0.999`. The fraction was unsupported and the framing ignored Adam's
+  bias correction. Replaced with the checkable statement: an EMA reaches ~63 % of
+  its asymptotic weight after one horizon (`1 − (1 − 1/H)^H → 1 − 1/e`, verified
+  numerically at 0.632), bias correction makes the estimate unbiased from step
+  one but it remains an average over ~`min(t, H)` effective samples, so a run of
+  a few thousand steps never reaches steady state in that accumulator.
+
 ## 0.1.0 — 2026-07-30
 
 Initial release. An umbrella advisor for training and evaluating neural networks
