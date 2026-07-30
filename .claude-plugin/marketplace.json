@@ -12,14 +12,28 @@
             "source": "./plugins/mindfunnel",
             "description": "mindfunnel: project-agnostic Claude Code session management. /mf:dump consolidates session state into auto-memory; /mf:spinup reads it back; /mf:setup and /mf:prime handle first-time and per-project scaffolding.",
             "category": "productivity",
-            "keywords": ["memory", "session", "workflow", "mindfunnel", "auto-memory"]
+            "keywords": [
+                "memory",
+                "session",
+                "workflow",
+                "mindfunnel",
+                "auto-memory"
+            ]
         },
         {
             "name": "ccsci",
             "source": "./plugins/ccscience",
             "description": "Research & scientific-computing skills adapted from Claude Science for stock Claude Code: literature-review, pdf-explore, figure-style, figure-composer, paper-narrative, canvas-design, doc-coauthoring, web-artifacts-builder, plus computational-scientist and deep-researcher subagents.",
             "category": "productivity",
-            "keywords": ["science", "research", "literature-review", "bibtex", "pdf", "figures", "scientific-computing"]
+            "keywords": [
+                "science",
+                "research",
+                "literature-review",
+                "bibtex",
+                "pdf",
+                "figures",
+                "scientific-computing"
+            ]
         },
         {
             "name": "ar",
@@ -37,13 +51,15 @@
             ]
         },
         {
-            "name": "parml",
-            "source": "./plugins/paretoml",
-            "description": "paretoml: a read-first advisor for the speed↔quality frontier of a training and evaluation pipeline. Prices every candidate change in time-to-target-quality rather than throughput, grades the evidence behind it, and names what it would silently break. /parml:audit reads a pipeline and ranks graded findings across the algorithmic, systems and protocol tiers; /parml:plan fixes an operating point under an explicit quality floor with gates and a stop rule; /parml:review adversarially checks a change. Modality-agnostic. Willing to recommend changing nothing. No hooks, no MCP.",
+            "name": "tml",
+            "source": "./plugins/tuneml",
+            "description": "tuneml: a read-first advisor for training and evaluating neural networks well — the scientific method for tuning and the speed↔quality frontier in one place. /tml:audit ranks graded, priced findings across the algorithmic, systems, protocol and architecture tiers; /tml:plan fixes an operating point and a step budget; /tml:round designs the next experiment, splitting hyperparameters into scientific, nuisance and fixed; /tml:analyze runs the diagnostic checklist and returns a variance-aware adopt verdict; /tml:review adversarially checks a change. Runs local or remote, and analyses results it did not produce. Supersedes parml. No hooks, no MCP.",
             "category": "productivity",
             "keywords": [
-                "paretoml",
+                "tuneml",
+                "hyperparameter-tuning",
                 "training-efficiency",
+                "experiment-design",
                 "tradeoff",
                 "profiling",
                 "ablation",

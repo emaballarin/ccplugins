@@ -4,7 +4,7 @@ Every entry has the same shape: **symptom** (what you see), **mechanism** (why),
 **detection** (the specific check that settles it). None of these announce
 themselves; each one reports success while doing damage.
 
-`/parml:review` walks this list against a diff. `/parml:audit` attaches the
+`/tml:review` walks this list against a diff. `/tml:audit` attaches the
 relevant entries to each finding. If you read only one, read **P3** — it is the
 most expensive mistake in the field and the one a dashboard actively encourages.
 
@@ -90,7 +90,7 @@ still had one trainable parameter, so the backward pass still traversed it.
 **Detection.** Verify the mechanism directly, never by the end-to-end number
 alone: require a full graph and let a break raise; count recompilations; confirm
 the fused kernel was actually selected; assert the frozen prefix has zero
-parameters with gradients enabled. `/parml:review` treats "did the claimed
+parameters with gradients enabled. `/tml:review` treats "did the claimed
 mechanism happen" as a standing check for exactly this reason.
 
 ---

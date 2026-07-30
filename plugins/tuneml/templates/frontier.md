@@ -1,6 +1,6 @@
 # Operating point — <project>
 
-<!-- Written by /parml:plan to ./.parml/frontier.md. This is the decision record.
+<!-- Written by /tml:plan to ./.tml/frontier.md. This is the decision record.
      The technical work is getting onto the frontier; this page is choosing where
      to sit on it, and that choice is the operator's. Delete this comment when
      filling in. -->
@@ -100,7 +100,7 @@ Written down **before** starting (C8). Stop when:
 
 - **Many measured iterations under a locked harness** → `/ar:start`, which takes
   this objective, this baseline, and this noise floor directly.
-- **A handful of changes** → execute the §4 table directly, `/parml:review` each
+- **A handful of changes** → execute the §4 table directly, `/tml:review` each
   diff before accepting it.
 - **Either way** → record the decision in project memory so the next session does
   not re-litigate it.

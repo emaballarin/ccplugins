@@ -1,12 +1,12 @@
-# parml findings — <project>
+# tuneml findings — <project>
 
-<!-- Written by /parml:audit to ./.parml/findings.md. Read by /parml:plan.
+<!-- Written by /tml:audit to ./.tml/findings.md. Read by /tml:plan.
      Every field is load-bearing; an empty field is a finding that is not ready
      to be acted on. Delete this comment block when filling in. -->
 
 **Audited** <ISO date> · **Scope** tiers <A|B|C> · **Modality** <…>
 **Pipeline** `<entrypoint path>` · **Machine** `<accelerator, count, driver, framework>`
-**Objective on record** <from ./.parml/frontier.md, or "not yet stated">
+**Objective on record** <from ./.tml/frontier.md, or "not yet stated">
 
 ## Current operating point
 

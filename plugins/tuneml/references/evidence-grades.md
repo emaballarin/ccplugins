@@ -39,6 +39,35 @@ their place by being measured, not by being plausible.
 **When you do not know.** `folklore` is an available, respectable answer. An
 ungraded claim is not.
 
+### 1.1 The source-uncertainty flag
+
+A separate axis from the grade, and it does not replace one. A claim is flagged
+**`source-uncertainty`** when _the cited source itself declines to settle the
+question_: not "we have not measured this here" — that is what the grade is for —
+but "the people who did the work say it is open".
+
+It exists because the two are routinely conflated, in the flattering direction. A
+well-cited claim from a strong source feels settled, and a reader who sees
+`measured-elsewhere` with a real citation attached will bank it. The flag is what
+stops that when the source's own conclusion was a shrug.
+
+Three worked cases, all live in this plugin:
+
+- `L-PLAYBOOK` marks roughly fifteen of its own sections as open research
+  questions. Everything ported from them carries the flag — including the
+  round-1→round-2 schedule advice, which its authors label speculation outright.
+- `L-SHAZEER20` measures that gated activations help and closes by offering **no
+  mechanism** for why. So SwiGLU's advantage is `measured-elsewhere` and has
+  never been promoted to `mechanism`, however often it is repeated as though it
+  had (`tier-d-architecture.md` D3).
+- Pre-norm versus post-norm on _final quality_ — as opposed to trainability,
+  which is settled — is contested in the current literature (D1).
+
+**How it behaves.** A flagged claim may still be acted on; it may not be used to
+close a question, to overrule a `measured-here` result, or to justify not
+measuring. When two flagged claims disagree, that is not a tie to be broken by
+tone — it is the state of the field, and saying so is the correct output.
+
 ---
 
 ## 2. Pricing: the only currency is time-to-target
@@ -54,11 +83,12 @@ Every change moves one factor, the other, or both — and **the two can move in
 opposite directions**. This decomposition is the analytical spine of the whole
 plugin:
 
-| Factor            | Moved by                 | Measured as                                                                 |
-| ----------------- | ------------------------ | --------------------------------------------------------------------------- |
-| `steps-to-target` | **Tier A** (algorithmic) | steps/epochs/tokens until the quality target is first met, at fixed harness |
-| `time-per-step`   | **Tier B** (systems)     | steady-state wall-clock per optimiser step, after warmup, at fixed batch    |
-| both, or neither  | the intersections (§4)   | end-to-end time-to-target, re-measured                                      |
+| Factor            | Moved by                  | Measured as                                                                                             |
+| ----------------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `steps-to-target` | **Tier A** (algorithmic)  | steps/epochs/tokens until the quality target is first met, at fixed harness                             |
+| `time-per-step`   | **Tier B** (systems)      | steady-state wall-clock per optimiser step, after warmup, at fixed batch                                |
+| both, or neither  | the intersections (§4)    | end-to-end time-to-target, re-measured                                                                  |
+| both, usually     | **Tier D** (architecture) | end-to-end — a Tier-D change often alters what "the model" denotes, so it is never priced on one factor |
 
 **Every finding must state which factor it moves and whether it moves the other
 adversely.** A change that improves `time-per-step` by 30 % while worsening

@@ -242,7 +242,7 @@ Then measure what you actually got:
 **Pitfall.** A graph break that falls back to eager reports success and delivers
 nothing. So does a compiled region that is recompiled every step. Both are
 invisible unless you look — which is why "did the mechanism actually happen" is a
-standing check in `/parml:review` (P5).
+standing check in `/tml:review` (P5).
 
 ---
 
@@ -436,6 +436,85 @@ problem. Dimensions: mean, and every step-unit hyperparameter (B11)
 Anything beyond these decision rules — topology, placement, custom kernels, and
 communication libraries — is out of scope for this plugin and should be handled
 by someone reading the profile directly.
+
+---
+
+### B14 — Batch size: chosen once, for time-to-target, not for occupancy
+
+**Grade** `mechanism` for the selection rule · `measured-elsewhere` for the
+scaling behaviour (`L-SHALLUE18`) · **Moves** both factors, in opposition
+**Radius** `numeric` at fixed hyperparameters, `distribution` in effect — because
+changing it invalidates the tuning of everything it interacts with
+**Applies to** every pipeline
+**Exposure** `bounded` — not a quality knob in itself, but a re-tuning trigger
+for knobs that are. Dimensions: mean quality, via the optimiser and
+regularisation hyperparameters that must be re-tuned with it
+
+**Batch size is not tuned against validation performance.** Given properly tuned
+hyperparameters — the optimiser's and the regulariser's especially — and a
+sufficient step budget, the same final quality is reachable at any batch size
+(`L-SHALLUE18`). Sweeping it for accuracy measures the staleness of your other
+hyperparameters, not the batch size.
+
+What it _does_ govern is time and resource consumption, so choose it for
+**time-to-target**:
+
+```
+time-to-target = steps-to-target × time-per-step
+```
+
+Larger batches reduce `steps-to-target` — perfectly, up to a **critical batch
+size**, then with diminishing returns, then not at all. Larger batches also
+usually raise `time-per-step` somewhat. The best batch size is the one minimising
+the product, and finding it is experimental: there is no way to compute it.
+
+**Do not maximise memory occupancy.** "The largest batch that fits" is a
+different objective, and it is frequently not the fast one. Run the sweep
+(powers of two, plus near neighbours), measure throughput, and take the argmin of
+time-to-target — **the optimum is often interior**, at well under full memory,
+and that is a legitimate answer rather than a failure to fill the device. Four
+mechanisms produce interior optima, all of them common:
+
+- **Allocator pressure near the ceiling** — fragmentation, allocation retries and
+  cache-flush cycles degrade throughput non-linearly as free memory approaches
+  zero.
+- **Workspace starvation** — many fast kernels need scratch space. With little
+  free memory the library silently selects a _slower_ algorithm that fits. Same
+  batch size, different kernel, worse step time.
+- **Tile and wave quantisation** — kernel efficiency is not monotone in batch
+  size. A shape leaving a partial final wave wastes a whole wave, so 96 can beat 100. This alone makes "largest that fits" wrong in principle.
+- **Headroom is load-bearing** — evaluation wants a batch at least as large as
+  training's (`tier-c-protocol.md`), and at 100% occupancy there is nowhere to
+  put it. EMA (D8), checkpointing buffers and communication buffers compete for
+  the same space.
+
+The apparent conflict with "utilisation" is not a conflict: **occupancy and
+utilisation are the datacenter's objective; time-to-target is the researcher's.**
+A configuration that looks wasteful per-device and reaches the target sooner is
+correct for the second objective, and saying so plainly avoids an argument that
+has nothing to do with the experiment.
+
+**Two things that must accompany the rule.**
+
+_Do this once, early._ Changing batch size later means re-tuning most
+hyperparameters — the optimiser's and the regulariser's above all — which is
+difficult, slow and expensive once a schedule has been tuned around a value
+(B11). It is not a knob to revisit casually.
+
+_An interior optimum is a finding, not just a setting._ Record **why** it is
+interior. If the cause is fragmentation or algorithm fallback, fixing the
+allocator configuration may buy the large batch _and_ the speed; if it is wave
+quantisation, it is a property of the shapes and will not be fixed. Reporting
+"50% occupancy was fastest" without the reason hands the next person a number
+they cannot act on — this is B1's profiling discipline applied to a shape.
+
+**Gradient accumulation / microbatching is not a speed technique.** It simulates
+a larger batch than the hardware supports and therefore buys **no throughput**;
+`L-PLAYBOOK` advises avoiding it in applied work, and that is the default
+position here. The one retained exception: when the memory-permitted batch size
+would otherwise be _crucially_ undersized — single digits — **and** lower
+gradient variance is genuinely required. That is a variance argument, not a speed
+argument, and it should be made in those words.
 
 ---
 
