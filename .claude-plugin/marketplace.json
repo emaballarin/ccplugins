@@ -12,28 +12,14 @@
             "source": "./plugins/mindfunnel",
             "description": "mindfunnel: project-agnostic Claude Code session management. /mf:dump consolidates session state into auto-memory; /mf:spinup reads it back; /mf:setup and /mf:prime handle first-time and per-project scaffolding.",
             "category": "productivity",
-            "keywords": [
-                "memory",
-                "session",
-                "workflow",
-                "mindfunnel",
-                "auto-memory"
-            ]
+            "keywords": ["memory", "session", "workflow", "mindfunnel", "auto-memory"]
         },
         {
             "name": "ccsci",
             "source": "./plugins/ccscience",
             "description": "Research & scientific-computing skills adapted from Claude Science for stock Claude Code: literature-review, pdf-explore, figure-style, figure-composer, paper-narrative, canvas-design, doc-coauthoring, web-artifacts-builder, plus computational-scientist and deep-researcher subagents.",
             "category": "productivity",
-            "keywords": [
-                "science",
-                "research",
-                "literature-review",
-                "bibtex",
-                "pdf",
-                "figures",
-                "scientific-computing"
-            ]
+            "keywords": ["science", "research", "literature-review", "bibtex", "pdf", "figures", "scientific-computing"]
         },
         {
             "name": "ar",
