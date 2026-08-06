@@ -3,6 +3,23 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.1 — 2026-08-06
+
+`templates/AGENTS.md` gains a **Density, not brevity** rule under Communication
+style: cut length by raising signal per line, never by dropping numbers,
+mechanisms, decision-changing caveats or the unflattering part, with a concrete
+list of filler to remove on sight and a "could a third go with nothing lost?"
+check before sending.
+
+The same file also absorbs four rules that had drifted into the maintainer's
+live user-global copy without ever reaching the shipped template — _Removing a
+limitation can unmask a defect it was hiding_, _Record the investigation behind
+a no-op_, _A change of severity class has to reach the summary_, and _Verify the
+verifier, when it gates something irreversible_. A machine seeded by `/mf:setup`
+now gets the current baseline rather than a stale one.
+
+No skill logic changed.
+
 ## 0.7.0 — 2026-08-06
 
 Adds a fifth skill, `/mf:author` — the reference for writing any document an

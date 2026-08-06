@@ -14,8 +14,8 @@ is left silently assumed, then hands off. It writes nothing and builds nothing.
 
 ## Skills
 
-| Skill      | When                             | What it does                                                                                                                                                                     |
-| ---------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Skill       | When                             | What it does                                                                                                                                                                                      |
+| ----------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/ws:grill` | Before committing to an approach | Maps the subject as a design tree and works it in rounds, asking the whole settled frontier at a time with a recommendation on every question. Ends with the design, the open list, and one exit. |
 
 `/ws:grill` is **user-only**. It never fires on its own, costs nothing in
@@ -61,13 +61,13 @@ says nothing about how `AskUserQuestion` is used anywhere else.
 A grilling session produces understanding, not artifacts. It closes by naming
 one exit:
 
-| If the understanding is about                                     | Hand off to  |
-| ----------------------------------------------------------------- | ------------ |
-| Which experiment to run, and how to make the comparison fair      | `/tml:round` |
-| Where to sit on the speed↔quality frontier, and for how long      | `/tml:plan`  |
-| Many measured iterations against one number under a locked harness | `/ar:start`  |
-| A document an agent will read                                     | `/mf:author` |
-| Work now specified well enough to build                           | Implementation |
+| If the understanding is about                                      | Hand off to    |
+| ------------------------------------------------------------------ | -------------- |
+| Which experiment to run, and how to make the comparison fair       | `/tml:round`   |
+| Where to sit on the speed↔quality frontier, and for how long       | `/tml:plan`    |
+| Many measured iterations against one number under a locked harness | `/ar:start`    |
+| A document an agent will read                                      | `/mf:author`   |
+| Work now specified well enough to build                            | Implementation |
 
 Those exits are suggestions, not dependencies — `ws` installs and runs on its
 own.

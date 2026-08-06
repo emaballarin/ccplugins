@@ -12,7 +12,10 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
-                  python-version: "3.12"
+                  # Python 3.14+ is the marketplace's declared floor — the
+                  # formatter pass runs reorder-python-imports --py314-plus, so
+                  # CI must not be older than what the source is written for.
+                  python-version: "3.14"
             - name: Install test deps
               run: pip install -r tests/requirements.txt
             - name: Run Tier-1 suite

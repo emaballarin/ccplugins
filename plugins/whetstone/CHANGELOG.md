@@ -3,6 +3,12 @@
 All notable changes to the `ws` (whetstone) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.1.1 — 2026-08-06
+
+Formatter pass over `README.md` and `skills/grill/SKILL.md` (table alignment and
+list indentation only) plus coordinated marketplace version alignment. No skill
+logic changed.
+
 ## 0.1.0 — 2026-08-06
 
 First release. One skill, `/ws:grill`.

@@ -134,13 +134,13 @@ Close with three things:
    currently standing in for each.
 3. **One recommended exit**, not a menu:
 
-   | If the understanding is about | Hand off to |
-   | --- | --- |
-   | Which experiment to run, and how to make the comparison fair | `/tml:round` |
-   | Where to sit on the speed↔quality frontier, and for how long | `/tml:plan` |
-   | Many measured iterations against one number under a locked harness | `/ar:start` |
-   | A document an agent will read | `/mf:author` |
-   | Work that is now specified well enough to build | Implementation, directly |
+    | If the understanding is about                                      | Hand off to              |
+    | ------------------------------------------------------------------ | ------------------------ |
+    | Which experiment to run, and how to make the comparison fair       | `/tml:round`             |
+    | Where to sit on the speed↔quality frontier, and for how long       | `/tml:plan`              |
+    | Many measured iterations against one number under a locked harness | `/ar:start`              |
+    | A document an agent will read                                      | `/mf:author`             |
+    | Work that is now specified well enough to build                    | Implementation, directly |
 
 Do not act on the understanding — including the exit — until the operator
 confirms it.

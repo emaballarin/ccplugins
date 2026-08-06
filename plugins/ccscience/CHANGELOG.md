@@ -3,6 +3,13 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.5.4 — 2026-08-06
+
+Declares **Python 3.14+** as the floor for the bundled kernels in the plugin
+README. Housekeeping otherwise — coordinated marketplace version alignment
+alongside the `mf` guidance update and a repository-wide formatter pass. No
+skill logic changed.
+
 ## 0.5.3 — 2026-08-06
 
 Housekeeping — coordinated marketplace version alignment, alongside the addition

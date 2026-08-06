@@ -1,6 +1,6 @@
 {
     "name": "tml",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "tuneml — a read-first advisor for training and evaluating neural networks well: the scientific method for tuning, and the speed↔quality frontier, in one place. Prices every candidate change in time-to-target-quality rather than throughput, grades the evidence behind it, and names what it would silently break. Five skills: /tml:audit reads a pipeline and emits ranked, evidence-graded, priced findings across the algorithmic, systems, protocol and architecture tiers; /tml:plan fixes an operating point and a step budget under an explicit quality floor; /tml:round designs the next round of experiments, classifying hyperparameters as scientific, nuisance or fixed; /tml:analyze extracts insight from results and returns a variance-aware adopt verdict; /tml:review adversarially checks a proposed or applied change. Runs local or remote, and analyses results it did not produce. Supersedes parml. No hooks, no MCP, no settings patching.",
     "author": {
         "name": "Emanuele Ballarin",

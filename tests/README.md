@@ -12,6 +12,12 @@ pip install -r tests/requirements.txt
 python -m pytest tests/ -q
 ```
 
+**Python 3.14+ is required**, here and for the `ccsci` kernels. It is the
+marketplace's declared floor, not an incidental local version: the house
+formatter (`hyperformat`) runs `reorder-python-imports --py314-plus`, so every
+`.py` in the repo may carry syntax older interpreters reject. CI pins the same
+floor — a lower CI version would fail on source that is correct by policy.
+
 CI runs the same command on every push and pull request
 (`.github/workflows/validate.yml`).
 

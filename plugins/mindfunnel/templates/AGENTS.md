@@ -55,6 +55,13 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   propagated NaN/inf, a downstream symptom of an upstream fault — trace it to
   the exact origin and fix there, not by suppressing the symptom with a broad
   guard (clamping, blanket `try/except`) that leaves the cause live.
+- **Removing a limitation can unmask a defect it was hiding.** After fixing or
+  improving one component, re-check the constraints its own deficiency was
+  masking: they were never exercised under the new regime. A sampler capped at
+  partial coverage hides an undersized budget; a slow path hides a race; a lossy
+  check hides everything it was silently passing. The unmasked defect is not a
+  regression caused by the fix and will not present as one — it looks like a
+  problem that was always there, because it was.
 - **Succinct docstrings everywhere; extra comments sparingly, only when
   they clarify non-obvious intent.** Docstrings are documentation, not
   comments — a one-line `"""..."""` on modules / functions / classes is
@@ -69,6 +76,19 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   new with numbers.
 - **Be direct.** "50× worse", "catastrophic", "identical" — not hedged
   language.
+- **Density, not brevity.** Length is a cost the reader pays on every
+  line, whether or not that line was justified. Cut by raising signal
+  per line — never by dropping numbers, mechanisms, decision-changing
+  caveats, or the unflattering part. Depth and precision are what the
+  compaction is _for_; a shorter answer that lost a caveat is a worse
+  answer, not a tighter one. Filler to cut on sight: restating the
+  question; announcing an action before performing it and again after;
+  narrating what the transcript already shows; preamble and closing
+  summary wrapped around content that is already short; a heading over
+  three lines of text; prose that repeats a table; hedges that hold
+  whatever the answer turns out to be; context already established this
+  session. Before sending, check whether a third could go with nothing
+  lost — if it could, it was too long.
 - **One suggestion, not a menu.** Suggest one (or few) next steps; let
   the user redirect.
 - **A decision is a brief, not a menu.** When the user must actually
@@ -98,6 +118,18 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   `mindfunnel` memory (if available) and in a source-committed Markdown
   log file — e.g. `experiment_params_todo.md`, `CHANGELOG.md`,
   `NOTES.md`, whatever the project uses — before starting the next thing.
+- **Record the investigation behind a _no-op_.** Deciding not to act leaves no
+  artifact — no diff, no new file, nothing for the next reader to trip over — so
+  the question reopens and gets re-investigated from scratch. When the answer to
+  "should we do X?" is no, write down what was checked and why it settles the
+  matter, not just the verdict: without the reasons, a considered decision is
+  indistinguishable from inertia, and the next pass will overturn it by default.
+- **A change of severity class has to reach the summary, not just the entry.**
+  Indexes, READMEs, issue titles, status lines and memory hooks are what get read
+  first and often alone. When a finding turns a deferred nicety into a defect —
+  or the reverse — amending only the detailed entry leaves the headline actively
+  misleading, and whoever reads it will correctly deprioritise the item on a
+  description that is no longer true.
 - **No "the user" in written artifacts.** When writing into logs,
   docstrings, comments, Markdown notes, commit messages, PR
   descriptions, plan files, or any prose deliverable, don't frame
@@ -171,6 +203,14 @@ each project owns a small project-scoped `AGENTS.md` (authored from
   no source to look up here, so **the check _is_ the source**. Keep the
   throwaway script, and cite its anchor numbers so the claim can be
   re-run.
+- **Verify the verifier, when it gates something irreversible.** Before
+  trusting a script, harness or audit whose verdict authorises a
+  destructive or unrecoverable step, run it against a known-positive and
+  a known-negative and confirm it separates them. A broken checker does
+  not fail loudly — it emits its own default verdict, indistinguishable
+  from a real finding, and whichever way it defaults is the way it
+  misleads. A uniform verdict across many independent checks is a
+  harness smell, not a result.
 - **Specs are authoritative — never silently reconcile a spec-vs-reality
   mismatch.** When an authoritative source (spec, design doc, ticket,
   stated requirement) conflicts with what you observe, do **not** amend
@@ -195,6 +235,10 @@ each project owns a small project-scoped `AGENTS.md` (authored from
 - **When delegating to a sub-agent**, include "grep for removed symbols,
   run the linter, compile-check imports" in the delegation brief.
 - **Don't add docstrings/types to experimental scripts** unless asked.
+- **Don't duplicate source into documents.** Pasted function bodies go
+  stale silently, and the prose around them still reads as authoritative.
+  State the contract and the public surface; quote only the kernels where
+  the code _is_ the specification, and point at the source for the rest.
 
 ## Important constraints
 

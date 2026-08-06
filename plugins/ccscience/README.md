@@ -41,6 +41,9 @@ Nothing is required to _install_ the plugin. Set what the skills you actually us
 
 Put these in your shell profile (or a per-project `.envrc`) so every session picks them up.
 
+**Python 3.14+ is required** for the bundled kernels — the marketplace's
+declared floor, not an incidental version.
+
 **Optional dependencies** (install only what the skills you use need)
 
 | For                                                    | Install                                                                       |
