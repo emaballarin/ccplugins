@@ -3,6 +3,29 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.0 — 2026-08-06
+
+Adds a fifth skill, `/mf:author` — the reference for writing any document an
+agent reads: a skill, an `AGENTS.md` / `CLAUDE.md`, or a file either points at.
+Covers context pointers and how their wording (not their target) decides
+retrieval reliability; the context-load / cognitive-load pair; the information
+hierarchy and progressive disclosure; co-location and sprawl; completion
+criteria split into clarity and demand, with premature completion as the failure
+mode; when to split by sequence; leading words and the negation trap; and a
+pruning discipline covering single source of truth, environment-as-source-of-
+truth, relevance, sediment and no-ops. Ships `references/skill-mechanics.md` for
+the skill-specific branch — frontmatter, the model- versus user-invoked choice,
+and router skills.
+
+Model-invocable, with triggers narrowed to authoring or pruning agent-facing
+documents. The existing four skills are unchanged.
+
+Adapted from `writing-for-agents` in [mattpocock/skills](https://github.com/mattpocock/skills)
+(MIT); see the new [NOTICE](NOTICE). Material specific to that repository was
+removed and this marketplace's frontmatter and bundled-resource conventions
+added, along with two further invocation tests — side effects, and
+interaction-mode blast radius.
+
 ## 0.6.2 - 04-08-2026
 
 Housekeeping — coordinated marketplace version alignment. Nothing in this plugin

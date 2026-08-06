@@ -1,6 +1,6 @@
 {
     "name": "ar",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "description": "ar — autoresearch: a skill-only autonomous experiment loop. Propose → measure → keep winners → repeat, against any numeric objective, with noise-floor gating so nothing is banked on noise. Five skills: /ar:start opens a run (dedicated branch + baseline noise floor), /ar:resume advances it, /ar:status prints read-only state, /ar:report writes the final summary, /ar:stop ends the loop. State lives in the target repo's ./.ar/ only. No hooks, no MCP, no settings patching.",
     "author": {
         "name": "Emanuele Ballarin",

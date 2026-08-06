@@ -1,6 +1,6 @@
 # mindfunnel
 
-Funnel a messy, high-bandwidth Claude Code session into a narrow, persistent memory channel — then spin it back up at the start of the next session. Four slash-command skills and a tiny amount of project scaffolding. Nothing else.
+Funnel a messy, high-bandwidth Claude Code session into a narrow, persistent memory channel — then spin it back up at the start of the next session. Five slash-command skills and a tiny amount of project scaffolding. Nothing else.
 
 Designed for researchers, power users, and anyone running multi-day engagements where context matters more than compute. Works on any project on any machine with Claude Code installed.
 
@@ -13,9 +13,9 @@ From any Claude Code session:
 /plugin install mf@ccplugins
 ```
 
-That's it. After installation, four skills are available under the `mf` namespace: `/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`.
+That's it. After installation, five skills are available under the `mf` namespace: `/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`, `/mf:author`.
 
-## The four skills
+## The five skills
 
 | Skill        | When                  | What it does                                                                                                                                                                                                                                                                                                                                               |
 | ------------ | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -23,6 +23,7 @@ That's it. After installation, four skills are available under the `mf` namespac
 | `/mf:prime`  | Once per project      | In the current project root: stamp a project-scoped `AGENTS.md` from the bundled stub (if absent), create a project-local `CLAUDE.md` symlink to `./AGENTS.md`, touch an empty `PROJECT.md`. All three are committed. Also cleans up legacy pre-0.3.0 symlinks into `~/.mindfunnel/` and strips stale `CLAUDE.md` / `AGENTS.md` entries from `.gitignore`. |
 | `/mf:spinup` | Start of each session | Read auto-memory in priority order and emit a tight "where we are + next action" brief. **Read-only** — stops and waits for direction.                                                                                                                                                                                                                     |
 | `/mf:dump`   | End / mid-session     | Consolidate the session's non-derivable state into `~/.claude/projects/<slug>/memory/`. Updates `MEMORY.md`. Rarely proposes `SOUL.md` / `AGENTS.md` / `USER.md` edits.                                                                                                                                                                                    |
+| `/mf:author` | Writing for an agent  | Reference for any document an agent reads — a skill, an `AGENTS.md` / `CLAUDE.md`, a file either points at. Context pointers, the context-load / cognitive-load pair, progressive disclosure, completion criteria, leading words, pruning. Ships `references/skill-mechanics.md` for the skill-specific branch. |
 
 ## Typical rhythm
 
@@ -97,7 +98,7 @@ Per-project files created by `/mf:prime` (the committed `AGENTS.md` stub, the in
 
 - **Skills are generic by design.** They reference Claude Code's auto-memory system (which is global) and the `/mf:prime` convention (which ships in this plugin). No domain-specific vocabulary, no single-project assumptions.
 - **Personal customisation lives in `SOUL.md` and `USER.md`.** The skills don't need to know who you are or which machine you're on; `SOUL.md` describes _you_ (role, workflow, preferences), `USER.md` describes _your machine_ (shell, toolchain, paths). Both are user-global — never stamped into projects, never committed anywhere.
-- **Side-effect skills stay user-only.** `/mf:setup` and `/mf:prime` set `disable-model-invocation: true` — both mutate the filesystem (writing `~/.mindfunnel/`, creating symlinks in a project root), and the user always drives them. `/mf:dump` and `/mf:spinup` are model-invocable: dump can fire at natural checkpoints or approaching context saturation, and spinup has a narrow trigger (explicit resume / catch-up phrasing only) so it won't bloat trivial asks with a brief.
+- **Side-effect skills stay user-only.** `/mf:setup` and `/mf:prime` set `disable-model-invocation: true` — both mutate the filesystem (writing `~/.mindfunnel/`, creating symlinks in a project root), and the user always drives them. `/mf:dump`, `/mf:spinup` and `/mf:author` are model-invocable: dump can fire at natural checkpoints or approaching context saturation, spinup has a narrow trigger (explicit resume / catch-up phrasing only) so it won't bloat trivial asks with a brief, and author fires on the branch that matters — authoring or pruning a `SKILL.md`, `AGENTS.md` or `CLAUDE.md` — rather than on markdown edits generally. `/mf:author` states this reasoning itself, in `references/skill-mechanics.md`.
 - **Self-contained.** Templates live inside the plugin at `templates/`. `/mf:setup` copies them to `~/.mindfunnel/` on first run. No separate install script, no cloning, no `chmod`.
 - **Idempotent everywhere.** Re-running `/mf:setup` or `/mf:prime` after the fact is safe. Destructive operations (replacing a real file) always ask first.
 
@@ -109,3 +110,7 @@ Per-project files created by `/mf:prime` (the committed `AGENTS.md` stub, the in
 ## License
 
 MIT. See [LICENSE](../../LICENSE) at the marketplace root.
+
+`/mf:author` and `references/skill-mechanics.md` are adapted from the
+`writing-for-agents` skill in [mattpocock/skills](https://github.com/mattpocock/skills)
+(MIT). See [NOTICE](NOTICE). The other four skills are original work.

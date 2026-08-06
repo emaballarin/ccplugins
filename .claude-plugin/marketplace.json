@@ -10,9 +10,9 @@
         {
             "name": "mf",
             "source": "./plugins/mindfunnel",
-            "description": "mindfunnel: project-agnostic Claude Code session management. /mf:dump consolidates session state into auto-memory; /mf:spinup reads it back; /mf:setup and /mf:prime handle first-time and per-project scaffolding.",
+            "description": "mindfunnel: project-agnostic Claude Code session management. /mf:dump consolidates session state into auto-memory; /mf:spinup reads it back; /mf:setup and /mf:prime handle first-time and per-project scaffolding; /mf:author is the reference for writing the documents an agent reads — skills, AGENTS.md, CLAUDE.md.",
             "category": "productivity",
-            "keywords": ["memory", "session", "workflow", "mindfunnel", "auto-memory"]
+            "keywords": ["memory", "session", "workflow", "mindfunnel", "auto-memory", "skill-authoring"]
         },
         {
             "name": "ccsci",
@@ -53,6 +53,13 @@
                 "machine-learning",
                 "deep-learning"
             ]
+        },
+        {
+            "name": "ws",
+            "source": "./plugins/whetstone",
+            "description": "whetstone: sharpen the thinking before the work. One user-only skill — /ws:grill runs a relentless, round-based interview over the design tree of a plan or decision, asking the whole settled frontier at a time with a recommendation on every question. Silence never settles anything; an assumption keeps the work moving while the question stays open. Read-only, stateless, hands off to /tml:round, /tml:plan, /ar:start, /mf:author or implementation.",
+            "category": "productivity",
+            "keywords": ["whetstone", "grilling", "interview", "design", "planning", "requirements", "decision"]
         }
     ]
 }

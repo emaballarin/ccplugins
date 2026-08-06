@@ -1,0 +1,22 @@
+whetstone (ccplugins) — sharpen the thinking before the work.
+
+The `/ws:grill` skill is adapted, with modifications, from MIT-licensed prior
+work:
+
+  • mattpocock/skills (MIT, Copyright (c) 2026 Matt Pocock) — the `grilling`
+    skill. The design-tree framing, the frontier (every decision whose
+    prerequisites are settled), the round structure with the whole frontier
+    asked at once, the ❓/➡️ question format with a recommended answer attached
+    to every question, the facts-are-the-agent's / decisions-are-the-user's
+    split, and the frontier-is-empty completion criterion all originate there.
+
+Unlike a clean-room re-implementation, this is a close textual adaptation: the
+skill's prose derives from the original and was rewritten, restructured and
+extended rather than re-derived. Modifications are documented in CHANGELOG.md
+and cover carrier selection (`AskUserQuestion` versus markdown), the
+frontier-before-carrier ordering, enforced non-consent-by-silence with an open
+list, and named hand-offs to the other plugins in this marketplace.
+
+Original copyright notices remain with their respective authors. This derivative
+retains attribution as required by the MIT License. No endorsement by the
+original authors is implied.

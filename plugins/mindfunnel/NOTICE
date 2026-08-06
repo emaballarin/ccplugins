@@ -1,0 +1,29 @@
+mindfunnel (ccplugins) — project-agnostic Claude Code session management.
+
+The `/mf:author` skill and `references/skill-mechanics.md` are adapted, with
+modifications, from MIT-licensed prior work:
+
+  • mattpocock/skills (MIT, Copyright (c) 2026 Matt Pocock) — the
+    `writing-for-agents` skill and its `SKILL-MECHANICS.md`. The context-pointer
+    model, the context-load / cognitive-load pair, the information hierarchy and
+    progressive disclosure, co-location and sprawl, completion criteria split
+    into clarity and demand (with premature completion and post-completion
+    steps), the split-by-sequence / split-by-invocation cut, leading words and
+    the negation failure mode, and the pruning discipline (single source of
+    truth, environment-as-source-of-truth, relevance, sediment, no-ops) all
+    originate there.
+
+Unlike a clean-room re-implementation, this is a close textual adaptation: the
+skill's prose derives from the original and was rewritten and restructured
+rather than re-derived. Modifications remove material specific to the source
+repository (its router skill, its published documentation site, and its
+Codex-specific per-skill YAML) and add the frontmatter and bundled-resource
+conventions used by this marketplace, plus two further invocation tests
+(side effects, and interaction-mode blast radius).
+
+The other four skills in this plugin — /mf:setup, /mf:prime, /mf:dump and
+/mf:spinup — are original work and derive from no external source.
+
+Original copyright notices remain with their respective authors. This derivative
+retains attribution as required by the MIT License. No endorsement by the
+original authors is implied.

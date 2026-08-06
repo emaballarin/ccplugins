@@ -3,6 +3,12 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.5.3 — 2026-08-06
+
+Housekeeping — coordinated marketplace version alignment, alongside the addition
+of the `ws` (whetstone) plugin and the new `/mf:author` skill in `mf` 0.7.0.
+Nothing in this plugin was edited. No skill logic changed.
+
 ## 0.5.2 - 04-08-2026
 
 Housekeeping — coordinated marketplace version alignment. Nothing in this plugin

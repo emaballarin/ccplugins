@@ -1,6 +1,6 @@
 {
     "name": "ccsci",
-    "version": "0.5.2",
+    "version": "0.5.3",
     "description": "ccsci — research & scientific-computing skills adapted from Claude Science for stock Claude Code. Skills: literature-review (DOI-grounded, all-STEM, BibTeX export), pdf-explore (parse-once big-PDF navigation, table extraction, native-resolution figures), figure-style / figure-composer / paper-narrative (publication multi-panel figures), canvas-design (generative poster/art + bundled fonts), doc-coauthoring (guided doc/spec co-writing), web-artifacts-builder (React/shadcn single-file HTML). Plus computational-scientist and deep-researcher subagents.",
     "author": {
         "name": "Emanuele Ballarin",

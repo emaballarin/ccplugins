@@ -16,10 +16,11 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 
 | Name    | Description                                                                                                                                                                                                                                                                                                                                                                                         | Docs                                                   |
 | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `mf`    | **mindfunnel** — project-agnostic session management. Four skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back.                                                                                                                                                                                                                         | [plugins/mindfunnel](plugins/mindfunnel/README.md)     |
+| `mf`    | **mindfunnel** — project-agnostic session management. Five skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back, plus `/mf:author` — the reference for writing the documents an agent reads.                                                                                                                                                                                                                         | [plugins/mindfunnel](plugins/mindfunnel/README.md)     |
 | `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, plus the `computational-scientist` and `deep-researcher` subagents.                                                                                        | [plugins/ccscience](plugins/ccscience/README.md)       |
 | `ar`    | **autoresearch** — an autonomous experiment loop for any numeric objective. Five skills (`/ar:start`, `/ar:resume`, `/ar:status`, `/ar:report`, `/ar:stop`) that propose one change, measure it, and keep it only if it beats the measured noise floor.                                                                                                                                             | [plugins/autoresearch](plugins/autoresearch/README.md) |
 | `tml`   | **tuneml** — the scientific method for tuning _and_ the speed↔quality frontier, in one place. Five skills (`/tml:audit`, `/tml:plan`, `/tml:round`, `/tml:analyze`, `/tml:review`) that read a pipeline, fix an operating point and a step budget, design experiments with scientific/nuisance/fixed hyperparameters, and return variance-aware adopt verdicts. Replaces the former `parml` plugin. | [plugins/tuneml](plugins/tuneml/README.md)             |
+| `ws`    | **whetstone** — sharpen the thinking before the work. One user-only skill (`/ws:grill`) that interviews a plan or decision in rounds over its design tree, asking the whole settled frontier at a time, and closes only when nothing is left silently assumed.                                          | [plugins/whetstone](plugins/whetstone/README.md)       |
 
 ## Install a plugin
 
@@ -28,6 +29,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 /plugin install ccsci@ccplugins
 /plugin install ar@ccplugins
 /plugin install tml@ccplugins
+/plugin install ws@ccplugins
 ```
 
 ## Layout
@@ -43,10 +45,9 @@ ccplugins/
 └── plugins/
     ├── mindfunnel/                          # plugin name: mf
     │   ├── .claude-plugin/plugin.json
-    │   ├── README.md
-    │   ├── CHANGELOG.md
-    │   ├── skills/{setup,prime,dump,spinup}/SKILL.md
-    │   ├── references/ledger.md
+    │   ├── README.md  CHANGELOG.md  NOTICE
+    │   ├── skills/{setup,prime,dump,spinup,author}/SKILL.md
+    │   ├── references/{ledger,skill-mechanics}.md
     │   └── templates/{AGENTS,project-AGENTS,PROJECT,SOUL,USER}.md
     ├── ccscience/                           # plugin name: ccsci
     │   ├── .claude-plugin/plugin.json
@@ -62,16 +63,20 @@ ccplugins/
     │   ├── references/{protocol,statistics,state-schema,resume-loop,completion-status}.md
     │   └── templates/{ar.config.json,benchmark.sh,checks.sh,
     │                  evaluator.py,ar-loop.sh}
-    └── tuneml/                              # plugin name: tml
+    ├── tuneml/                              # plugin name: tml
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT (+ CC BY 4.0 material)
+    │   ├── skills/{audit,plan,round,analyze,review}/SKILL.md
+    │   ├── references/{evidence-grades,literature,optimisers,regime,
+    │   │               hyperparameter-roles,study-design,diagnostics,
+    │   │               instability,step-budget,tier-a-algorithmic,
+    │   │               tier-b-systems,tier-c-protocol,tier-d-architecture,
+    │   │               modality-map,hardware-notes,pitfalls}.md
+    │   └── templates/{findings,frontier,study-spec}.md + results-example.jsonl
+    └── whetstone/                           # plugin name: ws
         ├── .claude-plugin/plugin.json
-        ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT (+ CC BY 4.0 material)
-        ├── skills/{audit,plan,round,analyze,review}/SKILL.md
-        ├── references/{evidence-grades,literature,optimisers,regime,
-        │               hyperparameter-roles,study-design,diagnostics,
-        │               instability,step-budget,tier-a-algorithmic,
-        │               tier-b-systems,tier-c-protocol,tier-d-architecture,
-        │               modality-map,hardware-notes,pitfalls}.md
-        └── templates/{findings,frontier,study-spec}.md + results-example.jsonl
+        ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
+        └── skills/grill/SKILL.md
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.
