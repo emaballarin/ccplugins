@@ -92,16 +92,11 @@
 
 ## Technical environment
 
-<!-- Tools, libraries, paths, cluster info. Internal packages, private
-     indexes, custom optimisers, cluster mount points, etc. Split into
-     "Personal libraries / packages" and "Compute environment" if that
-     helps. -->
-<!-- Examples:
-  - Language: Python 3.X, run with `python -O`, usually from `src/`.
-  - DL stack: PyTorch, JAX, … (whatever you use daily).
-  - Internal libraries: `<your-lib>` at `<private-index-url>`.
-  - Cluster: `<hostname>:/<path>`. Partition: `<name>`.
-  - Shell: <bash|zsh|fish>. Alias quirks: <list what trips you up>.
-  - Heavy commands (builds, training, long runs): where do they belong?
-    Local? Remote? Do you want them executed or only printed?
+Tools, libraries, paths and cluster info belong in `USER.md`, not here —
+this file is who you are and how you work; that one is what the machine
+is. Leave a pointer rather than a second copy.
+
+<!-- Example:
+  See `USER.md` — personal libraries, language and stack defaults, the
+  compute environment, and everything else machine-specific.
 -->

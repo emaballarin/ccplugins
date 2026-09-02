@@ -3,6 +3,48 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.2 — 2026-09-02
+
+`templates/AGENTS.md` gains four rules and absorbs a round of restructuring that
+had accumulated in the maintainer's live copy.
+
+New:
+
+- **Never estimate wall-clock effort.** No "~2 hours of careful work", no "a day
+  or two", no "quick five-minute fix". There is no clock, no calibration, and no
+  view of the reader's interruptions or review speed — but the number reads as
+  informative and gets planned around. Scope with what is countable instead:
+  files touched, steps, what is reversible, what it blocks, what has to land
+  first. A duration only on an outright request, and then keyed to something.
+- **`pkill -f` / `pgrep -f` match the command line you launched them from.** The
+  pattern sits in the invocation's own `argv`, so any command that both names the
+  target and greps for it matches itself. Killing takes out your own shell and
+  every later step while looking like it ran; checking reports a finished job as
+  alive forever, because an `until ! pgrep -f "…"` loop is waiting on itself.
+- **Give alternatives a topology, never a restaurant menu.** Present the space of
+  options — the axis of variation, which subsume or exclude which, where the
+  branch lies — not a list of disconnected proposals. Replaces the two narrower
+  bullets that previously said "suggest one next step" and "a decision is a
+  brief".
+- **Read the log before re-deriving anything.** Settled decisions, measured
+  numbers and rejected approaches are already written down.
+
+Changed:
+
+- **Where a job runs is set by its cost, not its kind** replaces the blanket
+  "don't run builds or long-running commands": short and iterative work runs
+  locally, long or compute-heavy work is written up for the remote box, and
+  anything touching shared infrastructure is printed and asked about.
+- Two new top-level sections — **Evidence and interpretation** and **Written
+  artifacts and logs** — collect rules that were previously scattered through
+  General principles and Planning & execution. No rule was dropped in the move.
+- The intro now points at `PROJECT.md`, `~/.mindfunnel/SOUL.md` and
+  `~/.mindfunnel/USER.md` explicitly, and says which wins on conflict.
+- `templates/USER.md` replaces the single `Codex / multi-agent compatibility`
+  section with `Personal libraries and compute`, `Other agents — how each reaches
+this baseline`, and `Formatting and linting`. `templates/SOUL.md` gains
+  clearer fill-in guidance; its sections are unchanged.
+
 ## 0.7.1 — 2026-08-06
 
 `templates/AGENTS.md` gains a **Density, not brevity** rule under Communication
