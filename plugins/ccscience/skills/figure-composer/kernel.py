@@ -345,6 +345,36 @@ def derive_outline_task(figure_png_path, claim=None, data_hints=None):
     )
 
 
+def finalize_outline(outline):
+    """Enforce the outline invariants the model cannot be trusted to honour.
+
+    :func:`derive_outline_task` asks a vision model to reverse-engineer an
+    outline from pixels, and its JSON arrives as untrusted input. Run it through
+    here before any other kernel call:
+
+        >>> outline = finalize_outline(json.loads(model_json))
+
+    Forces ``data_vid=None`` on every panel. A data ref names a file in *this*
+    session; an image cannot encode one, so any value the model puts there is
+    invented and would send a panel subagent to a path that does not exist.
+    The prompt also asks for null — this makes it true regardless. Fill the real
+    refs in yourself afterwards.
+
+    Pure: returns a new dict, one level deep on ``panels``; the input is not
+    mutated. Everything else — the prose fields, the grid geometry — is left
+    exactly as the model returned it and still needs your review."""
+    if not isinstance(outline, dict):
+        raise TypeError(f"finalize_outline: outline must be a dict, got {type(outline).__name__}")
+    if "panels" not in outline:
+        raise ValueError("finalize_outline: outline is missing the schema-required 'panels' key")
+    panels = outline["panels"]
+    if not isinstance(panels, list):
+        raise TypeError(f"finalize_outline: outline['panels'] must be a list, got {type(panels).__name__}")
+    out = dict(outline)
+    out["panels"] = [{**p, "data_vid": None} if isinstance(p, dict) else p for p in panels]
+    return out
+
+
 # Convention: save each composite as `{fig_key}.png` and write one
 # `{fig_key}_review_r{n}.json` per round — never overwrite an earlier round's
 # review file.

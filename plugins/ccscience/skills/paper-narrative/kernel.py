@@ -62,6 +62,36 @@ def derive_paper_brief_task(abstract_text, figure_claims):
     )
 
 
+def finalize_paper_brief(brief, figure_claims):
+    """Restore the ``figures`` list on a model-returned paper_brief.
+
+    :func:`derive_paper_brief_task` returns untrusted JSON. Run it through here
+    before :func:`narrative_review_task`:
+
+        >>> brief = finalize_paper_brief(json.loads(model_json), figure_claims)
+
+    ``figures`` is schema-required, but a model that has just written four prose
+    fields routinely drops it — and a brief with no figures makes
+    :func:`narrative_review_task` render an empty per-figure table, so the
+    reviewer grades a deck it was never shown. ``figure_claims`` is caller-supplied
+    and therefore known-good, so it is the correct fallback.
+
+    Absent, ``None``, and empty are all treated as missing. That is deliberately
+    wider than a plain ``setdefault`` (which fills only an absent key): a JSON
+    ``null`` or ``[]`` is the likelier failure here and is just as unusable
+    downstream. Any non-empty list the model returns is kept untouched — its
+    per-figure claims are the model's read of the paper and reviewing them is
+    the point.
+
+    Pure: returns a new dict; the input is not mutated."""
+    if not isinstance(brief, dict):
+        raise TypeError(f"finalize_paper_brief: brief must be a dict, got {type(brief).__name__}")
+    out = dict(brief)
+    if not out.get("figures"):
+        out["figures"] = list(figure_claims)
+    return out
+
+
 def narrative_review_schema():
     return {
         "type": "object",

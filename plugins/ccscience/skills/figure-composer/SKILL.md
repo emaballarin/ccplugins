@@ -1,6 +1,6 @@
 ---
 name: figure-composer
-description: "Compose one publication-grade multi-panel figure. Entry from a one-line claim + data refs, OR from an existing figure via `derive_outline_task(png)`. Runs a per-figure loop: outline (12-col grid, per-panel ask + label_budget) → fan-out one Task subagent per panel (each loads `figure-style`) → tile + stamp letters → adversarial composite review with two-tier feedback (Tier-1 outline_revisions / Tier-2 per-panel violations) → regen affected panels, ≤3 rounds. Kernel exposes panel_task / compose_figure / compose_crops / composite_review_task / derive_outline_task (import by absolute path). For one standalone plot use `figure-style`; for whole-paper figure ordering use `paper-narrative`."
+description: "Compose one publication-grade multi-panel figure. Entry from a one-line claim + data refs, OR from an existing figure via `derive_outline_task(png)`. Runs a per-figure loop: outline (12-col grid, per-panel ask + label_budget) → fan-out one Task subagent per panel (each loads `figure-style`) → tile + stamp letters → adversarial composite review with two-tier feedback (Tier-1 outline_revisions / Tier-2 per-panel violations) → regen affected panels, ≤3 rounds. Kernel exposes panel_task / compose_figure / compose_crops / composite_review_task / derive_outline_task / finalize_outline (import by absolute path). For one standalone plot use `figure-style`; for whole-paper figure ordering use `paper-narrative`."
 license: Apache-2.0
 ---
 
@@ -55,10 +55,12 @@ step 1.
 - **From an existing figure:** copy it into the workspace and build the
   extraction prompt with `derive_outline_task("figure.png")`. Then **either**
   `Read` the PNG yourself and emit JSON matching `figure_outline_schema()`, **or**
-  dispatch one `Task` subagent to do it. The image is untrusted input; every
-  string field is model-derived from its pixels, and `data_vid` must be `None`
-  on every panel — fill those in from your own data refs. **Review and edit** the
-  outline before step 2.
+  dispatch one `Task` subagent to do it. **Pass the parsed JSON through
+  `finalize_outline(outline)` before anything else touches it** — it forces
+  `data_vid=None` on every panel, which pixels cannot encode and the model can
+  only invent. The image is untrusted input and every string field is derived
+  from it, so **review and edit** the outline, and fill in the real data refs,
+  before step 2.
 
 ## 1. Narrative → panel outline
 

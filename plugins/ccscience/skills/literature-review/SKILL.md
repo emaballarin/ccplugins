@@ -52,7 +52,7 @@ print(json.dumps(lr.verify_dois(["10.1145/3292500.3330701"]), indent=2))
 PY
 ```
 
-The public helpers are `verify_dois`, `crossref_lookup`, `search_openalex`, `expand_citations`, `extract_dois`, `style_pass`, `resolve_published` / `resolve_published_all`, `dedupe_records`, `to_bibtex`, and `bibtex_tidy`. Each call is a short `python` run that imports the module and prints JSON you read back. Two optional env vars tune the polite path: `LITREVIEW_CONTACT_EMAIL` (Crossref/doi.org polite pool; defaults to a placeholder — set it to a real address you own) and `OPENALEX_API_KEY` (raises OpenAlex's per-request budget; without it, OpenAlex calls go out unauthenticated and still work, subject to shared rate limits).
+The public helpers are `verify_dois`, `crossref_lookup`, `search_openalex`, `expand_citations`, `extract_dois`, `style_pass`, `resolve_published` / `resolve_published_all`, `dedupe_records`, `to_bibtex`, and `bibtex_tidy`. Each call is a short `python` run that imports the module and prints JSON you read back. Two optional env vars tune the polite path: `LITREVIEW_CONTACT_EMAIL` (a real address you own; it enters the Crossref/doi.org **polite pool**, and until it is set no `mailto:` is sent and those requests are plain anonymous ones) and `OPENALEX_API_KEY` (raises OpenAlex's per-request budget; without it, OpenAlex calls go out unauthenticated and still work, subject to shared rate limits).
 
 ## Grounding: retrieve first, then write
 

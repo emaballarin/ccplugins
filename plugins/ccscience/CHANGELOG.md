@@ -3,6 +3,113 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.0 — 2026-09-02
+
+### Fixed — no more placeholder address in the Crossref polite pool
+
+`litrev_contact()` returned `example@example.com` when `LITREVIEW_CONTACT_EMAIL`
+was unset, and all three call sites append the `mailto:` only when it is truthy
+— so every unconfigured install identified itself to Crossref and doi.org with a
+placeholder. The polite pool exists so an operator can be contacted about their
+traffic; an address at a reserved domain (RFC 2606) identifies nobody and is
+worse than sending none at all. It now returns `None` when the variable is unset
+or blank, and those requests simply go out anonymously. The env var is unchanged
+and still the way into the polite pool; the README and SKILL.md now say what
+happens without it instead of describing a default that should never have been
+one.
+
+### Added — two validators at the model-JSON boundary
+
+The Claude Science originals enforced two invariants in code, inside host calls
+that returned parsed model output. The port replaced those calls with prompt
+builders, and the invariants degraded into prose asking the model to comply.
+Both are back as pure helpers, to be run on the JSON before anything else
+touches it:
+
+- **`finalize_outline(outline)`** (`figure-composer`) forces `data_vid=None` on
+  every panel. A data ref names a file in the session; pixels cannot encode one,
+  so any value a vision model puts there is invented and would send a panel
+  subagent to a path that does not exist.
+- **`finalize_paper_brief(brief, figure_claims)`** (`paper-narrative`) restores a
+  missing `figures` list from the caller's own claims. A model that has just
+  written four prose fields routinely drops it, and an empty list makes
+  `narrative_review_task` render an empty per-figure table — the handling-editor
+  reviewer then grades a deck it was never shown. Absent, `null` and `[]` are all
+  treated as missing, which is wider than the original's `setdefault`; a
+  non-empty list the model returned is always kept.
+
+Both are pure — they return a new dict and never mutate their input — and both
+raise on malformed input rather than silently passing it downstream.
+
+### Added — a behavioural test tier
+
+`tests/test_kernel_behaviour.py` executes the kernel helpers that are pure (no
+network, filesystem, or third-party import) and pins their invariants: the two
+new validators, `litrev_contact`'s no-address-means-no-`mailto` rule,
+`extract_dois`, `dedupe_records`, `pdf_guard_text`'s guarantee that untrusted
+page text cannot forge a prompt delimiter, and the panel geometry. The existing
+suite stays static-only and is now labelled Tier 1; this is Tier 2 and needs no
+skill dependency installed, because the kernels defer every heavy import.
+
+Writing it immediately surfaced a live defect — see below.
+
+### Fixed — `extract_dois` dropped markdown bold before a full stop
+
+`**10.x/y**.` extracted as `10.x/y**`. The trailing-punctuation strip is
+anchored at end-of-string and had no `.` in its character class, so on that
+input it matched nothing; only afterwards did a separate `removesuffix(".")`
+run, by which point the asterisks were stranded with no second pass to catch
+them. `**10.x/y**,` was always fine, because a comma _is_ in the class and went
+in the same bite. The malformed DOI then failed verification, so the failure was
+quiet rather than harmful — a citation simply went missing from a draft that
+wrote its DOIs in bold.
+
+`.` is now folded into the character class and the separate period-strip is
+gone, which fixes the case and makes the pass order-independent: mixed runs like
+`**.`, `..` and `.,` all go in one bite. Interior periods are untouched —
+`10.1234/v1.2.3` still extracts whole. Present in the Claude Science original;
+found by the new behavioural tier, not by report.
+
+### Changed
+
+- `style_pass(draft)` no longer accepts `model`. The parameter was inherited from
+  the original, which never used it either, and it advertised a knob that did
+  nothing.
+- The `computational-scientist` agent's companion-skills line now names
+  `/mf:author` as where a workflow or library gotcha worth keeping gets written
+  up as a skill. A pointer only — the agent is not told to volunteer it.
+- `NOTICE` added — the plugin was the only one in this marketplace without one.
+  It separates what is reproduced verbatim (the three public skills, the fonts,
+  the `web-artifacts-builder` scripts) from what is substantially adapted and
+  what is original, and records why the per-skill `LICENSE.txt` copies are not
+  carried over.
+
+## 0.6.0 — 2026-09-02
+
+### `figure-style` now declares when NOT to load
+
+Upstream Claude Science narrowed this skill's activation scope on 2026-08-31,
+and the narrowing is adopted here. Previously both the description and §0 said
+to load before _any_ plot, which pulled a long correctness checklist into
+context for throwaway EDA scatters and sanity-check histograms — cost with no
+deliverable to pay for it.
+
+The trigger is now **final-deliverable figures**: those shipping in a report,
+paper, or export, or saved as a file that will be kept. Exploratory and
+intermediate plots are drawn plainly, without the skill. A new §0 **Load
+trigger** paragraph states this, the frontmatter `description` leads with it so
+the decision is made before the body is read, and the two places that asserted
+the old rule — the README skill table and the `computational-scientist` agent's
+companion-skills line — were corrected to match. No rule inside §1–§9 changed,
+and the kernel is untouched.
+
+Upstream's own wording cites a Claude Science system-prompt section that has no
+Claude Code counterpart; that reference is dropped rather than ported dead. The
+same upstream pass also restyled prose to en-US and stripped explanatory
+comments from the kernels — neither is adopted: this repository is en-GB
+throughout, and the kernel comments carry the reasoning behind the port's own
+adaptations.
+
 ## 0.5.4 — 2026-08-06
 
 Declares **Python 3.14+** as the floor for the bundled kernels in the plugin

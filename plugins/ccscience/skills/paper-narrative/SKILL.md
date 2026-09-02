@@ -34,8 +34,9 @@ print([n for n in dir(k) if not n.startswith("_")])
 PY
 ```
 
-The kernel is pure prompt/schema builders (`paper_brief_schema`,
-`narrative_review_schema`, `derive_paper_brief_task`, `narrative_review_task`);
+The kernel is pure prompt/schema builders plus one validator
+(`paper_brief_schema`, `narrative_review_schema`, `derive_paper_brief_task`,
+`narrative_review_task`, `finalize_paper_brief`);
 the model work is done by you (inline) or a `Task` subagent.
 
 ## Workflow
@@ -47,8 +48,11 @@ the model work is done by you (inline) or a `Task` subagent.
    `paper_brief_schema()`) **or** dispatch a `Task` subagent to do it — pitch,
    vision, audience, most-arresting-asset, figures[]. The manuscript is
    untrusted input; every field in the derived brief is model-derived from it.
-   **Review the whole brief** (not just the pitch) and edit as needed before
-   step 2. (If the model omits `figures`, default it to your `figure_claims`.)
+   **Pass the parsed JSON through `finalize_paper_brief(brief, figure_claims)`**
+   — a model that has just written four prose fields routinely drops `figures`,
+   and an empty one makes step 2 render an empty per-figure table, so the
+   reviewer grades a deck it was never shown. Then **review the whole brief**
+   (not just the pitch) and edit as needed before step 2.
 2. **Dispatch the handling editor.** Build the prompt with
    `narrative_review_task(brief, deck_path)` (the deck is one PDF of all figures;
    the reviewer loads `figure-style` for the rules) and launch ONE `Task`

@@ -25,10 +25,12 @@ Nothing is required to _install_ the plugin. Set what the skills you actually us
 
 **Environment variables**
 
-- **`LITREVIEW_CONTACT_EMAIL`** — your email address, sent in the User-Agent for the
-  Crossref / doi.org **"polite pool"** (faster, more reliable lookups). Defaults to the
-  placeholder `example@example.com`; **set it to a real address you own** before running
-  literature reviews. `literature-review` reads it directly.
+- **`LITREVIEW_CONTACT_EMAIL`** — a real address **you own**, sent in the User-Agent for
+  the Crossref / doi.org **"polite pool"** (faster, more reliable lookups). Unset, no
+  `mailto:` is sent at all and those requests go out anonymously — which is the correct
+  fallback: the polite pool exists so an operator can be contacted about their traffic, so
+  a placeholder identifies nobody and is worse than sending nothing. `literature-review`
+  reads it directly.
     ```bash
     export LITREVIEW_CONTACT_EMAIL="you@example.org"
     ```
@@ -60,7 +62,7 @@ declared floor, not an incidental version.
 | ------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | **literature-review**     | "find the seminal paper for X", a full review, grounding a claim | Retrieve → verify → synthesise scientific literature with **no fabricated DOIs**. All-STEM (arXiv / DBLP / Semantic Scholar / alphaXiv first-class, plus OpenAlex / Crossref / PubMed); walks the citation graph; flags superseded / withdrawn / **refuted** work; ends with a resolve-published → dedupe → `.bib` → `bibtex-tidy` export. DOI kept everywhere by default.                                                                                                   | `bibtex-tidy` (npm); optional `OPENALEX_API_KEY`; `LITREVIEW_CONTACT_EMAIL` (Crossref polite pool — set your own, see [Setup](#setup)) |
 | **pdf-explore**           | an answer needs content from more than one place in a PDF        | Parse a PDF **once**, then read pages as persistent text (`pdf_pages`), build a TOC (`pdf_outline`), or fan whole-doc relevance scans / per-page maps / structured extraction out over **Task subagents** so the pages never fill your own context. **Tables** via `pdf_tables` (deterministic, page provenance, full table → CSV); **figures** via `pdf_images` (embedded rasters at native resolution) with `pdf_pages(mode="image")` → `pdf_crop` as the vector fallback. | `pypdfium2`, `pillow` (pip); `pdfplumber` for tables                                                                                   |
-| **figure-style**          | before drawing any plot                                          | Publication-figure **correctness** checklist (data fidelity, label economy, colour threading, render-then-verify) plus a matplotlib helper kernel (`apply_figure_style`, palettes, panel letters, per-panel crop QA).                                                                                                                                                                                                                                                        | matplotlib                                                                                                                             |
+| **figure-style**          | before a figure that ships (not EDA / sanity plots)              | Publication-figure **correctness** checklist (data fidelity, label economy, colour threading, render-then-verify) plus a matplotlib helper kernel (`apply_figure_style`, palettes, panel letters, per-panel crop QA).                                                                                                                                                                                                                                                        | matplotlib                                                                                                                             |
 | **figure-composer**       | building one multi-panel figure from a claim + data              | Outline (12-col grid) → one `Task` subagent per panel (each loads `figure-style`) → tile + letter → adversarial composite review → regen, ≤3 rounds.                                                                                                                                                                                                                                                                                                                         | matplotlib, pillow                                                                                                                     |
 | **paper-narrative**       | judging / reshaping the story a paper's figures tell             | Handling-editor review of the whole figure deck; converts the verdict into concrete moves and feeds a revised Fig-1 claim into `figure-composer`.                                                                                                                                                                                                                                                                                                                            | matplotlib, pillow                                                                                                                     |
 | **canvas-design**         | a poster, artwork, or other static design piece                  | Generative visual art via a design-philosophy manifesto expressed on a `.pdf`/`.png` canvas, with ~40 bundled typeface families.                                                                                                                                                                                                                                                                                                                                             | a renderer (matplotlib / reportlab / Pillow, or HTML→PDF)                                                                              |
@@ -96,9 +98,12 @@ cycle, so it works standalone.
 
 ## Provenance & license
 
-Adapted from the Claude Science skills (Apache-2.0, © Anthropic PBC). The adaptations and the new
-agents (`computational-scientist`, and the mindfunnel-optional `deep-researcher`) are © Emanuele
-Ballarin. Ships under **Apache-2.0** — see [`LICENSE`](LICENSE).
+Adapted from the Claude Science skills, and from Anthropic's public
+[`anthropics/skills`](https://github.com/anthropics/skills) for `canvas-design`, `doc-coauthoring`
+and `web-artifacts-builder` (both Apache-2.0, © Anthropic PBC). The adaptations and the new agents
+(`computational-scientist`, and the mindfunnel-optional `deep-researcher`) are © Emanuele Ballarin.
+Ships under **Apache-2.0** — see [`LICENSE`](LICENSE), and [`NOTICE`](NOTICE) for what is verbatim,
+what is adapted, and what is original.
 
 > **Font licensing note:** the `canvas-design` typefaces are under the SIL Open Font License by
 > their respective authors, **not** Apache-2.0. Each font ships with its OFL license file in

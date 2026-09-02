@@ -1,6 +1,6 @@
 ---
 name: figure-style
-description: "Publication-grade figure correctness and legibility rules. Load before drawing any plot and call `apply_figure_style()` — sets a role-mapped font-size ladder, outward ticks, frameless legends, and 300-dpi output. The skill is a checklist, not a house look: data fidelity (claim-titles tested against every row, excluded data never enters summaries), label economy (floor and ceiling), colour threading, chart-choice-by-data-shape, layout, and a render-then-verify QA loop (bbox collision + per-panel perceptual check). Ships helpers: focal_palette, bar_with_points, strip_with_median, end_of_line_labels, panel_letter, set_frame, panel_crops. For multi-panel figures load `figure-composer`; for whole-paper figure arc load `paper-narrative`."
+description: "Publication-grade figure correctness and legibility rules for final-deliverable figures — not every plot. Quick look or iterating on the analysis (EDA scatters, sanity-check histograms)? Plot plainly without this skill. Producing a figure that ships — report, paper, export, or a file you keep — load this skill first and call `apply_figure_style()` — sets a role-mapped font-size ladder, outward ticks, frameless legends, and 300-dpi output. The skill is a checklist, not a house look: data fidelity (claim-titles tested against every row, excluded data never enters summaries), label economy (floor and ceiling), colour threading, chart-choice-by-data-shape, layout, and a render-then-verify QA loop (bbox collision + per-panel perceptual check). Ships helpers: focal_palette, bar_with_points, strip_with_median, end_of_line_labels, panel_letter, set_frame, panel_crops. For multi-panel figures load `figure-composer`; for whole-paper figure arc load `paper-narrative`."
 license: Apache-2.0
 ---
 
@@ -8,9 +8,15 @@ license: Apache-2.0
 
 _A checklist for correct, legible, internally-consistent scientific figures. This
 skill does not impose a visual house style — frame, font, and palette are
-parameters. Load it and call `apply_figure_style()` before any plot._
+parameters. Once loaded, call `apply_figure_style()` before plotting._
 
 ## §0 Scope
+
+**Load trigger.** This skill is for **final-deliverable figures** — those
+shipping in a report, paper, or export, or saved as a file that will be kept —
+not for exploratory/intermediate plots (quick looks, EDA, sanity checks), which
+are drawn plainly without it. Once loaded, "every plot" below means every plot
+you render toward the deliverable.
 
 §1–§3, §8, and §9 are **correctness** — they apply to every plot, in every
 context, and have no aesthetic content. §4–§7 are **guidance** — defaults that

@@ -36,14 +36,20 @@ _RESOLVER_ERRORS = (RuntimeError, *_NET_ERRORS)
 response body. Same no-inline-tuple rule as above."""
 
 
-def litrev_contact() -> str:
+def litrev_contact() -> str | None:
     """Contact email for polite-pool API headers (Crossref / doi.org ONLY —
     never sent to OpenAlex, which takes no contact email). Reads
-    LITREVIEW_CONTACT_EMAIL, falling back to a placeholder (set the env var to
-    a real address you own for the Crossref/doi.org polite pool)."""
+    LITREVIEW_CONTACT_EMAIL; returns None when it is unset or blank.
+
+    None means *send no ``mailto:`` at all*, which is deliberate. The polite
+    pool exists so an operator can be contacted about their traffic, so a
+    placeholder address is worse than none: it identifies nobody, and
+    ``example.com`` is a reserved domain (RFC 2606) that no one can receive at.
+    Every caller already appends the suffix only when this returns truthy, so
+    an unconfigured install simply makes ordinary anonymous requests."""
     import os
 
-    return os.environ.get("LITREVIEW_CONTACT_EMAIL") or "example@example.com"
+    return (os.environ.get("LITREVIEW_CONTACT_EMAIL") or "").strip() or None
 
 
 def litrev_openalex_key() -> str | None:
@@ -394,8 +400,13 @@ def extract_dois(text: str) -> list[str]:
         d = m.split("</")[0]
         if d.count("<") != d.count(">"):
             d = d.split("<")[0]
-        d = re.sub(r"(?:\*\*|__|[_\]\*>`,;:])+$", "", d)
-        d = d.removesuffix(".")
+        # One end-anchored pass over ALL trailing punctuation, `.` included.
+        # The full stop used to be handled separately, *after* this — so
+        # `**10.x/y**.` stripped nothing here (no `.` in the class, hence no
+        # match at the end) and the later period-strip left the asterisks
+        # stranded. Folding `.` in makes the pass order-independent and lets
+        # mixed runs like `**.` or `.,` go in one bite.
+        d = re.sub(r"(?:\*\*|__|[_\]\*>`,;:.])+$", "", d)
         while d.endswith(")") and d.count("(") < d.count(")"):
             d = d[:-1]
         if len(d) > 8:
@@ -403,15 +414,14 @@ def extract_dois(text: str) -> list[str]:
     return sorted(out)
 
 
-def style_pass(draft: str, model: str | None = None) -> dict:
+def style_pass(draft: str) -> dict:
     """Deterministic prose lint. Returns {ok, issues:[{code,note}]} where each
     code is one of EMDASH/HONEST/PROCNOTE/PARENDOI/LONGHEAD/FLATSTRUCT.
 
     No LLM call by design: drafts routinely quote web/paper-retrieved
     third-party text, and a free-text fix hint the agent is instructed to
     apply would be an indirect-injection channel. The deterministic regex
-    codes are the load-bearing checks. `model` is accepted and ignored."""
-    del model
+    codes are the load-bearing checks."""
     issues: list[dict] = []
     w = len(draft.split()) or 1
     em = draft.count("—")

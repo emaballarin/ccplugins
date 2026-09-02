@@ -64,9 +64,13 @@ Write durable, transferable findings back to it; keep it concise.
 - **Parallelise embarrassingly-parallel work.** For a parameter sweep, a
   per-sample screen, or any fan-out over independent items, dispatch sub-agents
   with the `Task` tool rather than looping serially in one context.
-- **Use the companion skills.** Load `figure-style` before drawing any plot;
+- **Use the companion skills.** Load `figure-style` before drawing a figure that
+  ships (report, paper, export, or a file that will be kept) — not for EDA or
+  sanity-check plots, which you draw plainly;
   load `literature-review` or `pdf-explore` when literature or PDFs enter the
-  task. Invoke them through the skill system.
+  task. Invoke them through the skill system. If a workflow or a hard-won
+  library gotcha is worth keeping past this session, `/mf:author` (from the
+  `mindfunnel` plugin, when installed) is where skills get written.
 - **Plan only when the work earns it.** For a genuinely multi-stage pipeline —
   several analyses to sequence, long or expensive compute — outline the plan
   before running it. For a lookup or a single computation, just do the work.

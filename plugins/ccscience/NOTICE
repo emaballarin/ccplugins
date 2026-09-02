@@ -1,0 +1,73 @@
+ccsci (ccplugins) — research and scientific-computing skills for stock Claude Code.
+
+This plugin is a derivative work. Everything below is Apache-2.0, the same
+licence this plugin ships under; see LICENSE for the full text.
+
+  • Claude Science (Apache-2.0, © Anthropic PBC) — the five skills
+    `literature-review`, `pdf-explore`, `figure-style`, `figure-composer` and
+    `paper-narrative`, both their SKILL.md and their kernel.py.
+
+  • anthropics/skills (Apache-2.0, © Anthropic PBC) — the three skills
+    `canvas-design`, `doc-coauthoring` and `web-artifacts-builder`. These are
+    Anthropic's publicly published example skills, reached here through the
+    Claude Science catalogue that redistributes them.
+
+The derivations are not all of the same kind, and the difference matters to
+anyone reading the diff:
+
+  – `canvas-design`, `doc-coauthoring` and `web-artifacts-builder` are
+    reproduced essentially verbatim. Each gains one short added section
+    (a Claude Code rendering note, a tool-mapping note, a Node/runtime
+    requirements note) and nothing is removed. The bundled
+    `web-artifacts-builder/scripts/` — `init-artifact.sh`,
+    `bundle-artifact.sh`, `shadcn-components.tar.gz` — and every file under
+    `canvas-design/canvas-fonts/` are byte-for-byte the originals.
+
+  – `figure-style` is close to verbatim: the checklist is the original's, and
+    the kernel differs only in host-call replacement and static-checker
+    accommodations.
+
+  – `literature-review`, `pdf-explore`, `figure-composer` and `paper-narrative`
+    are substantial adaptations. Claude Science kernels run inside a host that
+    injects them and exposes an in-process model, artifact store and credential
+    vault through a `host.*` SDK. None of that exists in stock Claude Code, so
+    every such dependency was replaced: `host.llm` became prompt-builder
+    functions the agent feeds to itself or to `Task` subagents (with the
+    original's single blocking call re-shaped into an explicit
+    PREPARE → fan-out → ASSEMBLE protocol), `host.view_image` became
+    save-crop-then-`Read`, `save_artifacts` became `Write`, artifact ids became
+    filesystem paths, and stored credentials became environment variables.
+    `literature-review` was additionally generalised from a bio-leaning to an
+    all-STEM scope and extended with a resolve-published → dedupe → BibTeX
+    export path; `pdf-explore` was extended with deterministic table extraction
+    and embedded-figure extraction. These extensions are original work.
+
+  • The `computational-scientist` agent is a distillation, not a copy: it
+    restates working-style principles from the Claude Science OPERON agent
+    persona (produce artifacts, compute-don't-confabulate, read-the-docs-first,
+    ground capability claims in the environment, economy of steps, lab-notebook
+    register) in this marketplace's own words and against Claude Code's tools.
+    No text is reproduced from the original.
+
+  • The `deep-researcher` agent is original work and derives from no external
+    source.
+
+Font licensing — the typefaces under `skills/canvas-design/canvas-fonts/` are
+**not** Apache-2.0. Each is licensed under the SIL Open Font License by its
+respective author, and each ships beside its own OFL licence file in that
+directory. Those files are the authoritative terms for the fonts; nothing in
+this plugin's LICENSE or in this notice modifies them.
+
+Per-skill LICENSE.txt — upstream ships a copy of the bare Apache-2.0 licence
+text as `LICENSE.txt` inside `canvas-design/` and `web-artifacts-builder/`, and
+those skills' frontmatter reads `license: Complete terms in LICENSE.txt`. Both
+copies are the unmodified Apache-2.0 template carrying no copyright line. They
+are not reproduced here: this plugin ships one `LICENSE` at its root covering
+everything in it, and the two frontmatter fields were changed to the equivalent
+`license: Apache-2.0`. No licence grant is narrowed by this — the same terms
+apply to the same files, from one location instead of three.
+
+Original copyright notices remain with their respective authors. This derivative
+retains attribution as required by the Apache License, Version 2.0. No
+endorsement by the original authors is implied. This plugin is not affiliated
+with, and is not, Claude Science.
