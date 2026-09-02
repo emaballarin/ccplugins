@@ -1,4 +1,6 @@
-# Tier-1 static validation
+# Validation suite
+
+## Tier 1 — static
 
 Fast (<1s), free, dependency-light checks that keep the marketplace internally
 consistent. They read files only — no plugin code is imported or executed
@@ -32,6 +34,26 @@ CI runs the same command on every push and pull request
 | `test_referenced_paths.py` | `templates/…`, `references/…`, `scripts/…`, and `kernel.py` paths referenced inside a SKILL.md exist.                                                                                                                                                                                                                                                         |
 | `test_kernels.py`          | Each ccsci `kernel.py` parses and still defines every entrypoint its SKILL.md advertises (`KERNEL_API` manifest).                                                                                                                                                                                                                                             |
 | `test_evidence_grades.py`  | Every `tml` tier-catalogue item carries a grade, every _change_ tier item (A/B/D — C is protocol rules, exempt) also declares a quality exposure, both ladders match what `evidence-grades.md` documents, and every `A#`/`B#`/`C#`/`D#`/`P#` cross-reference resolves. Tier files are discovered on disk, so a new catalogue is covered as soon as it exists. |
+
+## Tier 2 — behavioural (`test_kernel_behaviour.py`)
+
+Tier 1 never executes plugin code. This one does, for the narrow set of ccsci
+kernel helpers that are **pure** — no network, no filesystem, no third-party
+import. Kernels defer every heavy import into a function body, so importing one
+still needs nothing beyond the stdlib and the tier stays as fast and as
+dependency-light as Tier 1. Anything needing matplotlib, pypdfium2, pdfplumber
+or a live service is out of scope here by construction.
+
+Covered: `finalize_outline` and `finalize_paper_brief` (the two invariants that
+guard model-returned JSON), `litrev_contact` (no address configured must mean no
+`mailto:` sent at all), `extract_dois`, `dedupe_records`, `pdf_guard_text` (a
+delimiter can never be forged out of untrusted page text), and the
+`grid_geom` / `compose_crops` panel geometry.
+
+This tier earns its keep: writing it surfaced a live defect in `extract_dois`
+(a markdown-bolded DOI immediately before a full stop kept its asterisks),
+inherited from the Claude Science original and fixed in ccsci 0.7.0. The
+regression case is parametrised in the file.
 
 ## When a check fails
 

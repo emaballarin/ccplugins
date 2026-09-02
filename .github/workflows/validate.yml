@@ -18,5 +18,5 @@ jobs:
                   python-version: "3.14"
             - name: Install test deps
               run: pip install -r tests/requirements.txt
-            - name: Run Tier-1 suite
+            - name: Run validation suite (Tier 1 static + Tier 2 behavioural)
               run: python -m pytest tests/ -q

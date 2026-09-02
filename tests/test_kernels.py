@@ -16,6 +16,7 @@ KERNEL_API: dict[str, set[str]] = {
         "compose_crops",
         "composite_review_task",
         "derive_outline_task",
+        "finalize_outline",
     },
     "figure-style": {
         "apply_figure_style",
@@ -39,6 +40,7 @@ KERNEL_API: dict[str, set[str]] = {
     },
     "paper-narrative": {
         "derive_paper_brief_task",
+        "finalize_paper_brief",
         "narrative_review_task",
         "paper_brief_schema",
         "narrative_review_schema",
