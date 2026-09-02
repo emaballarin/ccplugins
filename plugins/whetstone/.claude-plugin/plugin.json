@@ -1,6 +1,6 @@
 {
     "name": "ws",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "ws — whetstone: sharpen the thinking before the work. One user-only skill: /ws:grill runs a relentless, round-based interview over the design tree of a plan, decision or idea, asking the whole settled frontier at a time with a recommendation attached to every question, and closing only when nothing is left silently assumed. Silence never settles a question — an assumption keeps the work moving while the question stays open. Writes nothing, changes nothing, hands off to /tml:round, /tml:plan, /ar:start, /mf:author or implementation. No hooks, no MCP.",
     "author": {
         "name": "Emanuele Ballarin",

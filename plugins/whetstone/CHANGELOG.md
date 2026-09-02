@@ -3,6 +3,12 @@
 All notable changes to the `ws` (whetstone) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.1.2 — 2026-09-02
+
+Housekeeping — coordinated marketplace version alignment alongside the `mf`
+guidance update and the `ccsci` 0.7.0 release. Nothing in this plugin was
+edited. No skill logic changed.
+
 ## 0.1.1 — 2026-08-06
 
 Formatter pass over `README.md` and `skills/grill/SKILL.md` (table alignment and
