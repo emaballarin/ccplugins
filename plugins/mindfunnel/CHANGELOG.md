@@ -3,6 +3,28 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.3 — 2026-09-03
+
+`templates/AGENTS.md` gains two rules about automated rewriters, generalised from a
+session in which a formatter both introduced a latent defect and silently swallowed
+several edits.
+
+New:
+
+- **A tool that rewrites your files is making edits you did not review.** Formatters,
+  autofixers, import sorters and codemods change code after you reasoned about it, and
+  both failure modes are silent. The rewrite can introduce a defect no test can see —
+  whenever the language defers evaluation of what was rewritten (type annotations,
+  lazily imported names, an unexecuted branch), the broken construct sits inert until
+  something introspects it. And it invalidates every later edit that locates its target
+  by matching the old text. Run the rewriter and _then_ the tests; a green run from
+  before the rewrite says nothing about the file on disk.
+- **An edit that finds its target by matching text can silently do nothing.**
+  Search-and-replace, `sed` and patch application all report success when they match
+  nothing, so a no-op edit is indistinguishable from an applied one until something
+  downstream breaks. Assert the match, or confirm the change landed, rather than
+  reading the absence of an error as success.
+
 ## 0.7.2 — 2026-09-02
 
 `templates/AGENTS.md` gains four rules and absorbs a round of restructuring that

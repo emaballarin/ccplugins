@@ -252,6 +252,21 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   conflict, prefer local consistency within the file.
 - **Re-read a file before editing it** if a linter or formatter may have
   modified it since your last read.
+- **A tool that rewrites your files is making edits you did not review.**
+  Formatters, autofixers, import sorters and codemods all change code after you
+  reasoned about it, and both of their failure modes are silent. The rewrite can
+  introduce a defect the test suite cannot see: whenever the language defers
+  evaluation of whatever was rewritten — type annotations, lazily imported names,
+  a branch no test executes — a broken construct sits inert until something
+  introspects it. And the rewrite invalidates every later edit that locates its
+  target by matching the old text. Run the rewriter and _then_ the tests, in
+  that order; a green run from before the rewrite says nothing about the file now
+  on disk.
+- **An edit that finds its target by matching text can silently do nothing.**
+  Search-and-replace, `sed` and patch application all report success when they
+  match nothing and change nothing, so a no-op edit is indistinguishable from an
+  applied one until something downstream breaks. Assert the match, or confirm the
+  change landed, instead of reading the absence of an error as success.
 - **After multi-file refactors or sub-agent-delegated edits**, grep for
   residual unused imports, dead references (names of removed modules or
   symbols), and run the project's linter before declaring done.
