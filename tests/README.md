@@ -47,8 +47,11 @@ or a live service is out of scope here by construction.
 Covered: `finalize_outline` and `finalize_paper_brief` (the two invariants that
 guard model-returned JSON), `litrev_contact` (no address configured must mean no
 `mailto:` sent at all), `extract_dois`, `dedupe_records`, `pdf_guard_text` (a
-delimiter can never be forged out of untrusted page text), and the
-`grid_geom` / `compose_crops` panel geometry.
+delimiter can never be forged out of untrusted page text), the
+`grid_geom` / `compose_crops` panel geometry, and `paper-review`'s
+`export_notes.tag_three_column_tables` (every three-column table gets its
+fixed-width colgroup whatever attributes the renderer emits, and nothing else is
+touched).
 
 This tier earns its keep: writing it surfaced a live defect in `extract_dois`
 (a markdown-bolded DOI immediately before a full stop kept its asterisks),

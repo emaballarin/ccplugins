@@ -1,13 +1,15 @@
-"""Tier-2: the ccsci kernels' pure functions actually behave.
+"""Tier-2: the pure helpers in the ccsci skills actually behave.
 
 Tier-1 (`test_kernels.py`) parses kernels with `ast` and never runs them. This
 module does the opposite for the narrow set of helpers that are *pure* — no
 network, no filesystem, no third-party import — and pins the invariants that a
 reasonable-looking edit could silently break.
 
-Kernels defer every heavy import into a function body, so importing one costs
+Kernels defer every heavy import into a function body, and the skill scripts
+covered here import only the stdlib at module level, so importing either costs
 nothing and needs no skill dependency installed. Anything requiring matplotlib,
-pypdfium2, pdfplumber or the network stays out of this file by construction.
+pypdfium2, pdfplumber, pandoc or the network stays out of this file by
+construction.
 """
 
 import importlib.util
@@ -17,10 +19,11 @@ import _util as u
 import pytest
 
 
-def _kernel(skill: str):
-    """Import a ccsci kernel by path, as SKILL.md instructs the agent to."""
-    path = u.PLUGINS_DIR / "ccscience" / "skills" / skill / "kernel.py"
-    spec = importlib.util.spec_from_file_location(f"ccsci_{skill.replace('-', '_')}", path)
+def _kernel(skill: str, file: str = "kernel.py"):
+    """Import a ccsci skill module by path, as SKILL.md instructs the agent to."""
+    path = u.PLUGINS_DIR / "ccscience" / "skills" / skill / file
+    name = f"ccsci_{skill.replace('-', '_')}_{path.stem}"
+    spec = importlib.util.spec_from_file_location(name, path)
     assert spec is not None and spec.loader is not None, f"cannot load {u.rel(path)}"
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -31,6 +34,7 @@ litrev = _kernel("literature-review")
 pdfx = _kernel("pdf-explore")
 figcomp = _kernel("figure-composer")
 papernar = _kernel("paper-narrative")
+export = _kernel("paper-review", "scripts/export_notes.py")
 
 
 # ── figure-composer.finalize_outline ────────────────────────────────────────
@@ -313,3 +317,59 @@ def test_grid_geom_row_heights_track_the_outline_ratio():
     rowh = figcomp.grid_geom(_OUTLINE)[3]
     assert rowh[1] > rowh[0], "row_heights_mm [40, 60] must yield a taller second row"
     assert rowh[1] / rowh[0] == pytest.approx(60 / 40, rel=0.02)
+
+
+# ── paper-review scripts/export_notes.tag_three_column_tables ───────────────
+# The invariant: every three-column table (the skill's Block/Words/Content
+# tables) gets the fixed-width colgroup, whatever attributes the renderer puts
+# on its tags — and nothing else is touched. A matcher that silently matches
+# nothing degrades the PDF without any error, so each shape is pinned here.
+
+
+def _table(n_cols: int, table_attrs: str = "", tr_attrs: str = "") -> str:
+    head = "".join(f"<th>h{i}</th>" for i in range(n_cols))
+    cells = "".join(f"<td>c{i}</td>" for i in range(n_cols))
+    return f"<table{table_attrs}><thead><tr{tr_attrs}>{head}</tr></thead><tbody><tr>{cells}</tr></tbody></table>"
+
+
+def _is_tagged(html: str) -> bool:
+    return 'class="c3"' in html and "<colgroup><col><col><col></colgroup>" in html
+
+
+def test_export_tags_a_plain_three_column_table():
+    out = export.tag_three_column_tables(_table(3))
+    assert _is_tagged(out)
+    assert out.count("<colgroup>") == 1
+
+
+def test_export_tolerates_attributes_on_table_and_row():
+    """Older pandoc emits `<tr class="header">`; a literal-tag matcher missed it."""
+    out = export.tag_three_column_tables(_table(3, table_attrs=' style="x"', tr_attrs=' class="header"'))
+    assert 'style="x"' in out and 'class="c3"' in out
+    assert "<colgroup><col><col><col></colgroup>" in out
+
+
+def test_export_merges_into_an_existing_class():
+    out = export.tag_three_column_tables(_table(3, table_attrs=' class="wide"'))
+    assert 'class="wide c3"' in out
+    assert out.count("class=") == 1, "a second class attribute would be ignored by the renderer"
+
+
+@pytest.mark.parametrize("n_cols", [2, 4, 6])
+def test_export_leaves_other_widths_alone(n_cols):
+    html = _table(n_cols)
+    assert export.tag_three_column_tables(html) == html
+
+
+def test_export_leaves_a_renderer_colgroup_alone():
+    """pandoc's `markdown` reader emits inline-width colgroups; those win anyway."""
+    html = _table(3).replace("<thead>", '<colgroup><col style="width: 10%" /></colgroup><thead>', 1)
+    assert export.tag_three_column_tables(html) == html
+
+
+def test_export_handles_several_tables_and_is_idempotent():
+    body = f"<p>a</p>{_table(2)}<p>b</p>{_table(3)}<p>c</p>"
+    once = export.tag_three_column_tables(body)
+    assert once.count("<colgroup>") == 1, "only the three-column table is tagged"
+    assert "<p>a</p>" in once and "<p>c</p>" in once, "text between tables must survive"
+    assert export.tag_three_column_tables(once) == once
