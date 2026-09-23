@@ -3,6 +3,12 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.4 — 2026-09-23
+
+Housekeeping — coordinated marketplace version alignment alongside the `ccsci`
+0.8.0 release (the new `paper-review` skill). Nothing in this plugin was edited.
+No skill logic changed.
+
 ## 0.7.3 — 2026-09-03
 
 `templates/AGENTS.md` gains two rules about automated rewriters, generalised from a

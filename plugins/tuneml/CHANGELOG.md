@@ -3,6 +3,12 @@
 All notable changes to the `tml` (tuneml) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.1.6 — 2026-09-23
+
+Housekeeping — coordinated marketplace version alignment alongside the `ccsci`
+0.8.0 release (the new `paper-review` skill). Nothing in this plugin was edited.
+No skill logic changed.
+
 ## 0.1.5 — 2026-09-02
 
 Housekeeping — coordinated marketplace version alignment alongside the `mf`
