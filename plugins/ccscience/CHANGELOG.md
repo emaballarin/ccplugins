@@ -3,6 +3,49 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.8.0 — 2026-09-23
+
+### Added — `paper-review`, a second reader for a human-written review
+
+A user-invoked skill (`/ccsci:paper-review`) that captures a peer-review
+workflow in which the reviewer writes the review and Claude supplies what a
+sequential reader lacks: the whole paper in view at once. The phases are fixed —
+frame (venue, rubric with its boundary words, rebuttal, form fields) → read the
+whole paper → test the reviewer's impression against the text → decompose into
+an arc line, a claim ledger, line-anchored findings, a missing list and the one
+decisive experiment → argue both rubric boundaries for the score → constrain
+and error-check the summary, title and review, in that order. Claude drafts
+review prose only on "draft it".
+
+Two invariants carry the weight. Every finding is anchored by a line reference
+**and** a quoted phrase, because extraction line numbers drift and the phrase is
+what finds the passage again. Literature enters the ledger only after its
+primary source has been checked; an item that cannot be checked is tagged
+`unverified`, kept under its own heading through every recap, and flagged as
+substantive by every error check until it is checked (then retagged `derived`,
+citing the source), dropped, or kept by the reviewer's stated decision — in
+which case the confidence note names it. An unchecked attribution in a signed
+review is the reviewer's liability. Venue statistics get the same discipline:
+acceptance rates and score distributions are not calibration inputs, are never
+volunteered, and when asked for arrive with their source and year or not at
+all.
+
+`references/anchors.md` carries the ledger and anchor templates with the tag
+vocabulary (`evidenced` · `asserted` · `by construction` · `known from` ·
+`announced, not reported` · `confounded`; `stated` · `derived` · `inferred` ·
+`unverified`). `references/deliverables.md` carries the per-field constraints,
+the review block tables by score band with word budgets, the don't-address
+defaults, the error-check protocol (substantive first, wording second, final
+pass errors only) and the context-dump block. `scripts/export_notes.py`
+renders the notes to an A4 PDF for offline reading (Markdown through `pandoc`
+or the `markdown` package, PDF through `wkhtmltopdf` or `weasyprint`); optional,
+on request.
+
+The skill ships **user-invoked** (`disable-model-invocation: true`): it changes
+how the conversation runs for the whole session, and a review must not start
+because a PDF was mentioned. Every example inside it is synthetic — real
+submissions are confidential.
+
 ## 0.7.0 — 2026-09-02
 
 ### Fixed — no more placeholder address in the Crossref polite pool

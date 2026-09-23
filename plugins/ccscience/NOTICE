@@ -52,6 +52,9 @@ anyone reading the diff:
   • The `deep-researcher` agent is original work and derives from no external
     source.
 
+  • The `paper-review` skill is original work and derives from no external
+    source. Every example in it is synthetic.
+
 Font licensing — the typefaces under `skills/canvas-design/canvas-fonts/` are
 **not** Apache-2.0. Each is licensed under the SIL Open Font License by its
 respective author, and each ships beside its own OFL licence file in that

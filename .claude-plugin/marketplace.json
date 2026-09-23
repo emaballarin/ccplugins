@@ -17,9 +17,18 @@
         {
             "name": "ccsci",
             "source": "./plugins/ccscience",
-            "description": "Research & scientific-computing skills adapted from Claude Science for stock Claude Code: literature-review, pdf-explore, figure-style, figure-composer, paper-narrative, canvas-design, doc-coauthoring, web-artifacts-builder, plus computational-scientist and deep-researcher subagents.",
+            "description": "Research & scientific-computing skills adapted from Claude Science for stock Claude Code: literature-review, pdf-explore, figure-style, figure-composer, paper-narrative, canvas-design, doc-coauthoring, web-artifacts-builder, paper-review, plus computational-scientist and deep-researcher subagents.",
             "category": "productivity",
-            "keywords": ["science", "research", "literature-review", "bibtex", "pdf", "figures", "scientific-computing"]
+            "keywords": [
+                "science",
+                "research",
+                "literature-review",
+                "bibtex",
+                "pdf",
+                "figures",
+                "scientific-computing",
+                "peer-review"
+            ]
         },
         {
             "name": "ar",
