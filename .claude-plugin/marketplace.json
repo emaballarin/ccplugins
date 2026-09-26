@@ -66,9 +66,21 @@
         {
             "name": "ws",
             "source": "./plugins/whetstone",
-            "description": "whetstone: sharpen the thinking before the work. One user-only skill — /ws:grill runs a relentless, round-based interview over the design tree of a plan or decision, asking the whole settled frontier at a time with a recommendation on every question. Silence never settles anything; an assumption keeps the work moving while the question stays open. Read-only, stateless, hands off to /tml:round, /tml:plan, /ar:start, /mf:author or implementation.",
+            "description": "whetstone: sharpen the thinking before the work, and the work before it lands. /ws:grill (user-only) interviews a plan or decision in rounds over its design tree until nothing is silently assumed; /ws:test-gate (model-invoked) holds every new test to a shared value bar and extends rather than restructures existing ones; /ws:test-audit (user-only) audits and consolidates an existing suite, evidence first; /ws:deslop (user-only) strips AI slop from a diff before /code-review. No hooks, no MCP.",
             "category": "productivity",
-            "keywords": ["whetstone", "grilling", "interview", "design", "planning", "requirements", "decision"]
+            "keywords": [
+                "whetstone",
+                "grilling",
+                "interview",
+                "design",
+                "planning",
+                "requirements",
+                "decision",
+                "testing",
+                "test-quality",
+                "code-quality",
+                "cleanup"
+            ]
         }
     ]
 }

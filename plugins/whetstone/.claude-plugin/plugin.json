@@ -1,7 +1,7 @@
 {
     "name": "ws",
-    "version": "0.1.3",
-    "description": "ws — whetstone: sharpen the thinking before the work. One user-only skill: /ws:grill runs a relentless, round-based interview over the design tree of a plan, decision or idea, asking the whole settled frontier at a time with a recommendation attached to every question, and closing only when nothing is left silently assumed. Silence never settles a question — an assumption keeps the work moving while the question stays open. Writes nothing, changes nothing, hands off to /tml:round, /tml:plan, /ar:start, /mf:author or implementation. No hooks, no MCP.",
+    "version": "0.2.0",
+    "description": "ws — whetstone: sharpen the thinking before the work, and the work before it lands. Four skills. /ws:grill (user-only) runs a relentless, round-based interview over the design tree of a plan, decision or idea, asking the whole settled frontier at a time with a recommendation attached to every question; silence never settles a question. /ws:test-gate (model-invoked) gates every test as it is written — four questions, a shared junk-pattern check, red-before-green for regressions — extends existing tests rather than restructuring them, and notes the concerns it finds instead of fixing them. /ws:test-audit (user-only) audits and consolidates an existing suite, evidence first and one approved batch at a time, with a campaign mode for a whole subsystem. /ws:deslop (user-only) is a behaviour-preserving cleanup pass that strips AI slop from a diff before /code-review. No hooks, no MCP.",
     "author": {
         "name": "Emanuele Ballarin",
         "email": "emanuele@ballarin.cc"
@@ -9,5 +9,17 @@
     "homepage": "https://github.com/emaballarin/ccplugins/tree/main/plugins/whetstone",
     "repository": "https://github.com/emaballarin/ccplugins",
     "license": "MIT",
-    "keywords": ["whetstone", "grilling", "interview", "design", "planning", "requirements", "decision"]
+    "keywords": [
+        "whetstone",
+        "grilling",
+        "interview",
+        "design",
+        "planning",
+        "requirements",
+        "decision",
+        "testing",
+        "test-quality",
+        "code-quality",
+        "cleanup"
+    ]
 }
