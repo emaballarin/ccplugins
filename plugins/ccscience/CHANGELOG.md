@@ -3,6 +3,12 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.8.1 — 2026-09-26
+
+Housekeeping — coordinated marketplace version alignment alongside the `ws`
+0.2.0 release (the new `test-gate`, `test-audit` and `deslop` skills). Nothing
+in this plugin was edited. No skill logic changed.
+
 ## 0.8.0 — 2026-09-23
 
 ### Added — `paper-review`, a second reader for a human-written review

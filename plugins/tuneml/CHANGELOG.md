@@ -3,6 +3,12 @@
 All notable changes to the `tml` (tuneml) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.1.7 — 2026-09-26
+
+Housekeeping — coordinated marketplace version alignment alongside the `ws`
+0.2.0 release (the new `test-gate`, `test-audit` and `deslop` skills). Nothing
+in this plugin was edited. No skill logic changed.
+
 ## 0.1.6 — 2026-09-23
 
 Housekeeping — coordinated marketplace version alignment alongside the `ccsci`
