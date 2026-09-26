@@ -267,6 +267,12 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   match nothing and change nothing, so a no-op edit is indistinguishable from an
   applied one until something downstream breaks. Assert the match, or confirm the
   change landed, instead of reading the absence of an error as success.
+- **Tests ride along additively.** Adding tests leaves every existing
+  test running exactly what it ran before: new tests, rows, fixtures and
+  defaulted parameters, not restructured shared setup. A bundled test
+  refactor hides which change broke and turns discarding an experiment
+  into an un-refactoring. Report the duplication; consolidate later, on
+  purpose.
 - **After multi-file refactors or sub-agent-delegated edits**, grep for
   residual unused imports, dead references (names of removed modules or
   symbols), and run the project's linter before declaring done.

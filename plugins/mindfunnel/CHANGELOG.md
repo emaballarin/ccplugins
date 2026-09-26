@@ -3,6 +3,22 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.6 — 2026-09-26
+
+`templates/AGENTS.md` gains one rule under "Handling existing code", generalised
+from the `/ws:test-gate` design in `ws` 0.2.0.
+
+New:
+
+- **Tests ride along additively.** Adding tests leaves every existing test
+  running exactly what it ran before: new tests, rows, fixtures and defaulted
+  parameters, not restructured shared setup. A bundled test refactor hides which
+  change broke and turns discarding an experiment into an un-refactoring. Report
+  the duplication; consolidate later, on purpose.
+
+Existing machines keep their current baseline — `/mf:setup` never overwrites
+`~/.mindfunnel/AGENTS.md` — so copy the bullet across by hand to pick it up.
+
 ## 0.7.5 — 2026-09-26
 
 Housekeeping — coordinated marketplace version alignment alongside the `ws`
