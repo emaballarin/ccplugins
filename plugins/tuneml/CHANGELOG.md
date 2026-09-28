@@ -3,6 +3,12 @@
 All notable changes to the `tml` (tuneml) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.1.8 — 2026-09-28
+
+Housekeeping — coordinated marketplace version alignment alongside the `ccsci`
+0.9.0 release (the new `bib-audit` skill). Nothing in this plugin was edited.
+No skill logic changed.
+
 ## 0.1.7 — 2026-09-26
 
 Housekeeping — coordinated marketplace version alignment alongside the `ws`

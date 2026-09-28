@@ -1,0 +1,6 @@
+# Fallback journal names for bib-audit, used only when OpenAlex (by ISSN, then by
+# name) does not know a journal. Columns: alias as written in bibliographies, name.
+# Matching folds case, accents and punctuation.
+alias	name
+Zh. Eksp. Teor. Fiz.	Zhurnal Eksperimental'noi i Teoreticheskoi Fiziki
+Phys. Z. Sowjetunion	Physikalische Zeitschrift der Sowjetunion

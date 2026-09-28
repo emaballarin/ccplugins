@@ -3,6 +3,155 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.9.0 — 2026-09-28
+
+### Added — `bib-audit`, an end-to-end audit of an existing `.bib`
+
+A model-invoked skill (also `/ccsci:bib-audit`) whose kernel, `audit(bib, tex)`,
+verifies every entry, corrects it from the record it matches, replaces arXiv
+preprints with their version of record, merges duplicates losslessly, deletes
+garbage, strips non-citation fields (DOIs, abstracts, keywords, tool
+bookkeeping, and URLs except where the entry is itself a website, repository or
+piece of software), rekeys to `<Surname><Year><FirstContentWord>`, runs the
+house `bibtex-tidy` command and validates the result with `bibtex` and
+`biber --tool`. What no source settles lands in a review queue; the agent
+researches it and records answers with `resolve`, which the next `audit`
+applies. `rewrite_tex` migrates `\cite{}` keys through the emitted key map.
+
+- **One routed lookup per entry, batched where the API allows**, instead of
+  asking every database about every entry: Crossref by DOI (20 per request),
+  arXiv metadata through DataCite (25 per request: latest version, comment,
+  published DOI, category), the NeurIPS / PMLR / JMLR proceedings indices and
+  the ICLR / NeurIPS / ICML conference-site paper lists (one download per
+  year), Crossref bibliographic search, DataCite title search, and OpenReview
+  title search last — it allows 20 requests a minute (5 on its older API). The arXiv API itself is asked only for pinned versions and version
+  histories. Proceedings indices and past arXiv versions are cached machine-wide
+  for good.
+- **Never stalled by one slow source.** Lookups for different entries run on a
+  thread pool, with request starts still spaced per host. A host that fails
+  three attempts in a row is dropped for the rest of the run; the entries it
+  would have settled come back `unchecked` and are retried by the next run.
+- **Re-runs scale with edits, not with the bibliography.** Each settled entry is
+  cached under a hash of its citation content (independent of key, layout,
+  escaping, bracing and quote style); a second run over the audited 437-entry
+  bibliography served 415 of its 428 entries from the cache, looked up only the
+  13 still queued, and rewrote nothing.
+- **Identity is strict or soft.** Strict: normalised titles and first authors
+  agree. Soft (applied, listed for a glance): a dropped subtitle, a typo or
+  spelling variant, a year off by one, a shuffled author order. A DOI or arXiv id
+  that resolves to another work is an identity failure, corrected from a title
+  search or queued; so is a journal slot (volume and first page, or JMLR paper
+  number) that another work occupies — the signature of fabricated metadata.
+- **Only the entry's own publication replaces it.** A reprint in an edited
+  volume, a later edition, or a review of a book never does (kind and year
+  guards), and an entry that names a journal or proceedings is never
+  downgraded to its preprint: when no index confirms the venue it is kept as
+  written and marked `unconfirmed`.
+- **Versions.** A pinned arXiv version is cited exactly; otherwise the latest
+  version's metadata with the year of first submission, unless title or authors
+  changed across versions. A journal extension of a conference paper is reported,
+  never swapped in. OpenReview counts as published only for an accepted paper's
+  venue id (an allowlist): submissions under review stay preprints.
+- **Venues** from `references/venues.tsv`: the publication's series name without
+  edition or year, else `Proceedings of the <conference>`.
+- **Outputs.** With `.tex` files the `.bib` is rekeyed in place and the citations
+  are migrated, with a hard check that no previously defined key goes
+  undefined. Without, the `.bib` keeps its old keys as a drop-in, beside
+  `<stem>.rekeyed.bib` and `<stem>.keymap.tsv`. State lives under
+  `.ccsci/bibaudit/<bib path>/`: cache, overrides, findings, per-run snapshots,
+  and an appended `changes.md` recording every field change with its source.
+
+- **Optional credentials, degrading when refused.** `S2_API_KEY` (Semantic
+  Scholar), `OPENALEX_API_KEY`, and `OPENREVIEW_USERNAME` / `OPENREVIEW_PASSWORD`
+  (or `OPENREVIEW_TOKEN` for two-factor accounts) are read from the environment.
+  Semantic Scholar is asked only with a key (keyless calls answer 429); every
+  other source is asked without one. A refused credential is dropped for the
+  run, noted in the report, and the request repeated anonymously.
+- **DBLP through SPARQL, Semantic Scholar by batch, OpenAlex for names and
+  slots.** DBLP issues no API keys and walls dblp.org behind a bot check (probed
+  2026-09-27), but `sparql.dblp.org` is open: title search there returns venue,
+  year, pages, DOI and ordered authors (it finds the ICLR 2014 publication of an
+  arXiv-only entry). Semantic Scholar's record of a preprint names its published
+  version. OpenAlex supplies bylines, a journal's name by ISSN, and which work
+  sits at a journal's volume and first page.
+- **Names as printed on the paper.** The published byline is the reference's.
+  Other bylines of the same work (publisher, proceedings and arXiv records;
+  never author-registry profiles) only complete it: an initial or abbreviation
+  to the name it starts ("G." → "Giovanni", "JF" → "John F."), a name or
+  surname to its accented spelling ("Jose" → "José", "Buzsaki" → "Buzsáki"),
+  and only where the byline name fits exactly one co-author — the Kendalls,
+  Mosers and Leutgebs stay apart. Two written names are two names: "Ben" and
+  "Benedict", "Nati" and "Nathan" are never merged. A byline printed surname
+  first throughout ("Cavazzoni S., Razzoli L.") is read that way; one such name
+  among "First Last" ones is a one-letter surname ("Weinan E."). Records of a
+  discussion, reply, erratum or review of the work (Crossref's "[Title]:
+  Comment") are neither matched nor used as name evidence. Never reordered,
+  never inferred.
+  Where bylines disagree with the entry beyond completion, the entry is kept and
+  the author listed under `name_conflicts` for review — on every run until
+  resolved, since the verdict is cached with the entry.
+- **Journal names from one authority.** A journal article's venue is the
+  container title Crossref's latest articles of that journal carry — the
+  publisher's current name, by the entry's ISSN, else by the ISSN OpenAlex finds
+  for the name; `references/journals.tsv` (alias → name) is consulted only when
+  Crossref has no answer. The journal-level titles of Crossref and OpenAlex are
+  catalogue forms ("Physical review. E", "Machine Learning Science and
+  Technology") and are not used. The publisher's styling is taken as it is
+  ("PLOS One", "Journal of Neuroscience"); a journal renamed since the article
+  appeared keeps the name it appeared under (McCulloch and Pitts stay in "The
+  Bulletin of Mathematical Biophysics", not its successor "Bulletin of
+  Mathematical Biology"). When Crossref is unreachable the entry is not cached,
+  and the next run completes it.
+- **Opt-in whole-bibliography passes.** `audit(..., rekey=True)` regenerates
+  every key (otherwise a key assigned by an earlier run is kept, recorded in
+  `keys.json`, so re-runs never churn citations); `harmonise=True` rewrites each
+  author to the unique fullest form the bibliography itself uses for them.
+- **Acronyms keep their capitals.** Words with an inner capital or digit
+  (`GANs`, `U-Net`, `ResNet50`) are braced in titles so no style lowercases them.
+- **Preprints on other servers** (bioRxiv, SSRN, …) are verified from Crossref's
+  posted-content records, and upgraded through their `is-preprint-of` link.
+- **Fabricated-slot check** covers JMLR and PMLR volumes and, through OpenAlex
+  and Crossref, journals; NeurIPS, ICLR and TMLR list no pages to check against.
+- **Safe to re-run.** Cached verdicts carry the rules version and are discarded
+  when the rules change. Two backups at most: the first original and the state
+  before the latest run (`orig.bib` / `prev.bib` in the state directory,
+  `<file>.tex.orig.bak` / `.prev.bak` beside rewritten `.tex` files). The
+  machine-wide HTTP cache (`$XDG_CACHE_HOME/ccsci/bibaudit/http`) is pruned by
+  age and size, 180 days and 200 MB by default (`BIBAUDIT_CACHE_MAX_AGE_DAYS`,
+  `BIBAUDIT_CACHE_MAX_MB`).
+- **Journal spellings compared by word, abbreviation, contraction and acronym**
+  ("Proc. Natl. Acad. Sci.", "PNAS" and "Proceedings of the National Academy of
+  Sciences" agree; "Physical Review A" and "E" do not) — for dedupe, the slot
+  check and the journal authority alike.
+- **Names BibTeX misreads are flagged** under `name_conflicts`, on every run
+  until fixed: a middle comma part that is no suffix (Jr., Sr., a Roman numeral,
+  an ordinal) or a third comma — as a rule a missing "and" ("Devries, Paul L.
+  Hasburn, Javier E." is one person with the suffix "Paul L. Hasburn"). Which
+  reading was meant is written nowhere, so none is repaired.
+- **Validation in the document's own style**: bibtex compiles every entry with
+  the style the `.tex` files name in `\bibliographystyle`, or with
+  `audit(..., style=…)` (a name or a `.bst` path); plain otherwise. On the
+  437-entry audit plain, plainnat and alpha give 3 warnings, ieeetr 2 (it does
+  not sort), IEEEtran 3 others (it also rejects "Third edition" as an edition).
+- **A missing `.tex` path or `style` stops the audit before anything is
+  written**, so a mistyped path cannot leave the `.bib` rekeyed and the
+  citations unmigrated.
+- **Drift check reads LaTeX text symbols**: `\textregistered{}` and `®`
+  compare equal, so `bibtex-tidy`'s rewrite of one into the other is not
+  reported as a changed field.
+
+The key scheme, the all-caps repair and the venue conventions carry over from an
+earlier hand-run audit of a 437-entry bibliography; on that audit's accepted
+419-entry output the key generator agrees on all 419 keys. Run on the same
+original, the skill yields 421 entries, 407 of whose keys match the hand-run
+result (the rest: publications that appeared since, name forms as the records
+spell them, one title-changed preprint re-dated by the version rule), completes
+12 author names from the papers' own bylines, lists no name conflict, and leaves
+15 entries for review — among them both fabricated journal slots the hand-run
+audit found — with 3 bibtex warnings, all genuine gaps. A 73-entry thesis with
+34 `.tex` files, rekeyed in place, recompiles with no undefined citation and no
+bibtex warning; a second run changes no key and rewrites no file.
+
 ## 0.8.1 — 2026-09-26
 
 Housekeeping — coordinated marketplace version alignment alongside the `ws`

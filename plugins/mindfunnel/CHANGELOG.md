@@ -3,6 +3,12 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.7 — 2026-09-28
+
+Housekeeping — coordinated marketplace version alignment alongside the `ccsci`
+0.9.0 release (the new `bib-audit` skill). Nothing in this plugin was edited.
+No skill logic changed.
+
 ## 0.7.6 — 2026-09-26
 
 `templates/AGENTS.md` gains one rule under "Handling existing code", generalised

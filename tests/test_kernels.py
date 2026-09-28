@@ -10,6 +10,11 @@ import pytest
 
 # skill name -> public entrypoints the SKILL.md instructs the agent to call
 KERNEL_API: dict[str, set[str]] = {
+    "bib-audit": {
+        "audit",
+        "resolve",
+        "rewrite_tex",
+    },
     "figure-composer": {
         "panel_task",
         "compose_figure",

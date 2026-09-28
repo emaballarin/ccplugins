@@ -7,3 +7,6 @@ SOUL.md
 __pycache__/
 .pytest_cache/
 .ruff_cache/
+
+# /ws:test-gate and /ws:test-audit keep their working notes in ./.ws/.
+.ws/

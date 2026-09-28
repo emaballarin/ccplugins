@@ -1,0 +1,35 @@
+# Canonical venues for bib-audit. Columns: acronym, entry type, canonical name, pattern, lookup adapter.
+# The name is the publication's own series title with edition and year removed; where the publication
+# has no series title of its own it is 'Proceedings of the <conference>'. 'A|<YYYY:B' means B before YYYY.
+# Patterns are Python regexes searched in the folded, lower-case, punctuation-free venue text. Order
+# matters: the first match wins, so specific rows precede general ones. Workshops never match.
+acronym	type	canonical	pattern	adapter
+NeurIPS	inproceedings	Advances in Neural Information Processing Systems|<2022:Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks	(?:neural information processing systems|neurips|nips)\b.*datasets and benchmarks	neurips
+NeurIPS	inproceedings	Advances in Neural Information Processing Systems	\bneurips\b|\bnips\b|neural information processing systems	neurips
+ICML	inproceedings	Proceedings of the International Conference on Machine Learning	\bicml\b|international conference on machine learning(?! and\b| applications)	pmlr:ICML
+ICLR	inproceedings	Proceedings of the International Conference on Learning Representations	\biclr\b|international conference (?:on|for) learning representations	iclr
+COLT	inproceedings	Proceedings of the Conference on Learning Theory	\bcolt\b|conference on (?:computational )?learning theory	pmlr:COLT
+ALT	inproceedings	Proceedings of the International Conference on Algorithmic Learning Theory	algorithmic learning theory	pmlr:ALT
+AISTATS	inproceedings	Proceedings of the International Conference on Artificial Intelligence and Statistics	\baistats\b|artificial intelligence and statistics	pmlr:AISTATS
+UAI	inproceedings	Proceedings of the Conference on Uncertainty in Artificial Intelligence	\buai\b|uncertainty in artificial intelligence	pmlr:UAI
+CoRL	inproceedings	Proceedings of the Conference on Robot Learning	\bcorl\b|conference on robot learning	pmlr:CORL
+L4DC	inproceedings	Proceedings of the Conference on Learning for Dynamics and Control	\bl4dc\b|learning for dynamics and control	pmlr:L4DC
+TMLR	article	Transactions on Machine Learning Research	\btmlr\b|transactions on machine learning research	openreview
+JMLR	article	Journal of Machine Learning Research	\bjmlr\b|journal of machine learning research|\bj mach learn res\b	jmlr
+MLSys	inproceedings	Proceedings of Machine Learning and Systems	\bmlsys\b|machine learning and systems	
+CVPR	inproceedings	Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition|<2018:Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition	\bcvpr\b|conference on computer vision and pattern recognition	
+ICCV	inproceedings	Proceedings of the IEEE/CVF International Conference on Computer Vision|<2019:Proceedings of the IEEE International Conference on Computer Vision	\biccv\b|international conference on computer vision(?! theory| and)	
+ECCV	inproceedings	Proceedings of the European Conference on Computer Vision	\beccv\b|european conference on computer vision	
+WACV	inproceedings	Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision	\bwacv\b|winter conference on applications of computer vision	
+BMVC	inproceedings	Proceedings of the British Machine Vision Conference	\bbmvc\b|british machine vision conference	
+AAAI	article	Proceedings of the AAAI Conference on Artificial Intelligence	\baaai\b(?! spring| fall| symposium| press)|aaai conference on artificial intelligence	
+IJCAI	inproceedings	Proceedings of the International Joint Conference on Artificial Intelligence	\bijcai\b|international joint conference on artificial intelligence	
+TACL	article	Transactions of the Association for Computational Linguistics	\btacl\b|transactions of the association for computational linguistics	
+Findings	inproceedings	Findings of the Association for Computational Linguistics	findings of the association for computational linguistics|\bfindings of (?:acl|emnlp|naacl|eacl)\b	
+NAACL	inproceedings	Proceedings of the Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies	\bnaacl\b|north american chapter of the association for computational linguistics	
+EACL	inproceedings	Proceedings of the Conference of the European Chapter of the Association for Computational Linguistics	\beacl\b|european chapter of the association for computational linguistics	
+EMNLP	inproceedings	Proceedings of the Conference on Empirical Methods in Natural Language Processing	\bemnlp\b|empirical methods in natural language processing	
+ACL	inproceedings	Proceedings of the Annual Meeting of the Association for Computational Linguistics	\bacl\b|annual meeting of the association for computational linguistics	
+KDD	inproceedings	Proceedings of the ACM SIGKDD International Conference on Knowledge Discovery and Data Mining	\bkdd\b|knowledge discovery and data mining	
+ICASSP	inproceedings	Proceedings of the IEEE International Conference on Acoustics, Speech and Signal Processing	\bicassp\b|international conference on acoustics speech and signal processing	
+CLiC-it	inproceedings	Proceedings of the Italian Conference on Computational Linguistics	\bclic it\b|italian conference on computational linguistics	
