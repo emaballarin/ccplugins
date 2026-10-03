@@ -38,21 +38,21 @@ them silently.
 
 ### 1. Establish the regime — before designing anything
 
-`references/regime.md`. Three questions: how many trials can run concurrently,
+`${CLAUDE_PLUGIN_ROOT}/references/regime.md`. Three questions: how many trials can run concurrently,
 where do they run, and does this plugin get to see the results directly. The
 answers change the design, not just its execution. Do not guess the trial
 capacity from device count.
 
 ### 2. Scope the goal
 
-One sentence. `references/study-design.md` §1. Then state plainly whether this
+One sentence. `${CLAUDE_PLUGIN_ROOT}/references/study-design.md` §1. Then state plainly whether this
 round is **exploration** (insight — the default and the majority) or
 **exploitation** (a best configuration). They use different samplers and have
 different success criteria.
 
 ### 3. Assign roles
 
-`references/hyperparameter-roles.md`. In order:
+`${CLAUDE_PLUGIN_ROOT}/references/hyperparameter-roles.md`. In order:
 
 1. Name the **scientific** hyperparameters — usually one.
 2. Everything else starts **nuisance**.
@@ -65,19 +65,19 @@ scientific values. They are why one study per scientific setting is the default
 structure, and they carry a specific trap: two conditional hyperparameters
 sharing a name are not the same hyperparameter and must not share a search space.
 The learning rate under two different optimisers is the standard example; the
-beta-symbol collisions in `references/optimisers.md` §1.2 are the same failure in
+beta-symbol collisions in `${CLAUDE_PLUGIN_ROOT}/references/optimisers.md` §1.2 are the same failure in
 a different place.
 
 ### 4. Build the studies
 
-`references/study-design.md` §2–§3. Default: one study per scientific setting,
+`${CLAUDE_PLUGIN_ROOT}/references/study-design.md` §2–§3. Default: one study per scientific setting,
 each tuning over the nuisance set. Search spaces log-scaled for anything
 scale-like. Bounds are hypotheses and will be checked afterwards.
 
-Sampler follows the phase and the regime (`references/regime.md` §2) — quasi-random
+Sampler follows the phase and the regime (`${CLAUDE_PLUGIN_ROOT}/references/regime.md` §2) — quasi-random
 for exploration, Bayesian/TPE for exploitation, grid only in one or two
 dimensions. If the operator uses Optuna, name the concrete sampler
-(`references/regime.md` §2.1).
+(`${CLAUDE_PLUGIN_ROOT}/references/regime.md` §2.1).
 
 ### 5. Allocate the budget across the three desiderata
 
@@ -89,7 +89,7 @@ is not.
 
 ### 6. Emit the bundle
 
-Write `./.tml/rounds/NNN/` from `templates/study-spec.md`:
+Write `./.tml/rounds/NNN/` from `${CLAUDE_PLUGIN_ROOT}/templates/study-spec.md`:
 
 - the spec — goal, phase, role assignment, caveats, search spaces, sampler, seed;
 - the **configuration matrix** — one fully-resolved row per trial, with seeds;
@@ -107,7 +107,7 @@ discovering an omission afterwards is re-running the whole study.
 
 - Results are in → **`/tml:analyze`**.
 - The design revealed the pipeline is unstable → **stop**, and fix that first
-  (`references/instability.md`); a round run on an unstable workload measures the
+  (`${CLAUDE_PLUGIN_ROOT}/references/instability.md`); a round run on an unstable workload measures the
   instability.
 
 ## Completion status

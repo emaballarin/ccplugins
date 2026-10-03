@@ -3,6 +3,15 @@
 All notable changes to the `tml` (tuneml) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.1.9 — 2026-10-03
+
+Changed:
+
+- Plugin-root references in skill bodies use `${CLAUDE_PLUGIN_ROOT}/…`, which
+  Claude Code substitutes; a bare `references/…` token resolves against the
+  skill's own directory, where those files are not. Also carries the
+  coordinated marketplace version alignment. No skill logic changed.
+
 ## 0.1.8 — 2026-09-28
 
 Housekeeping — coordinated marketplace version alignment alongside the `ccsci`

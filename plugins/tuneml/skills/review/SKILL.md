@@ -25,7 +25,7 @@ survives contact with the diff.
 ### 1. What is claimed, and what would falsify it
 
 State the claim in one sentence, then its **radius**
-(`references/evidence-grades.md` §3.1) read mechanically off the diff, then what
+(`${CLAUDE_PLUGIN_ROOT}/references/evidence-grades.md` §3.1) read mechanically off the diff, then what
 observation would show it false. If nothing would, say so — an unfalsifiable
 claim is the finding.
 
@@ -44,7 +44,7 @@ runtime:
 - An optimiser change where the **beta convention differs between algorithms**:
   Adan's `β₂` is not Adam's `β₂`, Adan's `β₃` is, RMSProp's `alpha` is, and
   PyTorch's SGD `momentum` decays a _sum_ rather than an average
-  (`references/optimisers.md` §1). A ported beta value is a silent
+  (`${CLAUDE_PLUGIN_ROOT}/references/optimisers.md` §1). A ported beta value is a silent
   learning-rate change. Check this whenever an optimiser was swapped or its
   hyperparameters were copied from elsewhere.
 - Weight decay carried across an `Adam → AdamW` boundary unchanged — different
@@ -52,14 +52,14 @@ runtime:
 
 ### 3. Is the measurement still valid
 
-`references/tier-c-protocol.md` and `references/pitfalls.md`:
+`${CLAUDE_PLUGIN_ROOT}/references/tier-c-protocol.md` and `${CLAUDE_PLUGIN_ROOT}/references/pitfalls.md`:
 
 - **Score inflation** — did the change alter what is being measured, not just how
   fast it is computed? Evaluation set, metric definition, checkpoint selection
   rule, or the harness itself.
 - **Stale step-unit hyperparameters** — anything expressed in steps (schedules,
   warmup, decay length, EMA horizons, eval cadence) after a batch-size or
-  throughput change. `references/optimisers.md` §1.3: a horizon fixed in steps
+  throughput change. `${CLAUDE_PLUGIN_ROOT}/references/optimisers.md` §1.3: a horizon fixed in steps
   shrinks in examples when the batch grows.
 - **Timing boundary** — is evaluation inside or outside the clock? Warmup
   amortised or included? One-time costs priced at the real `k`?
@@ -97,7 +97,7 @@ Then the residue: what remains unverified and would need a measurement to close.
 
 - The change is fine but the sweep behind it is questionable → **`/tml:analyze`**.
 - The review found instability rather than a bad change →
-  **`references/instability.md`**.
+  **`${CLAUDE_PLUGIN_ROOT}/references/instability.md`**.
 
 ## Completion status
 

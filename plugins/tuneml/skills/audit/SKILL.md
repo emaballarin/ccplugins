@@ -29,7 +29,7 @@ that silently re-proposes what was already rejected is noise.
    `./.tml/findings.md`, and only after the findings have been shown. No global
    or shared state is touched.
 2. **Every finding carries a grade.** From the ladder in
-   `references/evidence-grades.md` §1. An ungraded claim is not emitted;
+   `${CLAUDE_PLUGIN_ROOT}/references/evidence-grades.md` §1. An ungraded claim is not emitted;
    `folklore` is a respectable answer.
 3. **Every finding is priced in time-to-target**, decomposed into
    `steps-to-target × time-per-step`, and states whether it moves the other
@@ -50,29 +50,29 @@ Then establish, by asking rather than inferring:
   can be priced, because "time-to-target" has no target.
 - **The constraint.** Wall-clock, device-hours, memory, or deadline?
 
-If the pipeline is already instrumented, read `references/regime.md` §1 and note
+If the pipeline is already instrumented, read `${CLAUDE_PLUGIN_ROOT}/references/regime.md` §1 and note
 the parallelism regime — it changes what `/tml:plan` can propose next.
 
 ### 2. Read the pipeline against the catalogues
 
 Load only the tiers the pipeline can actually exercise:
 
-| Tier                                | Covers                                                 |
-| ----------------------------------- | ------------------------------------------------------ |
-| `references/tier-a-algorithmic.md`  | Fewer steps to target                                  |
-| `references/tier-b-systems.md`      | Less wall-clock per step                               |
-| `references/tier-c-protocol.md`     | Whether the measurement means anything                 |
-| `references/tier-d-architecture.md` | The model and its arithmetic                           |
-| `references/optimisers.md`          | Optimiser choice and its hyperparameters               |
-| `references/modality-map.md`        | Per-modality instantiation of modality-sensitive items |
+| Tier                                                      | Covers                                                 |
+| --------------------------------------------------------- | ------------------------------------------------------ |
+| `${CLAUDE_PLUGIN_ROOT}/references/tier-a-algorithmic.md`  | Fewer steps to target                                  |
+| `${CLAUDE_PLUGIN_ROOT}/references/tier-b-systems.md`      | Less wall-clock per step                               |
+| `${CLAUDE_PLUGIN_ROOT}/references/tier-c-protocol.md`     | Whether the measurement means anything                 |
+| `${CLAUDE_PLUGIN_ROOT}/references/tier-d-architecture.md` | The model and its arithmetic                           |
+| `${CLAUDE_PLUGIN_ROOT}/references/optimisers.md`          | Optimiser choice and its hyperparameters               |
+| `${CLAUDE_PLUGIN_ROOT}/references/modality-map.md`        | Per-modality instantiation of modality-sensitive items |
 
 Two things to check that are not "opportunities" but defects, and which outrank
 every optimisation in the list:
 
-- **Optimisation failures** (`references/instability.md` §2). A workload whose
+- **Optimisation failures** (`${CLAUDE_PLUGIN_ROOT}/references/instability.md` §2). A workload whose
   learning-rate sweep tops out at an instability is reporting a ceiling, not an
   optimum, and every tuning conclusion under it is conditioned on the defect.
-- **Evaluation validity** (`references/tier-c-protocol.md`). Periodic evaluation
+- **Evaluation validity** (`${CLAUDE_PLUGIN_ROOT}/references/tier-c-protocol.md`). Periodic evaluation
   at regular **step** intervals rather than time intervals; eval batch at least
   as large as training's; partial batches correctly weighted (padded examples
   usually weight zero); retrospective checkpoint selection keeping the `n` best;
@@ -94,7 +94,7 @@ by expected time saved per unit of engineering cost, subject to:
 ### 4. Emit
 
 Show the findings, then write `./.tml/findings.md` from
-`templates/findings.md`. Lead with the ranked list; put the reasoning under it.
+`${CLAUDE_PLUGIN_ROOT}/templates/findings.md`. Lead with the ranked list; put the reasoning under it.
 
 State explicitly if the ranking is a **prior rather than a measurement** — which
 it is whenever no profile was available (`tier-b-systems.md` B1). And log

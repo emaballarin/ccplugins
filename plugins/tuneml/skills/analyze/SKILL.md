@@ -23,7 +23,7 @@ Then establish which mode you are in:
   assignment and the fixed-hyperparameter caveats are what make the fairness
   question answerable.
 - **Standalone** — results only, no spec. This is a normal mode, not a degraded
-  one (`references/regime.md` §4). Ask which hyperparameters the question is
+  one (`${CLAUDE_PLUGIN_ROOT}/references/regime.md` §4). Ask which hyperparameters the question is
   about; treat the rest as unknown-role; and answer the fairness question
   "cannot be determined" rather than "yes".
 
@@ -41,33 +41,33 @@ Then establish which mode you are in:
 
 ### 1. Ingest
 
-The expected shape is `templates/results-example.jsonl`. Coerce a CSV or tracker
+The expected shape is `${CLAUDE_PLUGIN_ROOT}/templates/results-example.jsonl`. Coerce a CSV or tracker
 export into it. **Required** per trial: an identifier, the hyperparameters, and
 the objective. **Optional, and each one gates a check**: the metric-vs-step
 series, the best-step, the infeasibility flag and reason, the seed, wall-clock.
 
 Say what was ingested and what was absent before analysing anything.
 
-### 2. The checklist — `references/diagnostics.md` §1
+### 2. The checklist — `${CLAUDE_PLUGIN_ROOT}/references/diagnostics.md` §1
 
 1. **Search-space boundaries** (§2) — plot the objective against each varied
    hyperparameter. Best points hugging a bound means the _space_ decided the
    answer; expand and re-run. If everything above some learning rate is
    infeasible **and** the best trials sit at that edge, stop and go to
-   `references/instability.md` — that is a stability defect wearing an
+   `${CLAUDE_PLUGIN_ROOT}/references/instability.md` — that is a stability defect wearing an
    optimum's clothes.
 2. **Sampling density** (§3) — no general answer exists; say so, and show how
    many points landed in the good region.
 3. **Infeasible fraction** (§4) — a large fraction means a bad space or a bug.
    Report it as a number with reasons, never as missing rows.
-4. **Optimisation failures** → `references/instability.md`.
+4. **Optimisation failures** → `${CLAUDE_PLUGIN_ROOT}/references/instability.md`.
 5. **Training curves** (§5) — problematic overfitting, late step-to-step
    variance, still-improving, saturated-early, or training loss rising (a bug).
    Check the best trial of **every** scientific setting, not just the overall
    best, and look at the whole population: selecting the winner suppresses
    overfitting and quietly rewards configurations that were merely hobbled.
 6. **Was the nuisance tuning good enough** to make the comparison fair
-   (`references/study-design.md` §4)?
+   (`${CLAUDE_PLUGIN_ROOT}/references/study-design.md` §4)?
 
 If 1–4 fail, the corrective action is to revise and re-run, not to interpret
 harder. Say that plainly rather than producing a hedged answer.
@@ -110,7 +110,7 @@ ask.
 ## Handoffs
 
 - Adopted, and the next question is a new comparison → **`/tml:round`**.
-- The study exposed instability → **`references/instability.md`**, then re-run.
+- The study exposed instability → **`${CLAUDE_PLUGIN_ROOT}/references/instability.md`**, then re-run.
 - The adopted change needs a code-level check → **`/tml:review`**.
 
 ## Completion status

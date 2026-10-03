@@ -37,14 +37,14 @@ findings to plan against.
 
 ### 1. Establish the regime
 
-`references/regime.md` §1 and §3: concurrent trials, local or remote execution.
+`${CLAUDE_PLUGIN_ROOT}/references/regime.md` §1 and §3: concurrent trials, local or remote execution.
 This is not optional and it is not inferable — a plan calling for 60-trial
 studies on a machine that runs two at a time is not a plan. Record what was
 sacrificed if the regime is low (`study-design.md` §4).
 
 ### 2. Fix the step budget
 
-`references/step-budget.md`. Determine compute-bound or not, then:
+`${CLAUDE_PLUGIN_ROOT}/references/step-budget.md`. Determine compute-bound or not, then:
 
 - **Not compute-bound** — pick `max_train_steps` (§2, including the constant-LR
   sweep procedure and its self-deception failure mode) and fix it across all
@@ -94,7 +94,7 @@ going".
 
 ### 7. Emit
 
-Write `./.tml/frontier.md` from `templates/frontier.md`, after showing the plan.
+Write `./.tml/frontier.md` from `${CLAUDE_PLUGIN_ROOT}/templates/frontier.md`, after showing the plan.
 
 ## Handoffs
 
