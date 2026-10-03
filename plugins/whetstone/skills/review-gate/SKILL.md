@@ -1,6 +1,6 @@
 ---
 name: review-gate
-description: Fresh-context review of a change against its stated intent, before the change is acted on. Use before a commit, before a release, or before launching a run whose result will be acted on — whenever the change is more than a one-line tweak, and always for an audit script, a release, or a pipeline feeding an experiment. Hands the diff and a written intent, never the implementer's reasoning, to a fresh sub-agent with a defect checklist; every finding then gets an outcome. Training or evaluation pipeline diffs also get /tml:review.
+description: Fresh-context review of a change against its stated intent, before the change is acted on. Use before a commit (not the per-iteration commits of an autonomous loop the operator started, such as `/ar:resume`), before a release, or before launching a run whose result will be acted on — whenever the change is more than a one-line tweak, and always for an audit script, a release, or a pipeline feeding an experiment. Hands the diff and a written intent, never the implementer's reasoning, to a fresh sub-agent with a defect checklist; every finding then gets an outcome. Training or evaluation pipeline diffs also get /tml:review.
 ---
 
 # /ws:review-gate — a second reader before the change is acted on
@@ -10,7 +10,8 @@ diff through the reasoning that produced it. The gate puts the change in front
 of a reader with **fresh** context, who sees what was written and what was
 asked for, and nothing in between. Scale it with blast radius: a one-flag tweak
 skips it; an audit script, a release, or a change feeding an experiment never
-does.
+does — except the per-iteration commits of an autonomous loop the operator
+started (`/ar:resume`), which the loop's own measurement gates.
 
 ## 1. Scope
 

@@ -7,7 +7,7 @@ description: Gate for every test being written or changed — four questions it 
 
 Applies while tests are being written. The bar itself — the value bar, the junk
 patterns, the retention bar, and where concerns are noted — lives in
-`references/test-value.md`; read it before the first test of the session.
+`${CLAUDE_PLUGIN_ROOT}/references/test-value.md`; read it before the first test of the session.
 
 The gate is **silent**. A test that passes it gets nothing beyond the task's
 normal summary. Speak only when a test fails the gate, or when the survey in
@@ -78,7 +78,7 @@ those — not a wider sweep, which is the audit's job — collect:
 
 Edit none of them. Report them once, in one short block at the end of the task,
 with `/ws:test-audit` as the suggested next step, and note each one as
-`references/test-value.md` describes, skipping any already noted.
+`${CLAUDE_PLUGIN_ROOT}/references/test-value.md` describes, skipping any already noted.
 
 ## Done when
 

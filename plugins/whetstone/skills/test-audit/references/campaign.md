@@ -2,7 +2,8 @@
 
 Campaign mode prunes one subsystem's whole test surface in one change: a plugin,
 a package, or one core area. The value bar, retention bar, candidate evidence,
-and validation in the skill and in `references/test-value.md` apply to every
+and validation in the skill and in the plugin's
+[`references/test-value.md`](../../../references/test-value.md) apply to every
 lane. This file adds the order of work and the lessons of a full campaign. Each
 step ends on its completion criterion; do not start the next step early.
 
@@ -30,7 +31,7 @@ one lane.
 
 ## 3. Read-only ledger per lane
 
-Give each lane to its own read-only Task subagent. The agent reads every
+Give each lane to its own read-only subagent. The agent reads every
 assigned test in full, including parameter tables. It also reads the production
 owners and their entry points, callers, history, and CI routing. Each test
 declaration goes into a written **ledger** with one mark. A parametrised test is
@@ -76,7 +77,7 @@ Done when every lane plan is applied and each lane's keepers pass.
 
 ## 6. Preservation review
 
-Before claiming completion, have independent reviewers — one Task subagent per
+Before claiming completion, have independent reviewers — one subagent per
 boundary group — compare deleted coverage against the keepers. They look for
 contracts that lost their only proof. They also look for new assertions that
 cannot fail, such as a rejection row the production code never reaches. The

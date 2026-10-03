@@ -2,12 +2,12 @@
 name: grill
 description: A relentless, round-based interview that stress-tests a plan, design or decision against its own design tree until nothing is left silently assumed.
 disable-model-invocation: true
-allowed-tools: [Read, Glob, Grep, Bash, Task, AskUserQuestion]
+allowed-tools: [Read, Glob, Grep, Bash, Agent, AskUserQuestion]
 ---
 
 # /ws:grill — interview a plan until nothing is assumed
 
-Interview relentlessly until you and the operator reach a shared understanding
+Keep interviewing until you and the operator reach a shared understanding
 of what is being built. Map the subject as a **design tree**: every decision
 branches into the decisions that hang off it.
 

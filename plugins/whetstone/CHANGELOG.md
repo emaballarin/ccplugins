@@ -3,6 +3,25 @@
 All notable changes to the `ws` (whetstone) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.1 — 2026-10-03
+
+Fixed:
+
+- **`/ws:test-audit` tells its two reference roots apart**: `test-value.md` at
+  the plugin root, `campaign.md` beside the skill. One bare `references/`
+  prefix named both.
+- **`/ws:deslop` reports every non-trivial item.** Its "one to three
+  sentences" cap contradicted that.
+
+Changed:
+
+- **`/ws:review-gate` skips the per-iteration commits of an autonomous loop the
+  operator started** (`/ar:resume`); the loop's measurement gates those.
+- The subagent tool is named `Agent` (`Task` remains an accepted alias):
+  `/ws:grill`'s `allowed-tools` and the prose say so. `/ws:grill` interviews
+  to its completion criterion rather than "relentlessly".
+- Plugin-root references in skill bodies use `${CLAUDE_PLUGIN_ROOT}/…`.
+
 ## 0.3.0 — 2026-10-03
 
 ### Added — `/ws:review-gate`

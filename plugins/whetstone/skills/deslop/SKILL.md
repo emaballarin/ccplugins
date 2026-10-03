@@ -65,8 +65,8 @@ Inspect every changed hunk for:
 
 ## 4. Report
 
-One to three sentences: whether anything changed, and every non-trivial item
-left for the author.
+Say whether anything changed, then list every non-trivial item left for the
+author.
 
 This pass is quality-only. Run it before `/code-review`, never instead of it —
 correctness and safety still need that review.

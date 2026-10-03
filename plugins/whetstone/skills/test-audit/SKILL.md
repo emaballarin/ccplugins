@@ -13,9 +13,9 @@ left behind. Optimise for confidence, not deletion count. Continue a broad audit
 as separate coherent batches.
 
 The value bar, junk patterns, retention bar, and the notes file live in
-`references/test-value.md`; read it first. **Campaign mode** prunes one
+`${CLAUDE_PLUGIN_ROOT}/references/test-value.md`; read it first. **Campaign mode** prunes one
 subsystem's whole test surface — every test file one package or area owns —
-in one change; before starting one, read `references/campaign.md`.
+in one change; before starting one, read [references/campaign.md](references/campaign.md), beside this file.
 
 ## 1. Scope and seed
 
@@ -27,7 +27,7 @@ in one change; before starting one, read `references/campaign.md`.
 ## 2. Discovery — read-only
 
 Hunt for the junk patterns and for duplicated setup. For a broad scope, run
-parallel read-only discovery lanes through Task subagents, split along
+parallel read-only discovery lanes through subagents, split along
 production-owner boundaries — core packages, plugins or extensions, apps and
 scripts and tooling, plus one cross-cutting pattern sweep. Outside campaign mode,
 prefer a few high-confidence candidates over a large speculative inventory.
