@@ -4,7 +4,7 @@ Kernel helpers for the pdf-explore skill (stock Claude Code port).
 Unlike the Claude Science original, this module has NO in-process model
 access: it runs as an ordinary Python process the agent drives via Bash.
 Model work is done by the AGENT — inline for a few pages, or fanned out
-over Task subagents for whole-doc sweeps (see SKILL.md). The helpers here
+over subagents for whole-doc sweeps (see SKILL.md). The helpers here
 are split into three deterministic roles:
 
     parse    — pdf_pages / pdf_outline / pdf_resolve / pdf_crop
@@ -361,8 +361,8 @@ def pdf_crop(image_path, box, out_path=None):
     """Crop a rendered page PNG to ``box``=(x0, y0, x1, y1) pixels and save
     it, returning the output path for the agent to ``Read()``.
 
-    A full rendered page downsamples to ≤1568px on attach, so a dense figure
-    ends up illegible. Render the page at high dpi (e.g. ``pdf_pages(...,
+    Claude Code downscales a large image to the model's size limit, so a
+    dense figure in a full-page render can stay illegible. Render the page at high dpi (e.g. ``pdf_pages(...,
     mode='image', dpi=200)``), crop to the figure/panel with this, then
     ``Read()`` the crop — legible detail at a fraction of the vision cost.
     ``box`` is in pixels of the render you cropped from. Requires pillow.
@@ -710,13 +710,11 @@ def pdf_scan_prepare(path, query, mode="auto", dpi=100, pages=None, system=None,
     """PREPARE a whole-doc relevance scan for agent-side fan-out.
 
     Parses the PDF and writes the guarded, nonce-delimited page text into
-    batched work files, returning a small manifest the agent fans Task
-    subagents over. Page text lands in FILES, so it never enters the
+    batched work files, returning a small manifest the agent fans subagents over. Page text lands in FILES, so it never enters the
     orchestrating agent's context.
 
     Manifest: ``{"job", "n_pages", "n_items", "instruction", "query",
-    "return_spec", "items", "assemble"}``. For each work item spawn one Task
-    subagent: give it ``instruction`` and ``query``, tell it to
+    "return_spec", "items", "assemble"}``. For each work item spawn one subagent: give it ``instruction`` and ``query``, tell it to
     ``Read(text_file)`` (and ``Read`` each non-null ``image_paths`` entry),
     and have it return ONLY a JSON array ``[{"page", "score" (0..1),
     "summary"}]`` — one object per page in that item. Concatenate every
@@ -815,7 +813,7 @@ def pdf_map_prepare(
     every page gets the same ``prompt`` and every answer is kept. Writes
     batched work files and returns the fan-out manifest.
 
-    Each work item → one Task subagent: give it ``instruction``, tell it to
+    Each work item → one subagent: give it ``instruction``, tell it to
     ``Read(text_file)`` (and ``Read`` non-null ``image_paths``), and have it
     return ONLY ``[{"page", "text"}]`` — one object per page. Concatenate
     the arrays and pass them to :func:`pdf_map_assemble`.
@@ -879,7 +877,7 @@ def pdf_extract_prepare(path, schema, mode="auto", dpi=100, pages=None, system=N
     ``description``; the per-page subagent applies it for you. Writes
     batched work files and returns the manifest (which carries ``schema``).
 
-    Each work item → one Task subagent: give it ``instruction`` and the
+    Each work item → one subagent: give it ``instruction`` and the
     ``schema``, tell it to ``Read(text_file)`` (and ``Read`` non-null
     ``image_paths``), and have it return ONLY ``[{"page", "data": {...schema
     fields...}}]`` — one object per page. Concatenate the arrays and pass
@@ -1183,7 +1181,7 @@ def pdf_scan_cost(results):
     :func:`pdf_map_assemble` (reads ``["usage"]`` directly) or a list of
     per-page rows. Returns ``{"input_tokens", "output_tokens", "n_calls",
     "n_errors"}``. Note: in stock Claude Code the per-page model calls run
-    inside Task subagents, so token counts are not visible here — the
+    inside subagents, so token counts are not visible here — the
     ``*_tokens`` fields are 0 and only ``n_calls``/``n_errors`` are
     meaningful.
     """

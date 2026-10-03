@@ -3,6 +3,51 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.10.0 — 2026-10-03
+
+Retires the three skills Anthropic now ships, and moves the rest onto
+Claude Code-first mechanics.
+
+Removed:
+
+- **`canvas-design`, `doc-coauthoring`, `web-artifacts-builder`.** Carried here
+  while Claude Code lacked them; Anthropic now ships them as `anthropic-skills`.
+  The ports differed from the originals only by one Claude Code note each.
+  `NOTICE`, `LICENSE`, both READMEs, `plugin.json` and the marketplace entry
+  follow. Use `anthropic-skills:canvas-design` and its siblings, which Claude
+  Code syncs from a claude.ai sign-in; an install without them can copy the
+  three skills from ccsci 0.9.0.
+
+Fixed:
+
+- **`figure-style` says how to load its kernel.** It named
+  `apply_figure_style()` and the helpers as if a host had injected them.
+- **Kernel imports use `${CLAUDE_SKILL_DIR}/kernel.py`**, which Claude Code
+  substitutes, instead of a `/ABSOLUTE/PATH/TO/` placeholder (`bib-audit`,
+  `figure-composer`, `figure-style`, `literature-review`, `paper-narrative`,
+  `pdf-explore`).
+- **`pdf-explore`**: the 1568px / ~1,600-token figures (the image limit before
+  Opus 4.7) are gone; fan-out subagents run on Sonnet (`model: "sonnet"`, the
+  latest Sonnet), and the 10–30× price claim is dropped.
+- **`computational-scientist`**: each Bash `python` run is a fresh process —
+  no persistent interpreter, no "cells". A long or heavy job runs when the
+  user handed the run over — explicitly, or clearly enough that the dispatcher
+  judged so; otherwise the agent returns the launch command. Dispatchers say which in the brief.
+- **`paper-narrative` step 4** reads "plus its moved-in panels"; a formatter had
+  turned the `+` into a list bullet.
+
+Changed:
+
+- The crop-every-panel self-QA passes (`figure-style` §9.2, `figure-composer`
+  §3.5) read the full figure first and crop only where detail is dense; the
+  §4 reviewer still crops every panel.
+- `literature-review` names `bib-audit`'s DOI-stripping camera-ready preset as
+  the different deliverable it is.
+- Both agents drop `effort: xhigh` and inherit the session's effort level.
+- The subagent tool is named `Agent` throughout, kernel docstrings included
+  (`Task` remains an alias).
+- Plugin-root references in skill bodies use `${CLAUDE_PLUGIN_ROOT}/…`.
+
 ## 0.9.0 — 2026-09-28
 
 ### Added — `bib-audit`, an end-to-end audit of an existing `.bib`

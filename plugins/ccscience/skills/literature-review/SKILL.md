@@ -41,12 +41,12 @@ A literature question has two halves: finding the papers a domain expert would p
 
 ## Load the helpers
 
-`kernel.py` in this skill's directory ships the retrieval and BibTeX helpers. There is no auto-injection: import the file by its path before using it, and the module has zero import-time side effects, so importing it costs nothing. From a Bash `python` invocation (substitute the absolute path to this skill's `kernel.py`):
+`kernel.py` in this skill's directory ships the retrieval and BibTeX helpers. There is no auto-injection: import the file by its path before using it, and the module has zero import-time side effects, so importing it costs nothing. From a Bash `python` invocation:
 
 ```bash
 python - <<'PY'
 import importlib.util, json
-spec = importlib.util.spec_from_file_location("litrev_kernel", "/ABSOLUTE/PATH/TO/skills/literature-review/kernel.py")
+spec = importlib.util.spec_from_file_location("litrev_kernel", "${CLAUDE_SKILL_DIR}/kernel.py")
 lr = importlib.util.module_from_spec(spec); spec.loader.exec_module(lr)
 print(json.dumps(lr.verify_dois(["10.1145/3292500.3330701"]), indent=2))
 PY
@@ -79,7 +79,7 @@ After the citation-graph expansion and before you write the reference list, norm
 3. **Fetch BibTeX.** `to_bibtex(dois)` retrieves a BibTeX entry per DOI via DOI content negotiation (`GET https://doi.org/<DOI>` with `Accept: application/x-bibtex`). Run `verify_dois` first so only real DOIs reach this step. Write the returned entries to a `.bib` file with the `Write` tool.
 4. **Tidy.** `bibtex_tidy(bib_path)` runs the `bibtex-tidy` npm CLI in place (`npm i -g bibtex-tidy`; if it is not on PATH the helper leaves the file untidied and returns a note rather than failing). This normalizes braces, sorting, field order, and duplicates.
 
-**DOI policy — keep the DOI everywhere by default.** The DOI is the pin that makes verification, the inline `[Author Year](https://doi.org/…)` links, and dedupe all work, so it is retained throughout: `verify_dois` resolves it, the prose links through it, `to_bibtex` keeps the `doi` field, and the default `bibtex_tidy(bib_path)` omits only `abstract` and `keywords`. Stripping the DOI is an **optional** variant, never the default: call `bibtex_tidy(bib_path, drop_doi=True)` only when a downstream consumer explicitly needs a DOI-free `.bib` (it swaps in `--omit=abstract,keywords,doi`; everything else is identical). Do not strip DOIs from the review itself.
+**DOI policy — keep the DOI everywhere by default.** The DOI is the pin that makes verification, the inline `[Author Year](https://doi.org/…)` links, and dedupe all work, so it is retained throughout: `verify_dois` resolves it, the prose links through it, `to_bibtex` keeps the `doi` field, and the default `bibtex_tidy(bib_path)` omits only `abstract` and `keywords`. `bib-audit` applies a camera-ready preset that strips DOIs; run it on this output only when that preset is wanted. Stripping the DOI is an **optional** variant, never the default: call `bibtex_tidy(bib_path, drop_doi=True)` only when a downstream consumer explicitly needs a DOI-free `.bib` (it swaps in `--omit=abstract,keywords,doi`; everything else is identical). Do not strip DOIs from the review itself.
 
 ## Superseded, withdrawn, refuted
 

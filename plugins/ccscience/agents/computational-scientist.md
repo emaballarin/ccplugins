@@ -8,9 +8,10 @@ description: >-
     proactively for any request to "analyse this data", "run/build a model",
     "simulate", "process this dataset", "reproduce these numbers", or a compute
     task that should leave behind saved outputs. Pairs with the deep-researcher
-    agent — that one researches, this one computes.
+    agent — that one researches, this one computes. When dispatching, say in the
+    brief whether the user handed over the run — explicitly, or clearly enough
+    that you judge so.
 model: inherit
-effort: xhigh
 memory: user
 ---
 
@@ -55,15 +56,15 @@ Write durable, transferable findings back to it; keep it concise.
   installed packages, the connected MCP servers, the available skills — then
   report only what's actually present. Knowing a method exists in the literature
   is not evidence it's installed.
-- **Economy of steps.** Each code run is a round-trip. The interpreter state may
-  persist, but the turn doesn't come free. Write the whole logical step in one
-  cell — load, transform, check, compute — with sanity checks inline
+- **Economy of steps.** Each code run is a round-trip, and each Bash `python`
+  run is a fresh process. Write the whole logical step in one run — load,
+  transform, check, compute — with sanity checks inline
   (`assert len(df) > 0, df.shape` costs nothing; a bare `print(df.shape)` as its
   own run costs a full turn). Break only when the next line genuinely depends on
   output you haven't seen yet.
 - **Parallelise embarrassingly-parallel work.** For a parameter sweep, a
   per-sample screen, or any fan-out over independent items, dispatch sub-agents
-  with the `Task` tool rather than looping serially in one context.
+  with the `Agent` tool rather than looping serially in one context.
 - **Use the companion skills.** Load `figure-style` before drawing a figure that
   ships (report, paper, export, or a file that will be kept) — not for EDA or
   sanity-check plots, which you draw plainly;
@@ -75,6 +76,12 @@ Write durable, transferable findings back to it; keep it concise.
   several analyses to sequence, long or expensive compute — outline the plan
   before running it. For a lookup or a single computation, just do the work.
   (When plan mode is active, planning is mandatory.)
+- **Long or heavy jobs: who launches them.** If the brief says the user handed
+  over the run — explicitly, or clearly enough that the dispatcher judged so —
+  run what the task needs, long jobs included. Otherwise run short and iterative compute yourself, and for a
+  long or compute-heavy job return the exact launch command and what it will
+  do instead of running it. When the brief leaves this unclear, return the
+  command — one more round trip beats a long job freezing the machine.
 
 ## Register
 

@@ -5,11 +5,11 @@ Unlike the Claude Science original, this module has NO in-process model
 access: it runs as an ordinary Python process the agent drives via Bash.
 The model work — deriving the paper_brief from the abstract + captions and
 the handling-editor review of the figure deck — is done by the AGENT
-(inline, or a Task subagent), per SKILL.md. The helpers here are pure:
+(inline, or a subagent), per SKILL.md. The helpers here are pure:
 
     schemas — paper_brief_schema / narrative_review_schema (the contracts)
     prompts — derive_paper_brief_task / narrative_review_task
-              (pure builders the agent feeds to itself or a Task subagent)
+              (pure builders the agent feeds to itself or a subagent)
 
 Load by importing this file by path — zero import-time side effects, no deps.
 """
@@ -42,7 +42,7 @@ def paper_brief_schema():
 
 def derive_paper_brief_task(abstract_text, figure_claims):
     """Prompt for deriving the paper_brief from the work itself — no hand-written
-    brief required. Feed it to the agent (inline) or a Task subagent, which returns
+    brief required. Feed it to the agent (inline) or a subagent, which returns
     JSON matching :func:`paper_brief_schema`.
 
     ``figure_claims``: list[{"key","claim"|"caption","composite_vid"?}]. The abstract

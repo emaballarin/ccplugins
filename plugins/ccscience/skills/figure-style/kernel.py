@@ -257,7 +257,7 @@ def panel_crops(fig, dpi=None, pad_px=6, bbox_inches=None, pad_inches=None):
         >>> fig.savefig("fig.png")  # bbox_inches='tight' via rcParams
         >>> img = Image.open("fig.png")
         >>> for letter, box in panel_crops(fig).items():
-        ...     img.crop(box).save(f"panel_{letter}.png")  # then Read each crop
+        ...     img.crop(box).save(f"panel_{letter}.png")  # Read the crops that need it
     """
     import matplotlib as mpl
     import matplotlib.text

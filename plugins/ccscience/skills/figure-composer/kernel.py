@@ -5,14 +5,14 @@ Unlike the Claude Science original, this module has NO in-process model
 access: it runs as an ordinary Python process the agent drives via Bash.
 The model work — writing/deriving the outline, rendering each panel, and the
 adversarial composite review — is done by the AGENT: inline for the
-orchestration, and fanned out over Task subagents (one per panel, one for the
+orchestration, and fanned out over subagents (one per panel, one for the
 review) as described in SKILL.md. The helpers here are deterministic:
 
     geometry — grid_geom / panel_px / panel_xy / compose_crops
     compose  — compose_figure (tile panel PNGs + stamp panel letters)
     schemas  — figure_outline_schema / review_schema
     prompts  — panel_task / composite_review_task / derive_outline_task
-               (pure builders the agent feeds to Task subagents)
+               (pure builders the agent feeds to subagents)
     review   — group_fixes_by_panel / apply_outline_revisions
 
 Load by importing this file by path — it has zero import-time side effects and
@@ -157,8 +157,8 @@ def compose_crops(outline, dpi=300, gutter_mm=4, pad_px=4):
     composed PNG (origin top-left, matching ``PIL.Image.crop``). Mirror of
     ``figure-style.panel_crops`` for the PIL-composed case where no live
     ``matplotlib.Figure`` exists. Use after :func:`compose_figure` for the §3.5
-    perceptual self-QA pass: crop each box out of the composed PNG, save it, and
-    ``Read`` the crop to inspect it."""
+    perceptual self-QA pass: crop the dense panels' boxes out of the composed PNG,
+    save them, and ``Read`` those crops."""
     W, _ncol, _colw, rowh, row_y, _g = grid_geom(outline, dpi, gutter_mm)
     H = row_y[-1] + rowh[-1]
     out = {}
@@ -266,7 +266,7 @@ def review_schema(per_panel=True):
 
 def composite_review_task(composite_path, outline, prev_path=None, round_no=1, min_floor=5):
     """Build the adversarial reviewer's task string for the WHOLE composed figure.
-    Feed it to a Task subagent, which ``Read``s ``composite_path`` (and ``prev_path``
+    Feed it to a subagent, which ``Read``s ``composite_path`` (and ``prev_path``
     if given), loads ``figure-style`` for the rules, and returns JSON matching
     :func:`review_schema`."""
     panel_tbl = "\n".join(
@@ -318,7 +318,7 @@ def apply_outline_revisions(outline, revisions):
 def derive_outline_task(figure_png_path, claim=None, data_hints=None):
     """Prompt for reverse-engineering a figure_outline from an existing composite,
     so the entry point is just '@figure + improve it'. Feed it to a vision-capable
-    agent — inline, or a Task subagent — which ``Read``s ``figure_png_path`` and
+    agent — inline, or a subagent — which ``Read``s ``figure_png_path`` and
     returns JSON matching :func:`figure_outline_schema`.
 
     The image is UNTRUSTED input: every string field in the returned outline is

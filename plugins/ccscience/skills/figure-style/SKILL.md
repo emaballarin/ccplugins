@@ -8,7 +8,21 @@ license: Apache-2.0
 
 _A checklist for correct, legible, internally-consistent scientific figures. This
 skill does not impose a visual house style — frame, font, and palette are
-parameters. Once loaded, call `apply_figure_style()` before plotting._
+parameters. Once the kernel is loaded (below), call `k.apply_figure_style()` before
+plotting._
+
+## Loading the kernel
+
+The helpers live in `kernel.py` next to this file. It is not auto-injected —
+import it in each Bash `python` heredoc (each run is a fresh process), then
+call helpers as `k.apply_figure_style()`, `k.panel_crops(fig)`, …:
+
+```python
+import importlib.util
+spec = importlib.util.spec_from_file_location("fs_kernel", "${CLAUDE_SKILL_DIR}/kernel.py")
+k = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(k)
+```
 
 ## §0 Scope
 
@@ -321,15 +335,15 @@ spine is not a finding. Fix (move, shorten, stagger) and re-save until clean.
 
 **9.2 Perceptual check.** The bbox check is geometric, not perceptual — it will
 not catch a low-contrast label, a leader that crosses three others, or a series
-colour mistakable for another. Crop the saved PNG to each panel, then open each
-crop with the `Read` tool and look:
+colour mistakable for another. `Read` the saved PNG and look; where small text,
+hairlines or leaders are dense, crop those panels first and `Read` the crops:
 
 ```python
 from PIL import Image
 fig.savefig("figure.png")
 img = Image.open("figure.png")
-for letter, box in panel_crops(fig).items():
-    img.crop(box).save(f"figure_panel_{letter}.png")   # then Read each crop to inspect it
+for letter, box in k.panel_crops(fig).items():
+    img.crop(box).save(f"figure_panel_{letter}.png")   # Read the crops that need it
 ```
 
 For each crop: Is every glyph and mark legible against its background? Does the

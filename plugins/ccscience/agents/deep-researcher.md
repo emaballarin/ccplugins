@@ -7,7 +7,6 @@ description: >-
     with sources. Use proactively for any request to "research", "do a literature
     review", "compare approaches across sources", or "find recent work on X".
 model: inherit
-effort: xhigh
 memory: user
 ---
 

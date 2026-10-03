@@ -1,6 +1,6 @@
 ---
 name: pdf-explore
-description: "Use this skill when the user has attached or pointed to a PDF, paper, report, or other document and the answer needs content from more than one place in it: summarize the methods or any other section, compare sections, find where a topic is discussed, read a value or label off a figure or chart, pull tables out as CSV, or find/list/extract every instance of something across the whole document (datasets, benchmarks, citations, figures, table rows, accession numbers — including appendices). It parses the PDF once in Python: pdf_pages (pages as persistent text), pdf_outline (TOC), pdf_tables (deterministic table extraction with per-table page provenance), pdf_images (embedded figures at native resolution), and prepare/assemble helpers that fan whole-doc relevance scans / per-page maps / structured extraction out over Task subagents so the pages never fill your own context. Complementary to the built-in Read(pages=...), which attaches ≤20 PDF pages as ephemeral vision dropped after one turn — reach for this skill for persistent text, whole-doc sweeps, tables, figures, and structured extraction Read can't do. For PDF creation/manipulation use reportlab/pypdf directly. Deps: pip install pypdfium2 pillow (plus pdfplumber for tables)."
+description: "Use this skill when the user has attached or pointed to a PDF, paper, report, or other document and the answer needs content from more than one place in it: summarize the methods or any other section, compare sections, find where a topic is discussed, read a value or label off a figure or chart, pull tables out as CSV, or find/list/extract every instance of something across the whole document (datasets, benchmarks, citations, figures, table rows, accession numbers — including appendices). It parses the PDF once in Python: pdf_pages (pages as persistent text), pdf_outline (TOC), pdf_tables (deterministic table extraction with per-table page provenance), pdf_images (embedded figures at native resolution), and prepare/assemble helpers that fan whole-doc relevance scans / per-page maps / structured extraction out over subagents so the pages never fill your own context. Complementary to the built-in Read(pages=...), which attaches ≤20 PDF pages as ephemeral vision dropped after one turn — reach for this skill for persistent text, whole-doc sweeps, tables, figures, and structured extraction Read can't do. For PDF creation/manipulation use reportlab/pypdf directly. Deps: pip install pypdfium2 pillow (plus pdfplumber for tables)."
 license: Apache-2.0
 ---
 
@@ -15,7 +15,7 @@ expensive way to get it.
 
 This skill parses the PDF **once** into persistent per-page text, and — for
 whole-document work — runs **one cheap model call per page (or per batch) in
-parallel via Task subagents**, so the page text lives in files and subagent
+parallel via subagents**, so the page text lives in files and subagent
 contexts, never in yours. You load only what matters, or sweep every page
 without putting the pages in your own context at all.
 
@@ -33,7 +33,7 @@ all heavy imports are lazy):
 ```bash
 python3 - <<'PY'
 import importlib.util
-K = "/ABSOLUTE/PATH/TO/pdf-explore/kernel.py"   # this SKILL.md's directory + /kernel.py
+K = "${CLAUDE_SKILL_DIR}/kernel.py"
 spec = importlib.util.spec_from_file_location("pdf_kernel", K)
 k = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(k)
@@ -68,7 +68,7 @@ terms apply. `pdf_tables` is the one helper on a second backend (pdfplumber),
 because PDFium exposes no table API at all. `path` can be a workspace path or a
 `~/`-expanded path.
 
-## Which helper — inline vs Task fan-out
+## Which helper — inline vs subagent fan-out
 
 | helper                                                  | when                                                                            | how the model work happens                                     |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -96,7 +96,7 @@ subagents read.
    manifest: `instruction`, (`query` / `schema` where relevant), `return_spec`,
    and `items` = `[{pages, text_file, image_paths}, ...]`. Only this small
    manifest lands in your context.
-2. **FAN OUT** — for each `item`, launch a **Task** subagent. Its prompt =
+2. **FAN OUT** — for each `item`, launch a subagent. Its prompt =
    the manifest's `instruction` (+ `query` / `schema`) + _"Read `text_file`
    (and Read each non-null `image_paths` entry), then return ONLY the JSON
    the `return_spec` describes."_ Each subagent returns a short JSON array —
@@ -121,7 +121,7 @@ per-job nonce delimiters the document can't forge, so a page that says
 # 1. PREPARE
 python3 - <<'PY'
 import importlib.util, json
-K = "/ABSOLUTE/PATH/TO/pdf-explore/kernel.py"
+K = "${CLAUDE_SKILL_DIR}/kernel.py"
 spec = importlib.util.spec_from_file_location("pdf_kernel", K)
 k = importlib.util.module_from_spec(spec); spec.loader.exec_module(k)
 m = k.pdf_scan_prepare("paper.pdf", query="batch-effect correction methods",
@@ -130,7 +130,7 @@ print(json.dumps(m, ensure_ascii=False, indent=1))
 PY
 ```
 
-2. Read the manifest. For each `item`, launch a Task subagent, e.g.:
+2. Read the manifest. For each `item`, launch a subagent, e.g.:
 
     > `{instruction}` `{query}` — Read the page text at `{text_file}`. For each
     > page in it, score relevance in [0,1] and write one sentence on what the
@@ -144,7 +144,7 @@ PY
 # 3. ASSEMBLE
 python3 - <<'PY'
 import importlib.util
-K = "/ABSOLUTE/PATH/TO/pdf-explore/kernel.py"
+K = "${CLAUDE_SKILL_DIR}/kernel.py"
 spec = importlib.util.spec_from_file_location("pdf_kernel", K)
 k = importlib.util.module_from_spec(spec); spec.loader.exec_module(k)
 r = k.pdf_scan_assemble("paper.pdf", "results.json", top_k=5)
@@ -218,8 +218,8 @@ obviously answer ("where do they discuss limitations"), use the scan protocol.
 
 ## Recipe — read a figure in detail
 
-A full rendered page downsamples to ≤1568px on attach, so a dense figure ends
-up illegible no matter the DPI. There are two ways out, and **which one works
+Claude Code downscales a large image to the model's size limit before sending
+it, so a dense figure in a full-page render can stay illegible whatever the DPI. There are two ways out, and **which one works
 depends on how the figure was drawn**.
 
 ### First try `pdf_images` — the figure at its native resolution
@@ -266,7 +266,7 @@ PY
 ```
 
 Then `Read(file_path="<crop path>")` — more legible _and_ cheaper than the full
-page (~400 vision tokens vs ~1,600). First `Read` the full page render to locate
+page. First `Read` the full page render to locate
 the figure if you don't know its box; crop one panel at a time for multi-panel
 figures. Always crop from the `.cache/` render, never from a previously attached
 (downsampled) view.
@@ -393,7 +393,8 @@ image-mode work files carry `image_paths` for the subagent to `Read`.
 ## Cost & budget
 
 ~800 input + ~100 output tokens/page in text mode. Run the fan-out subagents
-on a cheap (Haiku-class) model — heavier models cost 10–30× more and add
+on Sonnet (`model: "sonnet"` on the `Agent` call — the latest Sonnet on the
+Anthropic API): Opus- and Fable-class models cost more per token and add
 nothing to recall-complete per-page pulls. Token usage isn't visible to the
 kernel (the calls run inside subagents), so `pdf_scan_cost` reports only
 `n_calls`/`n_errors`, not tokens. For a very large document, scan a subset via

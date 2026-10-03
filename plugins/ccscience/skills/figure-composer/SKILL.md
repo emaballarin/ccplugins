@@ -1,27 +1,27 @@
 ---
 name: figure-composer
-description: "Compose one publication-grade multi-panel figure. Entry from a one-line claim + data refs, OR from an existing figure via `derive_outline_task(png)`. Runs a per-figure loop: outline (12-col grid, per-panel ask + label_budget) → fan-out one Task subagent per panel (each loads `figure-style`) → tile + stamp letters → adversarial composite review with two-tier feedback (Tier-1 outline_revisions / Tier-2 per-panel violations) → regen affected panels, ≤3 rounds. Kernel exposes panel_task / compose_figure / compose_crops / composite_review_task / derive_outline_task / finalize_outline (import by absolute path). For one standalone plot use `figure-style`; for whole-paper figure ordering use `paper-narrative`."
+description: "Compose one publication-grade multi-panel figure. Entry from a one-line claim + data refs, OR from an existing figure via `derive_outline_task(png)`. Runs a per-figure loop: outline (12-col grid, per-panel ask + label_budget) → fan-out one subagent per panel (each loads `figure-style`) → tile + stamp letters → adversarial composite review with two-tier feedback (Tier-1 outline_revisions / Tier-2 per-panel violations) → regen affected panels, ≤3 rounds. Kernel exposes panel_task / compose_figure / compose_crops / composite_review_task / derive_outline_task / finalize_outline (import by absolute path). For one standalone plot use `figure-style`; for whole-paper figure ordering use `paper-narrative`."
 license: Apache-2.0
 ---
 
 # Figure Composer — narrative → panels → compose → adversarial loop
 
 **Step 0.** Load `figure-style` alongside this skill — that is the design rules
-(and `apply_figure_style()` + helpers). Each panel's `Task` subagent loads it
+(and `apply_figure_style()` + helpers). Each panel's subagent loads it
 independently; you need it in context to write the outline and review the
 composite.
 
 ## Loading the kernel
 
 The deterministic helpers live in `kernel.py` next to this file. It is **not**
-auto-injected — import it by absolute path in a Bash `python` heredoc (zero
+auto-injected — import it in a Bash `python` heredoc (zero
 import-time side effects; the only heavy import, PIL, is lazy inside
 `compose_figure`):
 
 ```bash
 python3 - <<'PY'
 import importlib.util
-K = "/ABSOLUTE/PATH/TO/figure-composer/kernel.py"   # this SKILL.md's dir + /kernel.py
+K = "${CLAUDE_SKILL_DIR}/kernel.py"
 spec = importlib.util.spec_from_file_location("fc_kernel", K)
 k = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(k)
@@ -42,7 +42,7 @@ panel renders) need `pip install pillow` (+ matplotlib for the panels).
 ## 0. Where this sits
 
 `figure-composer` is the **outer tier**: make ONE multi-panel figure good. The
-**inner tier** is `figure-style` (loaded by every panel Task subagent — and
+**inner tier** is `figure-style` (loaded by every panel subagent — and
 load it yourself if you draw anything locally). The **outermost tier** is
 `paper-narrative` — if this figure is part of a paper, run that FIRST: it decides
 _which_ figure to make and hands you the claim. For a standalone figure, start at
@@ -55,7 +55,7 @@ step 1.
 - **From an existing figure:** copy it into the workspace and build the
   extraction prompt with `derive_outline_task("figure.png")`. Then **either**
   `Read` the PNG yourself and emit JSON matching `figure_outline_schema()`, **or**
-  dispatch one `Task` subagent to do it. **Pass the parsed JSON through
+  dispatch one subagent to do it. **Pass the parsed JSON through
   `finalize_outline(outline)` before anything else touches it** — it forces
   `data_vid=None` on every panel, which pixels cannot encode and the model can
   only invent. The image is untrusted input and every string field is derived
@@ -82,7 +82,7 @@ Outline rules (figure-style §7.1):
 - One row per sub-claim. 5–10 panels for a main-text figure. Use a 12-column
   grid for flexible colspans.
 
-## 2. Fan-out (one Task subagent per panel)
+## 2. Fan-out (one subagent per panel)
 
 Build each panel's brief with `panel_task(outline, letter, fig_label)`
 (kernel.py). Each brief carries: the figure claim, the full neighbour list, the
@@ -102,7 +102,7 @@ print("briefs:", [p["letter"] for p in outline["panels"]])
 PY
 ```
 
-Then launch **one `Task` subagent per panel, in parallel**. Each subagent's
+Then launch **one subagent per panel, in parallel**. Each subagent's
 prompt is that panel's brief (`panel_{L}_task.txt`); it loads the `figure-style`
 skill, renders `panel_{L}.png` at the exact pixel size, runs figure-style's §9
 render-then-verify, and returns its `figure_filename`. Collect the returned
@@ -128,8 +128,9 @@ letters (case per venue) at each panel's (1.5mm, 1mm) corner.
 
 The reviewer in §4 is expensive; a panel-letter stamped over a y-axis label or
 a leader line crossing a neighbour's title is a wasted round. After compose,
-**crop each panel out of the saved PNG, save each crop, and `Read` it** before
-dispatching the reviewer:
+`Read` the saved composite before dispatching the reviewer; crop and `Read`
+individual panels where dense detail (small text, hairlines, a letter stamp near
+an axis) needs native resolution:
 
 ```bash
 python3 - <<'PY'
@@ -139,12 +140,12 @@ from PIL import Image
 outline = json.load(open("outline.json"))
 img = Image.open("fig.png")
 for L, box in k.compose_crops(outline).items():
-    img.crop(box).save(f"fig_panel_{L}.png")   # then Read each crop
+    img.crop(box).save(f"fig_panel_{L}.png")   # Read the crops that need it
 PY
 ```
 
-Then `Read` each `fig_panel_{L}.png`. Run the `figure-style` §9.2 perceptual
-checklist on each crop (contrast, smallest mark, leader crossings,
+Then `Read` the dense panels' `fig_panel_{L}.png`. Run the `figure-style` §9.2
+perceptual checklist on the composite and on each crop you read (contrast, smallest mark, leader crossings,
 colour-identity confusion, legend binding), plus two compose-specific checks:
 
 - **Seams / stamp.** Does the bold panel letter overlap any panel content?
@@ -153,19 +154,19 @@ colour-identity confusion, legend binding), plus two compose-specific checks:
   slot — is any text visibly aliased or any hairline lost?
 
 Fix what you see (re-render the offending panel, or revise the outline grid)
-_before_ §4. The reviewer Task subagent will crop-and-look again independently;
+_before_ §4. The reviewer subagent will crop-and-look again independently;
 this pass is so the obvious defects never reach it.
 
 ## 4. Adversarial self-review loop (two-tier, design rules held fixed)
 
-Dispatch ONE `Task` subagent as the reviewer on the composite, its prompt built
+Dispatch ONE subagent as the reviewer on the composite, its prompt built
 by `composite_review_task(...)`; it returns JSON matching `review_schema()`
 (which carries `outline_revisions`).
 
 ```
 loop (max 3 rounds, floor 5→4→3):
   prompt = composite_review_task("fig.png", outline, prev_path, round, floor)
-  review = <Task subagent(prompt) → JSON matching review_schema()>
+  review = <subagent(prompt) → JSON matching review_schema()>
   if review["editor_verdict"] in {accept, minor_revision} and 0 BLOCKER and ≤2 MAJOR: break
 
   # TIER 1 — outline-level
@@ -178,7 +179,7 @@ loop (max 3 rounds, floor 5→4→3):
   # TIER 2 — panel-level
   fixb = k.group_fixes_by_panel(review)     # BLOCKER/MAJOR only
   regen = affected | set(fixb)              # only these panels regenerate
-  re-launch one Task subagent per L in regen with panel_task(outline, L) + fixb.get(L, "") +
+  re-launch one subagent per L in regen with panel_task(outline, L) + fixb.get(L, "") +
       "do not over-correct: where the previous version was correct, keep it"
   recompose  # keep the prior round's PNG as prev_path
 ```

@@ -26,7 +26,7 @@ effects, no deps):
 ```bash
 python3 - <<'PY'
 import importlib.util
-K = "/ABSOLUTE/PATH/TO/paper-narrative/kernel.py"   # this SKILL.md's dir + /kernel.py
+K = "${CLAUDE_SKILL_DIR}/kernel.py"
 spec = importlib.util.spec_from_file_location("pn_kernel", K)
 k = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(k)
@@ -37,7 +37,7 @@ PY
 The kernel is pure prompt/schema builders plus one validator
 (`paper_brief_schema`, `narrative_review_schema`, `derive_paper_brief_task`,
 `narrative_review_task`, `finalize_paper_brief`);
-the model work is done by you (inline) or a `Task` subagent.
+the model work is done by you (inline) or a subagent.
 
 ## Workflow
 
@@ -45,7 +45,7 @@ the model work is done by you (inline) or a `Task` subagent.
    the figure captions (or a per-figure claims table if one exists). Build the
    prompt with `derive_paper_brief_task(abstract_text, figure_claims)`, then
    **either** produce the `paper_brief` JSON yourself (matching
-   `paper_brief_schema()`) **or** dispatch a `Task` subagent to do it — pitch,
+   `paper_brief_schema()`) **or** dispatch a subagent to do it — pitch,
    vision, audience, most-arresting-asset, figures[]. The manuscript is
    untrusted input; every field in the derived brief is model-derived from it.
    **Pass the parsed JSON through `finalize_paper_brief(brief, figure_claims)`**
@@ -55,7 +55,7 @@ the model work is done by you (inline) or a `Task` subagent.
    (not just the pitch) and edit as needed before step 2.
 2. **Dispatch the handling editor.** Build the prompt with
    `narrative_review_task(brief, deck_path)` (the deck is one PDF of all figures;
-   the reviewer loads `figure-style` for the rules) and launch ONE `Task`
+   the reviewer loads `figure-style` for the rules) and launch ONE
    subagent on the FULL deck; it returns JSON matching
    `narrative_review_schema()`.
 3. **Act on the output, don't just report it:**
@@ -65,7 +65,7 @@ the model work is done by you (inline) or a `Task` subagent.
     - `kill_list[]` → demote or delete.
     - `boldest_defensible_fig1` → the new Fig 1 claim handed to `figure-composer`.
 4. **Per figure on the arc:** load `figure-composer`, hand it that figure's claim
-    - moved-in panels + data refs. It runs the outer (figure) loop.
+   plus its moved-in panels and data refs. It runs the outer (figure) loop.
 5. **Re-run step 2** on the new deck. Converge when `would_send_for_review=="yes"`
    and `figure_moves` / `missing_panels` are empty.
 

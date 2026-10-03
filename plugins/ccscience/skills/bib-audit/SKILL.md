@@ -48,12 +48,12 @@ The kernel does every mechanical part of the audit in one call and leaves a **re
 
 ## Load the kernel
 
-`kernel.py` sits next to this file; import it by absolute path in a Bash `python` heredoc (zero import-time side effects, standard library only). Each `python` run is a fresh process, so re-import every time:
+`kernel.py` sits next to this file; import it in a Bash `python` heredoc (zero import-time side effects, standard library only). Each `python` run is a fresh process, so re-import every time:
 
 ```bash
 python3 - <<'PY'
 import importlib.util, json
-spec = importlib.util.spec_from_file_location("bibaudit", "/ABSOLUTE/PATH/TO/skills/bib-audit/kernel.py")
+spec = importlib.util.spec_from_file_location("bibaudit", "${CLAUDE_SKILL_DIR}/kernel.py")
 k = importlib.util.module_from_spec(spec); spec.loader.exec_module(k)
 s = k.audit("paper/references.bib", tex=["paper/main.tex", "paper/appendix.tex"])
 print(json.dumps({x: s[x] for x in ("entries_in", "entries_out", "status", "queue", "soft", "notices", "validation")}, indent=1, default=str))
