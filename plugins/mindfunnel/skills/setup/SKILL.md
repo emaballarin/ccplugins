@@ -1,20 +1,21 @@
 ---
 name: setup
-description: One-time bootstrap — seed ~/.mindfunnel/ with AGENTS.md, SOUL.md, USER.md, and PROJECT.md.example from the plugin's bundled templates. Use the first time you run the mindfunnel plugin on a new machine, or when ~/.mindfunnel/ is missing. Idempotent — detects existing files and never overwrites. Also creates a CLAUDE.md symlink pointing at AGENTS.md inside ~/.mindfunnel/, and ~/.claude/{SOUL,USER}.md + ~/.codex/{SOUL,USER}.md symlinks so both agents can reach the same personal files.
+description: Bootstrap — seed ~/.mindfunnel/ with AGENTS.md, SOUL.md, USER.md, and PROJECT.md.example from the plugin's bundled templates. Use the first time you run the mindfunnel plugin on a new machine, when ~/.mindfunnel/ is missing, or after an mf upgrade that adds links. Idempotent — detects existing files and never overwrites. Also creates a CLAUDE.md symlink pointing at AGENTS.md inside ~/.mindfunnel/, and — for each agent installed — ~/.claude/{CLAUDE,SOUL,USER}.md + ~/.codex/{AGENTS,SOUL,USER}.md symlinks so both agents load the same baseline and personal files.
 disable-model-invocation: true
 allowed-tools: [Read, Write, Bash]
 ---
 
 # /mf:setup — bootstrap `~/.mindfunnel/`
 
-Seed the user's personal `~/.mindfunnel/` directory with the editable scaffolding the other mindfunnel skills depend on. Run **once per machine**. Idempotent: if `~/.mindfunnel/` already looks complete, say so and stop.
+Seed the user's personal `~/.mindfunnel/` directory with the editable scaffolding the other mindfunnel skills depend on. Run **once per machine**, and again after an upgrade that adds a link. Idempotent: if `~/.mindfunnel/` already looks complete **and** Step 4 reports every link already in place, say so and stop. A complete `~/.mindfunnel/` alone is not enough — an upgrade can add links to it.
 
 ## Important
 
-1. **Never overwrite.** Every target file is created only if it doesn't already exist. The user may have already edited `SOUL.md` or `USER.md` — destroying them is unacceptable.
+1. **Never overwrite user content.** Every target is created only if absent; the only things ever replaced are a dangling symlink and Step 3's own `CLAUDE.md` link. The user may have already edited `SOUL.md` or `USER.md` — destroying them is unacceptable.
 2. **Templates live at `${CLAUDE_PLUGIN_ROOT}/templates/`.** That environment variable is set by Claude Code when this skill runs. Do not hard-code a path; always use the variable.
 3. **`CLAUDE.md` inside `~/.mindfunnel/` is a symlink** to `AGENTS.md` in the same directory. This is the standard convention; both names point at the same content.
 4. **`SOUL.md` and `USER.md` are user-global, not project-level.** Neither gets stamped into a project root by `/mf:prime`. This skill symlinks `~/.claude/{SOUL,USER}.md` and `~/.codex/{SOUL,USER}.md` to the corresponding files in `~/.mindfunnel/` so both agents reach the same source of truth.
+5. **Each agent's baseline entry point is a symlink too**: `~/.claude/CLAUDE.md` → `~/.mindfunnel/CLAUDE.md`, and `$CODEX_HOME/AGENTS.md` (default `~/.codex/`) → `~/.mindfunnel/AGENTS.md`. Codex reads that file unless an `AGENTS.override.md` sits beside it, which Step 4 reports. Without these links, no agent loads the baseline.
 
 ## Instructions
 
@@ -56,40 +57,56 @@ ln -sfn AGENTS.md "$HOME/.mindfunnel/CLAUDE.md"
 
 `-f` replaces a broken or pre-existing symlink, `-n` prevents following an existing `CLAUDE.md` symlink into its target when forcing. Safe because we're only ever symlinking to `AGENTS.md` in the same directory.
 
-### Step 4: Create the `SOUL.md` and `USER.md` symlinks into `~/.claude/` and `~/.codex/`
+### Step 4: Create the per-agent symlinks into `~/.claude/` and `~/.codex/`
 
-Both `SOUL.md` and `USER.md` are user-global. Both Claude Code and Codex should reach the same source of truth at `~/.mindfunnel/`. For each agent dotdir that exists, install a symlink for each of the two files — idempotently, and without clobbering a non-symlink file the user may have authored themselves.
+`SOUL.md`, `USER.md` and the baseline `AGENTS.md` are user-global: Claude Code and Codex should reach the same source of truth at `~/.mindfunnel/`. For each agent dotdir that exists, install the symlinks idempotently. A target is created when absent and re-pointed only when it is a dangling symlink; a real file, or a symlink to somewhere else (a dotfiles setup, say), is the user's and stays as it is. Run the snippet as one block — `mf_link` exists only in the shell that defines it. It prints one status line per target; build the Step 5 report from those lines.
 
 ```bash
-for name in SOUL.md USER.md; do
-    for agent_dir in "$HOME/.claude" "$HOME/.codex"; do
-        [ -d "$agent_dir" ] || continue
-        target="$agent_dir/$name"
-        src="$HOME/.mindfunnel/$name"
-        if [ ! -e "$src" ]; then
-            # Template seeding was declined above; nothing to point at.
-            continue
-        fi
-        if [ -L "$target" ]; then
-            # Already a symlink. Only re-point if it's pointing elsewhere.
-            if [ "$(readlink "$target")" != "$src" ]; then
-                ln -sfn "$src" "$target"
-            fi
+codex_dir=${CODEX_HOME:-$HOME/.codex}
+mf_link() {  # mf_link <target> <src> — idempotent; replaces nothing but a dangling symlink
+    local target=$1 src=$2 cur
+    [ -d "$(dirname "$target")" ] || return 0   # agent not installed: the loop reports it
+    if [ ! -e "$src" ]; then
+        echo "$target: skipped (no $src)"
+    elif [ -L "$target" ]; then
+        cur=$(readlink "$target")
+        if [ "$cur" = "$src" ]; then
+            echo "$target: already symlinked correctly"
         elif [ -e "$target" ]; then
-            # Real file — don't touch. Flag in the report.
-            :
+            echo "$target: left alone (symlink to $cur)"
+        elif ln -sfn "$src" "$target"; then
+            echo "$target: re-pointed (was dangling → $cur)"
         else
-            ln -s "$src" "$target"
+            echo "$target: FAILED to re-point"
         fi
-    done
+    elif [ -e "$target" ]; then
+        echo "$target: left alone (real file)"
+    elif ln -s "$src" "$target"; then
+        echo "$target: symlinked → $src"
+    else
+        echo "$target: FAILED to link"
+    fi
+}
+for agent_dir in "$HOME/.claude" "$codex_dir"; do
+    if [ ! -d "$agent_dir" ]; then
+        echo "$agent_dir/: not present; skipped"
+        continue
+    fi
+    mf_link "$agent_dir/SOUL.md" "$HOME/.mindfunnel/SOUL.md"
+    mf_link "$agent_dir/USER.md" "$HOME/.mindfunnel/USER.md"
 done
+mf_link "$HOME/.claude/CLAUDE.md" "$HOME/.mindfunnel/CLAUDE.md"
+mf_link "$codex_dir/AGENTS.md" "$HOME/.mindfunnel/AGENTS.md"
+if [ -s "$codex_dir/AGENTS.override.md" ]; then
+    echo "$codex_dir/AGENTS.override.md: present — Codex reads it instead of AGENTS.md"
+fi
 ```
 
 Skip an agent dir that doesn't exist (e.g. `~/.codex/` on a Claude-only machine). Don't create agent dirs yourself — they're owned by the respective agent installer.
 
 ### Step 5: Report
 
-Emit a short summary, ≤ 14 lines, listing for each target: **created**, **already present** (skipped), **symlinked**, or **skipped** (real file in the way). Example:
+Emit a short summary, ≤ 14 lines, listing for each target: **created**, **already present** (skipped), **symlinked**, **re-pointed** (was dangling), **left alone** (a real file, or a symlink elsewhere — name its target), or **skipped**. Flag an `AGENTS.override.md`. Example:
 
 ```
 ~/.mindfunnel/
@@ -98,8 +115,10 @@ Emit a short summary, ≤ 14 lines, listing for each target: **created**, **alre
   USER.md            created
   PROJECT.md.example already present
   CLAUDE.md          symlinked → AGENTS.md
+~/.claude/CLAUDE.md  symlinked → ~/.mindfunnel/CLAUDE.md
 ~/.claude/SOUL.md    symlinked → ~/.mindfunnel/SOUL.md
 ~/.claude/USER.md    symlinked → ~/.mindfunnel/USER.md
+~/.codex/AGENTS.md   symlinked → ~/.mindfunnel/AGENTS.md
 ~/.codex/SOUL.md     symlinked → ~/.mindfunnel/SOUL.md
 ~/.codex/USER.md     symlinked → ~/.mindfunnel/USER.md
 ```
@@ -135,8 +154,10 @@ On a no-op run, skip this paragraph.
   USER.md            created
   PROJECT.md.example created
   CLAUDE.md          symlinked → AGENTS.md
+~/.claude/CLAUDE.md  symlinked → ~/.mindfunnel/CLAUDE.md
 ~/.claude/SOUL.md    symlinked → ~/.mindfunnel/SOUL.md
 ~/.claude/USER.md    symlinked → ~/.mindfunnel/USER.md
+~/.codex/AGENTS.md   symlinked → ~/.mindfunnel/AGENTS.md
 ~/.codex/SOUL.md     symlinked → ~/.mindfunnel/SOUL.md
 ~/.codex/USER.md     symlinked → ~/.mindfunnel/USER.md
 ```
@@ -158,8 +179,10 @@ Followed by the "edit `SOUL.md` / `USER.md`" hint.
   USER.md            already present
   PROJECT.md.example already present
   CLAUDE.md          symlinked → AGENTS.md
+~/.claude/CLAUDE.md  already symlinked correctly
 ~/.claude/SOUL.md    already symlinked correctly
 ~/.claude/USER.md    already symlinked correctly
+~/.codex/AGENTS.md   already symlinked correctly
 ~/.codex/SOUL.md     already symlinked correctly
 ~/.codex/USER.md     already symlinked correctly
 ```
@@ -173,6 +196,7 @@ Followed by the "edit `SOUL.md` / `USER.md`" hint.
   USER.md            created
   PROJECT.md.example created
   CLAUDE.md          symlinked → AGENTS.md
+~/.claude/CLAUDE.md  symlinked → ~/.mindfunnel/CLAUDE.md
 ~/.claude/SOUL.md    symlinked → ~/.mindfunnel/SOUL.md
 ~/.claude/USER.md    symlinked → ~/.mindfunnel/USER.md
 ~/.codex/            not present; skipped
@@ -180,9 +204,9 @@ Followed by the "edit `SOUL.md` / `USER.md`" hint.
 
 ## Anti-patterns
 
-- **Don't overwrite `SOUL.md` or `USER.md`** — or any other target — under any circumstance. The user's edits are sacred.
+- **Don't overwrite user content** — `SOUL.md`, `USER.md`, or any target that is a real file or a live link. The user's edits are sacred.
 - **Don't hard-code `/home/<user>/repositories/.../templates/`.** Always use `${CLAUDE_PLUGIN_ROOT}`; the cache path changes on every update.
 - **Don't create files inside the plugin cache (`${CLAUDE_PLUGIN_ROOT}`).** That directory is discarded and recreated on plugin update. Only read from it.
-- **Don't touch per-project files.** `/mf:setup` only writes inside `~/.mindfunnel/` and creates the `SOUL.md` / `USER.md` symlinks in `~/.claude/` / `~/.codex/`. Per-project work is `/mf:prime`'s job.
+- **Don't touch per-project files.** `/mf:setup` only writes inside `~/.mindfunnel/` and creates the per-agent symlinks in `~/.claude/` / `~/.codex/`. Per-project work is `/mf:prime`'s job.
 - **Don't create `~/.claude/` or `~/.codex/` yourself.** If an agent's dotdir doesn't exist, the user hasn't installed that agent; installing a symlink into a non-existent dir would be premature. Skip and move on.
-- **Don't replace a real `SOUL.md` or `USER.md` in `~/.claude/` or `~/.codex/`.** If the target exists and is not a symlink, the user may have hand-authored it. Leave it alone and flag in the report.
+- **Leave the user's own targets as they are** — a real file or a symlink to somewhere else at any link target (`CLAUDE.md`, `AGENTS.md`, `SOUL.md`, `USER.md` in `~/.claude/` or `~/.codex/`). Only a dangling symlink gets re-pointed. If the target exists and is not a symlink, the user may have hand-authored it. Leave it alone and flag in the report.

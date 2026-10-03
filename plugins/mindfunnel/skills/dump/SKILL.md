@@ -125,7 +125,7 @@ Before writing: for any file you're about to modify, read it first to preserve l
 If the session surfaced a **general** guideline or preference worth propagating to every future session on any project, propose an edit to one of the user-global files:
 
 - `~/.mindfunnel/SOUL.md` — user traits, collaboration style, communication preferences.
-- `~/.mindfunnel/AGENTS.md` — general, agent-neutral engineering guidelines. This is the maintainer's user-global AGENTS.md, auto-loaded via `~/.claude/CLAUDE.md` and `~/.codex/instructions.md`. It is not the per-project `./AGENTS.md` (which is a small project-scoped stub owned by the project).
+- `~/.mindfunnel/AGENTS.md` — general, agent-neutral engineering guidelines. This is the maintainer's user-global AGENTS.md, auto-loaded via `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`. It is not the per-project `./AGENTS.md` (which is a small project-scoped stub owned by the project).
 - `~/.mindfunnel/USER.md` — per-machine user preferences: shell, Python defaults, formatter paths, multi-agent hook bridges.
 
 **Guardrails:**
@@ -133,7 +133,7 @@ If the session surfaced a **general** guideline or preference worth propagating 
 - **Propose, never apply silently.** Show the proposed passage, explain _why_ it's general, wait for explicit approval, then apply.
 - **Budget**: 0 proposals in the common case, 1 every 5–10 dumps at most.
 - **Three conditions must all hold**: genuinely general (applies to any project), stable (not contradicted elsewhere), actionable (a concrete rule, not a vibe).
-- **Write to `~/.mindfunnel/` directly** — never to the per-project `./AGENTS.md` or to the symlink aliases (`~/.claude/CLAUDE.md`, `~/.codex/instructions.md`). The user-global content has one canonical home.
+- **Write to `~/.mindfunnel/` directly** — never to the per-project `./AGENTS.md` or to the symlink aliases (`~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`). The user-global content has one canonical home.
 - **Pick the right file.** Agent-neutral engineering style → AGENTS.md. Personal style / who the user is → SOUL.md. Machine-specific tooling → USER.md.
 
 If in doubt, skip. User-global file churn creates noise.

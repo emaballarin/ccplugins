@@ -29,8 +29,22 @@
      or behave unexpectedly. -->
 
 <!-- Example:
-  - Shell is Fish. `rm` is aliased to interactive mode; use `rm -f` in
+  - Shell is Fish: write commands meant for the maintainer in Fish
+    syntax. Claude Code's Bash tool runs only Bash or Zsh (pin one with
+    `CLAUDE_CODE_SHELL`), so test Fish-only commands with `fish -c '…'`.
+  - `rm` is aliased to interactive mode, deliberately; use `rm -f` in
     scripts so prompts don't stall the session.
+  - A pipeline reports its last stage only: `set -o pipefail` before
+    piping a build or test into `tail`.
+-->
+
+## Version control
+
+<!-- Signing, push policy — anything an agent must not route around. -->
+
+<!-- Example:
+  - Commits are always signed. If signing fails (locked signer), stop
+    and hand back; never disable or skip it.
 -->
 
 ## Python conventions
@@ -39,7 +53,10 @@
      linter paths, personally-preferred libraries. -->
 
 <!-- Example:
-  - Python 3.14+, run with `python -O`, typically from `src/`.
+  - Python 3.14+, typically from `src/`. Experiment runs use `python -O`;
+    tests never do — `-O` strips every `assert` pytest doesn't rewrite.
+  - Venvs live at `<venv-root>/<name>/.venv`, named by the project's
+    `.envrc`. Agent shells skip direnv: run `direnv exec . <cmd>`.
   - PyTorch is the default for tensors / differentiable programming / ML.
   - Modern native type-hint syntax: `tuple[int, float]`, `int | None`,
     `collections.abc` imports.
@@ -75,7 +92,7 @@
   | Agent       | `AGENTS.md` is auto-loaded as        |
   | ----------- | ------------------------------------ |
   | Claude Code | `~/.claude/CLAUDE.md`                |
-  | Codex       | `~/.codex/instructions.md`           |
+  | Codex       | `~/.codex/AGENTS.md`                 |
 
   Every entry is a symlink into `~/.mindfunnel/`, so one edit at the real
   file propagates to all of them. Check with `stat -Lc %i` rather than by

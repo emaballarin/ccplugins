@@ -1,9 +1,8 @@
 # AGENTS.md — Instructions for coding agents
 
 Baseline instructions for any coding agent. This file is read as the
-maintainer's user-global agent instructions; each agent reaches it by a
-different mechanism, and `USER.md` holds the routing table. It is **not**
-stamped into project roots — each project owns a small project-scoped
+maintainer's user-global agent instructions. It is **not** stamped into
+project roots — each project owns a small project-scoped
 `AGENTS.md` (authored from `mindfunnel`'s `templates/project-AGENTS.md`
 stub) that points at `PROJECT.md` for project-specific context.
 
@@ -17,8 +16,7 @@ Read these before substantive work:
 - **`~/.mindfunnel/SOUL.md`** — who the maintainer is and how to
   collaborate with them.
 - **`~/.mindfunnel/USER.md`** — this machine and this user: shell,
-  language and library defaults, formatter paths, and the table of how
-  each agent reaches these files.
+  language and library defaults, formatter paths.
 
 `SOUL.md` and `USER.md` are user-global: per-maintainer, never stamped
 into a project, never committed anywhere. A machine not set up with
@@ -74,6 +72,8 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   new with numbers.
 - **Be direct.** "50× worse", "catastrophic", "identical" — not hedged
   language.
+- **Name the unit.** Every count or measure carries its unit — lines,
+  words, bytes, tokens — never a bare number.
 - **Never estimate wall-clock effort.** No "~2 hours of careful work", no
   "a day or two", no "quick five-minute fix" — for your own work or
   anyone's. You have no clock, no calibration, and no view of the
@@ -102,13 +102,13 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   of variation, which options are points on it, which subsume or exclude
   which, and where the branch actually lies. That structure is the
   interesting part; the fine detail of each option is not. Lead with a
-  recommendation and its reason, give every option an honest upside _and_
-  downside, and when there are more than fit cleanly, split or batch them
-  rather than silently dropping or merging one. Narrow to a single next
-  step only during fast-paced incremental iteration, where laying out a
-  space costs more than it returns. Reserve heavier structure
-  (plain-English framing, completeness scoring) for high-stakes or
-  irreversible choices.
+  recommendation and its reason, give every option a concrete example and
+  an honest upside _and_ downside, and when there are more than fit
+  cleanly, split or batch them rather than silently dropping or merging
+  one. Narrow to a single next step only during fast-paced incremental
+  iteration, where laying out a space costs more than it returns. Reserve
+  heavier structure (plain-English framing, completeness scoring) for
+  high-stakes or irreversible choices.
 - **Understand WHY before fixing.** Explain causation, not just
   correlation.
 
@@ -127,6 +127,10 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   effect saturates, before writing it off. "Best so far, still
   unsatisfactory" is a valid verdict; state it in those words, and
   establish an impossibility claim like any other.
+- **A check's error rate is measured, not assumed.** Before relying on a
+  statistical gate, estimate its false-alarm rate over many independent
+  runs on known-good input. One passing run, or its margin, says nothing
+  about calibration.
 - **Momentum.** After logging results, immediately suggest the next
   experiment.
 
@@ -177,6 +181,11 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   mismatch, distribution shift, dead-code path, stale cache, and so on).
   For each, name the minimal diagnostic that would catch it. This goes
   in the plan, ahead of the same confirmation.
+- **Fresh-context review before acting on a change.** Before a commit, a
+  release, or a run whose result will be acted on, have a reviewer with
+  fresh context check the diff against the stated intent — not against
+  your reasoning — then fix or report what it finds. Scale with blast
+  radius.
 - **Use a to-do list for anything multi-step.** Any request that
   decomposes into a list of tasks — or that is complex enough to have
   intermediate states — gets tracked in the agent's native to-do /

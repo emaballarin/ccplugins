@@ -3,11 +3,54 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## 0.7.7 — 2026-09-28
+## 0.7.7 — 2026-10-03
 
-Housekeeping — coordinated marketplace version alignment alongside the `ccsci`
-0.9.0 release (the new `bib-audit` skill). Nothing in this plugin was edited.
-No skill logic changed.
+`/mf:setup` now installs each agent's baseline entry point, and the docs stop
+naming a Codex path that Codex never reads. Also carries the coordinated
+marketplace version alignment alongside the `ccsci` 0.9.0 release (the new
+`bib-audit` skill).
+
+Fixed:
+
+- **`/mf:setup` wires the baseline.** Step 4 also links `~/.claude/CLAUDE.md` →
+  `~/.mindfunnel/CLAUDE.md` and `$CODEX_HOME/AGENTS.md` (default `~/.codex/`) →
+  `~/.mindfunnel/AGENTS.md`, only for an agent whose dotdir exists. Before this,
+  a machine bootstrapped by `/mf:setup` loaded the baseline in neither agent
+  unless the links were made by hand. An `AGENTS.override.md` beside the Codex
+  link is reported, since Codex reads it instead.
+- **`/mf:setup` leaves the user's own targets alone.** Every link — the new two
+  and the existing `SOUL.md` / `USER.md` — is created when absent and re-pointed
+  only when dangling. A real file, or a live symlink to somewhere else (a
+  dotfiles setup), is left as it is and reported; previously a foreign symlink
+  was silently re-pointed. Step 4 prints one status line per target.
+- **`/mf:setup` re-runs Step 4 on a complete `~/.mindfunnel/`**, so an upgrade
+  gains new links instead of stopping at "already set up".
+- **Codex reads `~/.codex/AGENTS.md`, not `~/.codex/instructions.md`.**
+  Corrected in `/mf:prime`, `/mf:dump`, the README and `templates/USER.md`. An
+  `instructions.md` symlink resolves, but Codex never opens it: it looks like
+  coverage and provides none.
+- **The README uninstall removes only links into `~/.mindfunnel/`.** One `find`
+  command, valid in fish, bash, zsh and sh. The previous `rm -f` would also
+  have deleted a hand-authored file at those paths.
+
+Changed:
+
+- `templates/AGENTS.md` re-synced with the live baseline: new **Fresh-context
+  review before acting on a change**, **Name the unit** and **A check's error
+  rate is measured, not assumed** rules; alternatives now carry a concrete
+  example each; the per-agent routing-table references are gone.
+- `templates/USER.md` examples gain the agent shell (Claude Code's Bash tool
+  runs only Bash or Zsh; pin one with `CLAUDE_CODE_SHELL`), `pipefail`, `-O`
+  scoped to experiment runs, venvs located through `.envrc`, and a Version
+  control section.
+
+Install impact: re-run `/mf:setup` to gain the two baseline links. It never
+overwrites `~/.mindfunnel/AGENTS.md` or `USER.md`, so to adopt the three new
+baseline rules, the reworded alternatives bullet and the routing-table removal,
+copy them from `templates/AGENTS.md` by hand (a `diff` against your live file
+shows them). The `templates/USER.md` changes reach new installs only. A
+`~/.codex/instructions.md` link made by hand from the old docs is inert and can
+be deleted.
 
 ## 0.7.6 — 2026-09-26
 

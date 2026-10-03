@@ -13,7 +13,7 @@ Set up the current project's root with a small committed agent-entry-point so th
 - `CLAUDE.md` — intra-repo symlink to `./AGENTS.md`, **committed**. Explicit Claude Code compatibility.
 - `PROJECT.md` — real file, empty by default, **committed**. Holds project-specific deep context.
 
-**Nothing per-project points into `~/.mindfunnel/` anymore.** The maintainer's user-global engineering style (`~/.mindfunnel/AGENTS.md`) is loaded independently via the `~/.claude/CLAUDE.md` / `~/.codex/instructions.md` symlinks that `/mf:setup` manages; it is not conflated with each project's `AGENTS.md`. Likewise, `SOUL.md` and `USER.md` are user-global files reached via `~/.claude/` and `~/.codex/` symlinks and are never stamped into a project.
+**Nothing per-project points into `~/.mindfunnel/` anymore.** The maintainer's user-global engineering style (`~/.mindfunnel/AGENTS.md`) is loaded independently via the `~/.claude/CLAUDE.md` / `~/.codex/AGENTS.md` symlinks that `/mf:setup` manages; it is not conflated with each project's `AGENTS.md`. Likewise, `SOUL.md` and `USER.md` are user-global files reached via `~/.claude/` and `~/.codex/` symlinks and are never stamped into a project.
 
 Run **once per project**, from the project root. Idempotent: re-running after the upgrade cleans up legacy pre-0.3.0 symlinks and legacy `.gitignore` lines automatically.
 
