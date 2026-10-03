@@ -20,17 +20,17 @@ Write the current session's non-derivable state to the project's auto-memory dir
 
 ### Step 1: Locate the memory directory
 
-Claude Code's auto-memory system lives at `~/.claude/projects/<slug>/memory/` where `<slug>` is the project's absolute path with every `/` replaced by `-`.
+Use the auto-memory directory Claude Code names in its system prompt. Without one, derive it: `~/.claude/projects/<slug>/memory/`, where `<slug>` is the repository root — shared by its subdirectories and worktrees; `$PWD` outside git — with every non-alphanumeric character replaced by `-`. An `autoMemoryDirectory` setting or `CLAUDE_CODE_PROJECT_DIR_NAME` overrides the derivation.
 
 ```bash
-bash -c 'echo ~/.claude/projects/$(echo "$PWD" | sed "s|/|-|g")/memory'
+bash -c 'g=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && r=$(dirname "$g") || r=$PWD; echo ~/.claude/projects/$(printf %s "$r" | sed "s/[^A-Za-z0-9]/-/g")/memory'
 ```
 
 The directory is usually already created by Claude Code. If not, create it before writing.
 
 ### Step 2: Verify the project is primed
 
-Confirm `AGENTS.md` and `PROJECT.md` exist in the project root (these are set up by `/mf:prime`; under 0.3.0+ they're real committed files, under older versions they may be symlinks — either counts). If either is missing:
+Confirm `AGENTS.md` and `PROJECT.md` exist in the project root (set up by `/mf:prime`; a regular file or a symlink both count). If either is missing:
 
 - **Flag it** and offer to run `/mf:prime` from the project root.
 - **Do not run `/mf:prime` silently** — pre-existing files with the same name matter.
@@ -67,13 +67,13 @@ Every memory file has YAML frontmatter with `name`, `description`, `type`. The f
 - **`user`** — durable facts about the user's role, expertise, responsibilities. Low churn.
 - **`reference`** — pointers to external systems (issue trackers, experiment trackers, dashboards, buckets). Low churn.
 
-Filename convention: `<type>_<topic>.md` (e.g. `project_state.md`, `results_full_sweep.md`, `feedback_offline_vs_online.md`, `reference_wandb.md`).
+Filename convention: `<type>_<topic>.md` (e.g. `project_state.md`, `feedback_offline_vs_online.md`, `reference_wandb.md`); a large results dossier of type `project` may be named `results_<topic>.md`.
 
 ### Step 5b: Append atomic entries to the ledger
 
 Alongside the narrative Markdown, append **atomic** claims / decisions / learnings to the append-only ledger. This is where trust and provenance live, so a future session can tell a measured result from an inferred guess — and check whether it has since gone stale.
 
-The full schema, trust ladder, and semantics are in `references/ledger.md` — read it if you have not this session. In short, each line is one JSON object:
+The full schema, trust ladder, and semantics are in `${CLAUDE_PLUGIN_ROOT}/references/ledger.md` — read it if you have not this session. In short, each line is one JSON object:
 
 ```json
 {
@@ -92,17 +92,19 @@ Rules:
 
 - **Append only.** Never rewrite or delete a line. To revise, append a new entry whose `supersedes` names the old `id`.
 - **Pick the honest trust rung.** `guaranteed` > `observed` > `given` > `user-inferred` > `agent-inferred`; `opinion` for a taste call with no truth claim. Do not inflate an inference to `observed`.
-- **Record provenance.** Put the grounding paths (commit-pinned as `path@<sha>` when the claim is tied to specific code), run-ids, or URLs in `sources`. Omit for a bare preference.
+- **Record provenance.** Put the grounding paths (commit-pinned as `path@<sha>`, with `<sha>` = `git rev-parse HEAD` at dump time, when the claim is tied to specific code), run-ids, or URLs in `sources`. Omit for a bare preference.
 - **Ledger-worthy only.** One-sentence assertions that carry trust or provenance — a benchmark number, a settled decision, a durable gotcha. Prose state stays in Markdown; do not double-log.
 
-Append with a shell heredoc (the memory dir is the same `<slug>` path as the Markdown files; timestamp via `date -u +%Y-%m-%dT%H:%M:%SZ`):
+Append with a shell heredoc (the memory dir from Step 1; timestamp via `date -u +%Y-%m-%dT%H:%M:%SZ`):
 
 ```bash
-LEDGER=~/.claude/projects/$(echo "$PWD" | sed "s|/|-|g")/memory/ledger.jsonl
+LEDGER="<memory dir from Step 1>/ledger.jsonl"
 cat >> "$LEDGER" <<'JSON'
 {"id":"20260101-1","ts":"2026-01-01T00:00:00Z","kind":"claim","status":"observed","text":"...","sources":["..."]}
 JSON
 ```
+
+Correct what has gone stale: when an entry's source changed — including drift a `/mf:spinup` brief flagged this session — append a corrected entry that `supersedes` it.
 
 If there are no atomic assertions worth pinning this dump, skip — the ledger is not a log of everything.
 
@@ -131,7 +133,7 @@ If the session surfaced a **general** guideline or preference worth propagating 
 **Guardrails:**
 
 - **Propose, never apply silently.** Show the proposed passage, explain _why_ it's general, wait for explicit approval, then apply.
-- **Budget**: 0 proposals in the common case, 1 every 5–10 dumps at most.
+- **Rare by design**: most dumps propose nothing; propose only when an insight meets all three conditions below.
 - **Three conditions must all hold**: genuinely general (applies to any project), stable (not contradicted elsewhere), actionable (a concrete rule, not a vibe).
 - **Write to `~/.mindfunnel/` directly** — never to the per-project `./AGENTS.md` or to the symlink aliases (`~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`). The user-global content has one canonical home.
 - **Pick the right file.** Agent-neutral engineering style → AGENTS.md. Personal style / who the user is → SOUL.md. Machine-specific tooling → USER.md.
@@ -140,7 +142,7 @@ If in doubt, skip. User-global file churn creates noise.
 
 ### Step 9: Report
 
-End with a concise summary, ≤ 15 lines:
+End with a concise summary:
 
 ```
 Memory dir: <path>
@@ -201,7 +203,7 @@ If nothing was worth logging, say "no new signal; memory is current" and do noth
 
 **Symptom:** Files land at an unexpected location, or Claude Code complains about an unknown memory dir.
 
-**Cause:** The slug transformation doesn't match Claude Code's internal convention on this host.
+**Cause:** An `autoMemoryDirectory` setting or `CLAUDE_CODE_PROJECT_DIR_NAME` moved the directory, or Step 1's derivation missed a case (a git submodule, git older than 2.31).
 
 **Solution:** Check with `ls ~/.claude/projects/` — the current project's dir should appear. If absent, Claude Code hasn't indexed this project yet; create the dir manually with `mkdir -p ~/.claude/projects/<slug>/memory` and Claude Code will adopt it.
 
@@ -234,7 +236,6 @@ If nothing was worth logging, say "no new signal; memory is current" and do noth
 - **Don't dump verbatim tool output** — summarise signal, cite key numbers only.
 - **Don't log bug-fix recipes** — the fix is in the code, its context is in the commit. Log _why_ the bug existed if non-obvious.
 - **Don't overwrite** existing content without reading first.
-- **Don't propose SOUL.md / AGENTS.md / USER.md edits routinely.** Once every few dumps at most, or if really needed.
 - **Don't create a new file** when an existing one can absorb the update.
 - **Don't list every tool call you made** — memory is for signal, not process.
 - **Don't re-run experiments or verify against current code** — that's spinup's job. Dump is mostly write.

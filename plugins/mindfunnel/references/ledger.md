@@ -18,7 +18,7 @@ and do not duplicate a ledger claim as a Markdown paragraph — cross-reference 
 ~/.claude/projects/<slug>/memory/ledger.jsonl
 ```
 
-Same `<slug>` and memory dir as the Markdown files (`$PWD` with every `/` → `-`).
+Same `<slug>` and memory dir as the Markdown files (the directory `/mf:dump` Step 1 locates).
 One JSON object per line. Create the file on first append if absent.
 
 ## Entry schema
@@ -89,5 +89,5 @@ For each surviving entry, check its `sources`:
 - a `path` that no longer exists → flag the entry **orphaned**.
 
 A stale or orphaned entry is **not** cited as current fact. Surface it as needing
-re-verification, or (if the drift is unambiguous) append a corrected entry that
-`supersedes` it.
+re-verification, with the correction when the drift is unambiguous; the next
+`/mf:dump` appends a corrected entry that `supersedes` it.

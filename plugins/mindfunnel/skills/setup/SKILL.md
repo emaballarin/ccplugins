@@ -106,7 +106,7 @@ Skip an agent dir that doesn't exist (e.g. `~/.codex/` on a Claude-only machine)
 
 ### Step 5: Report
 
-Emit a short summary, ≤ 14 lines, listing for each target: **created**, **already present** (skipped), **symlinked**, **re-pointed** (was dangling), **left alone** (a real file, or a symlink elsewhere — name its target), or **skipped**. Flag an `AGENTS.override.md`. Example:
+Emit a short summary listing for each target: **created**, **already present** (skipped), **symlinked**, **re-pointed** (was dangling), **left alone** (a real file, or a symlink elsewhere — name its target), or **skipped**. Flag an `AGENTS.override.md`. Example:
 
 ```
 ~/.mindfunnel/
@@ -204,9 +204,7 @@ Followed by the "edit `SOUL.md` / `USER.md`" hint.
 
 ## Anti-patterns
 
-- **Don't overwrite user content** — `SOUL.md`, `USER.md`, or any target that is a real file or a live link. The user's edits are sacred.
 - **Don't hard-code `/home/<user>/repositories/.../templates/`.** Always use `${CLAUDE_PLUGIN_ROOT}`; the cache path changes on every update.
 - **Don't create files inside the plugin cache (`${CLAUDE_PLUGIN_ROOT}`).** That directory is discarded and recreated on plugin update. Only read from it.
 - **Don't touch per-project files.** `/mf:setup` only writes inside `~/.mindfunnel/` and creates the per-agent symlinks in `~/.claude/` / `~/.codex/`. Per-project work is `/mf:prime`'s job.
 - **Don't create `~/.claude/` or `~/.codex/` yourself.** If an agent's dotdir doesn't exist, the user hasn't installed that agent; installing a symlink into a non-existent dir would be premature. Skip and move on.
-- **Leave the user's own targets as they are** — a real file or a symlink to somewhere else at any link target (`CLAUDE.md`, `AGENTS.md`, `SOUL.md`, `USER.md` in `~/.claude/` or `~/.codex/`). Only a dangling symlink gets re-pointed. If the target exists and is not a symlink, the user may have hand-authored it. Leave it alone and flag in the report.

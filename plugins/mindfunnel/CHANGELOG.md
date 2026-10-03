@@ -3,6 +3,59 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.7.8 — 2026-10-03
+
+`/mf:dump` and `/mf:spinup` find the memory directory Claude Code actually
+uses, and the authoring guide is corrected against current Claude Code and
+current models.
+
+Fixed:
+
+- **The memory directory.** Both skills replaced only `/` in `$PWD`. Claude
+  Code derives the directory from the repository root — shared by its
+  subdirectories and worktrees — and maps every non-alphanumeric character to
+  `-`. A path containing `_`, `.` or a space, or a session started in a
+  subdirectory, sent dumps to a directory auto-memory never loads and had
+  spinup read it back. Both now use the path the system prompt names, else
+  derive it as Claude Code does, and name the `autoMemoryDirectory` and
+  `CLAUDE_CODE_PROJECT_DIR_NAME` overrides. Memory an earlier version wrote to
+  a wrong directory stays there; move it by hand.
+- **`/mf:spinup` is read-only throughout.** Two of its passages and
+  `references/ledger.md` told it to edit memory; it now flags drift with the
+  proposed correction, and `/mf:dump` appends the superseding ledger entry.
+- **Staleness check**: `git diff --quiet <sha> -- <path>` replaces the
+  `git log -1` comparison, which flagged a `HEAD`-pinned entry stale and missed
+  uncommitted edits; `/mf:dump` pins `<sha>` to `HEAD`.
+- **File names agree.** Spinup read `user_prefs.md` and `collaboration_style.md`,
+  names dump's convention never produces; it now reads `user_*.md`. Dump names
+  `results_*` as a `project` dossier.
+- **`/mf:spinup` no longer claims "resume"**, which belongs to `/ar:resume`.
+- **`references/skill-mechanics.md`**: `allowed-tools` pre-approves tools for
+  the invoking turn and restricts nothing; `disallowed-tools` is what removes
+  one. Plugin-root material is referenced as `${CLAUDE_PLUGIN_ROOT}/…`, which
+  Claude Code substitutes in a `SKILL.md` body.
+
+Changed:
+
+- **`/mf:author`**: a no-op intensifier is deleted or replaced with a checkable
+  criterion, not escalated to a stronger word; splitting by sequence waits for
+  an observed rush; a prohibition anchors the failure it names; "Done when"
+  asks for every rule's reason, stated once at normal volume.
+- Numeric caps dropped: the dump, prime, setup and spinup report lengths and
+  dump's proposal budget;
+  rules restated across Important, Troubleshooting and Anti-patterns are
+  stated once.
+- Prime, dump and spinup describe legacy state by its shape, not by the plugin
+  version that left it; the cleanup logic is unchanged.
+- Plugin-root references in skill bodies use `${CLAUDE_PLUGIN_ROOT}/…`.
+- `templates/AGENTS.md` re-synced with the live baseline: a one-line progress
+  note is not filler; ask when a wrong assumption would compound; an explicit
+  hand-off settles where a long job runs; an autonomous loop the maintainer
+  started is exempt from per-commit review; the dump cadence lives in
+  §Memory system. `templates/USER.md` gains the memory-directory rule, a host
+  guard and a long-running-jobs section; `templates/SOUL.md` three more
+  generic examples.
+
 ## 0.7.7 — 2026-10-03
 
 `/mf:setup` now installs each agent's baseline entry point, and the docs stop

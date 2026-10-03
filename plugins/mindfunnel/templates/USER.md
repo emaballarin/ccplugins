@@ -10,6 +10,12 @@
 > as symlinks to `~/.mindfunnel/USER.md` so the same file is reachable
 > from either agent's dotdir.
 
+<!-- Optional guard, for a file that may be copied between machines:
+  **"This machine" means the host `<hostname>`.** If `hostname` reports
+  anything else, treat every machine-specific claim below as unverified
+  and ask rather than assume.
+-->
+
 ## Memory system usage
 
 <!-- Do you use `mindfunnel` for session-persistent memory? Where does
@@ -19,8 +25,9 @@
 <!-- Example:
   This user relies on `mindfunnel` (`/mf:dump`, `/mf:spinup`,
   `/mf:prime`, `/mf:setup`). Per-project memory lives at
-  `~/.claude/projects/<slug>/memory/` where `<slug>` is the project CWD
-  with every `/` replaced by `-`.
+  `~/.claude/projects/<slug>/memory/` where `<slug>` is the repository
+  root (the CWD outside git) with every non-alphanumeric character
+  replaced by `-`.
 -->
 
 ## Shell environment
@@ -99,6 +106,20 @@
   filename if that ever looks doubtful. An agent with no user-global
   instructions file needs a short pointer file instead of a copy — a copy
   goes stale silently.
+-->
+
+## Long-running local jobs
+
+<!-- How this machine treats long runs: sleep behaviour, a launcher that
+     caps resources, when a remote box is the better place. -->
+
+<!-- Example:
+  - The laptop sleeps mid-run: any job longer than a few minutes must be
+    resumable — append each finished unit of work to a JSONL cache with
+    `flush()` + `os.fsync()`, so an interruption costs one unit.
+  - Inhibit sleep only (`systemd-inhibit --what=sleep …`), not idle or the
+    lid switch.
+  - Launch heavy jobs through `<launcher>`, which caps RAM and CPU.
 -->
 
 ## Formatting and linting

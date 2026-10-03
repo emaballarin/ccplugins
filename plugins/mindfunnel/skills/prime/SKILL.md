@@ -1,6 +1,6 @@
 ---
 name: prime
-description: Prime the current project for the mindfunnel workflow — stamp a project-scoped `AGENTS.md` from the bundled stub (if absent), create a project-local `CLAUDE.md` symlink to `./AGENTS.md`, touch an empty `PROJECT.md` if absent, clean up legacy `SOUL.md` / `CLAUDE.md` / `AGENTS.md` symlinks left behind by pre-0.3.0 primings, and strip legacy `CLAUDE.md`/`AGENTS.md` entries from `.gitignore` so the new committed files track cleanly. Run from the project root. Idempotent with a safety guard — leaves pre-existing hand-authored files alone. Requires `/mf:setup` to have been run first.
+description: Prime the current project for the mindfunnel workflow — stamp a project-scoped `AGENTS.md` from the bundled stub (if absent), create a project-local `CLAUDE.md` symlink to `./AGENTS.md`, touch an empty `PROJECT.md` if absent, clean up legacy `SOUL.md` / `CLAUDE.md` / `AGENTS.md` symlinks left behind by older primes, and strip legacy `CLAUDE.md`/`AGENTS.md` entries from `.gitignore` so the committed files track cleanly. Run from the project root. Idempotent with a safety guard — leaves pre-existing hand-authored files alone. Requires `/mf:setup` to have been run first.
 disable-model-invocation: true
 allowed-tools: [Read, Write, Bash]
 ---
@@ -9,20 +9,20 @@ allowed-tools: [Read, Write, Bash]
 
 Set up the current project's root with a small committed agent-entry-point so that every contributor — with or without the `mindfunnel` plugin installed — sees a clean project-scoped `AGENTS.md` on clone:
 
-- `AGENTS.md` — project-scoped stub (copied from `templates/project-AGENTS.md`), real file, **committed**. Maintainers extend it per-project as the project grows.
+- `AGENTS.md` — project-scoped stub (copied from `${CLAUDE_PLUGIN_ROOT}/templates/project-AGENTS.md`), real file, **committed**. Maintainers extend it per-project as the project grows.
 - `CLAUDE.md` — intra-repo symlink to `./AGENTS.md`, **committed**. Explicit Claude Code compatibility.
 - `PROJECT.md` — real file, empty by default, **committed**. Holds project-specific deep context.
 
-**Nothing per-project points into `~/.mindfunnel/` anymore.** The maintainer's user-global engineering style (`~/.mindfunnel/AGENTS.md`) is loaded independently via the `~/.claude/CLAUDE.md` / `~/.codex/AGENTS.md` symlinks that `/mf:setup` manages; it is not conflated with each project's `AGENTS.md`. Likewise, `SOUL.md` and `USER.md` are user-global files reached via `~/.claude/` and `~/.codex/` symlinks and are never stamped into a project.
+**Nothing per-project points into `~/.mindfunnel/`.** The maintainer's user-global engineering style (`~/.mindfunnel/AGENTS.md`) is loaded independently via the `~/.claude/CLAUDE.md` / `~/.codex/AGENTS.md` symlinks that `/mf:setup` manages; it is not conflated with each project's `AGENTS.md`. Likewise, `SOUL.md` and `USER.md` are user-global files reached via `~/.claude/` and `~/.codex/` symlinks and are never stamped into a project.
 
-Run **once per project**, from the project root. Idempotent: re-running after the upgrade cleans up legacy pre-0.3.0 symlinks and legacy `.gitignore` lines automatically.
+Run **once per project**, from the project root. Idempotent: re-running also cleans up legacy symlinks into `~/.mindfunnel/` and the `.gitignore` lines older primes left.
 
 ## Important
 
 1. **Run from the project root.** The skill writes into the current working directory. Confirm with `pwd` before acting if there's any doubt.
 2. **Never overwrite a pre-existing regular file.** A hand-authored `./AGENTS.md` or `./CLAUDE.md` always wins over the stub; leave it alone and flag in the report.
 3. **`~/.mindfunnel/` must already be set up.** If it isn't, stop and tell the user to run `/mf:setup` first. (The stub template lives inside the plugin, not in `~/.mindfunnel/`, but `/mf:setup` is still the prerequisite for the rest of the workflow.)
-4. **`.gitignore` edits are minimal, targeted, and one-way.** `/mf:prime` strips `AGENTS.md` and `CLAUDE.md` lines from `.gitignore` if they're there (required — leaving them would prevent the new committed files from staging). It does **not** touch the legacy `SOUL.md` line (harmless, orthogonal to this change).
+4. **`.gitignore` edits are minimal, targeted, and one-way.** `/mf:prime` strips `AGENTS.md` and `CLAUDE.md` lines from `.gitignore` if they're there (required — leaving them would prevent the committed files from staging). It does **not** touch the legacy `SOUL.md` line (harmless, orthogonal to this change).
 
 ## Instructions
 
@@ -93,14 +93,14 @@ fi
 
 ### Step 4: Clean up a legacy `./SOUL.md` symlink
 
-Earlier versions of `/mf:prime` (≤ 0.2.2) created `./SOUL.md` as a symlink to `~/.mindfunnel/SOUL.md`. Starting with 0.3.0, `SOUL.md` is user-global only (reachable via `~/.claude/SOUL.md` and `~/.codex/SOUL.md`, managed by `/mf:setup`) and should not live in the project root.
+A `./SOUL.md` symlink to `~/.mindfunnel/SOUL.md` is a leftover from an older prime. `SOUL.md` is user-global only (reachable via `~/.claude/SOUL.md` and `~/.codex/SOUL.md`, managed by `/mf:setup`) and should not live in the project root.
 
 Remove the legacy symlink automatically — but **only** if it's exactly that known-safe symlink:
 
 ```bash
 if [ -L SOUL.md ] && [ "$(readlink SOUL.md)" = "$HOME/.mindfunnel/SOUL.md" ]; then
     rm -f SOUL.md
-    echo "Removed legacy SOUL.md symlink (pre-0.3.0 prime leftover)"
+    echo "Removed legacy SOUL.md symlink (older prime leftover)"
 fi
 ```
 
@@ -120,9 +120,9 @@ Never overwrite an existing `PROJECT.md`. If the project already has one, leave 
 
 ### Step 6: Strip legacy `AGENTS.md` / `CLAUDE.md` entries from `.gitignore`
 
-Earlier primings (≤ 0.2.x) added `AGENTS.md` and `CLAUDE.md` to the project's `.gitignore` because they used to be per-user symlinks. Under the new model they're committed files; those lines would prevent them from staging, so strip them.
+Older primes added `AGENTS.md` and `CLAUDE.md` to the project's `.gitignore` while they were per-user symlinks. They are committed files; those lines would prevent them from staging, so strip them.
 
-This is the one and only forced `.gitignore` edit in `/mf:prime` and it exists to make the new model function.
+This is the one and only forced `.gitignore` edit in `/mf:prime` and it exists so the committed files can be staged.
 
 ```bash
 if [ -f .gitignore ] && git rev-parse --git-dir >/dev/null 2>&1; then
@@ -131,7 +131,7 @@ if [ -f .gitignore ] && git rev-parse --git-dir >/dev/null 2>&1; then
             # Strip the exact-match line in place.
             tmp="$(mktemp)"
             grep -vx "$f" .gitignore > "$tmp" && mv "$tmp" .gitignore
-            echo "Removed $f from .gitignore (now committed under the new model)"
+            echo "Removed $f from .gitignore (committed file)"
         fi
     done
 fi
@@ -141,11 +141,11 @@ Leaves the `SOUL.md` line alone. It's harmless (guards against a future hand-aut
 
 **Note:** this step only strips exact-match lines. It does not touch pattern entries (e.g. `*.md`, `AGENTS.*`) or lines with comments / trailing whitespace. If someone hand-edited the gitignore in a non-standard way, the line stays and the user can clean it up.
 
-**This step does not `git rm --cached` anything.** If the project previously committed `AGENTS.md` or `CLAUDE.md` as broken symlinks (see troubleshooting below for the < 0.2.2 state), that's still the user's problem to untrack — a destructive history op.
+**This step does not `git rm --cached` anything.** If the project previously committed `AGENTS.md` or `CLAUDE.md` as broken symlinks (see troubleshooting below), that's still the user's problem to untrack — a destructive history op.
 
 ### Step 7: Report
 
-Emit a short summary, ≤ 10 lines. For each file / action:
+Emit a short summary. For each file / action:
 
 - `AGENTS.md` — **created from stub** / **kept (existing file)** / **replaced legacy symlink**
 - `CLAUDE.md` — **created** / **already correct** / **repointed from legacy** / **kept (hand-authored)**
@@ -165,7 +165,7 @@ CLAUDE.md   created → AGENTS.md
 PROJECT.md  created (empty)
 ```
 
-### Example 2: Project already primed under 0.3.0, re-run
+### Example 2: Already-primed project, re-run
 
 ```
 AGENTS.md   kept (existing file)
@@ -174,14 +174,14 @@ PROJECT.md  present
 Nothing to do.
 ```
 
-### Example 3: Project primed under ≤ 0.2.2, re-run after upgrade
+### Example 3: Project with legacy symlinks, re-run
 
 ```
 AGENTS.md   replaced legacy symlink with stub
 CLAUDE.md   repointed from ~/.mindfunnel/CLAUDE.md → AGENTS.md
-SOUL.md     removed legacy symlink (pre-0.3.0)
+SOUL.md     removed legacy symlink (older prime leftover)
 PROJECT.md  present
-.gitignore  stripped AGENTS.md, CLAUDE.md (now committed; SOUL.md line left alone)
+.gitignore  stripped AGENTS.md, CLAUDE.md (committed files; SOUL.md line left alone)
 ```
 
 ### Example 4: Project has a hand-authored `AGENTS.md`
@@ -193,7 +193,7 @@ PROJECT.md  present
 .gitignore  stripped AGENTS.md, CLAUDE.md
 ```
 
-The hand-authored `AGENTS.md` stays; the user gets to commit it under the new model.
+The hand-authored `AGENTS.md` stays; the user commits it.
 
 ## Troubleshooting
 
@@ -209,32 +209,29 @@ The old file is gone. Recover from git (`git show HEAD:AGENTS.md > AGENTS.md`) i
 
 That's an unusual setup — probably a different convention the user is following. **Ask**, don't replace blindly. The user may want to keep the existing symlink.
 
-### Repo was primed under mindfunnel ≤ 0.2.1 and has `CLAUDE.md` / `AGENTS.md` committed as symlinks into `~/.mindfunnel/`
+### `CLAUDE.md` / `AGENTS.md` are committed as symlinks into `~/.mindfunnel/`
 
 **Symptom:** `git ls-files` shows `CLAUDE.md` and `AGENTS.md` tracked in a repo primed by a very old `/mf:prime`. Other clones on other machines see dangling symlinks because `~/.mindfunnel/` doesn't exist there.
 
-**Cause:** Versions 0.2.0 and 0.2.1 of `/mf:prime` only added `SOUL.md` to `.gitignore`, so `CLAUDE.md` and `AGENTS.md` got committed as broken-elsewhere symlinks.
+**Cause:** A very old prime ignored only `SOUL.md`, so `CLAUDE.md` and `AGENTS.md` got committed as broken-elsewhere symlinks.
 
 **Solution (user-driven, never automated by `/mf:prime`):**
 
 ```fish
-# in each previously-primed project root, after upgrading to 0.3.0:
+# in each affected project root:
 git rm --cached CLAUDE.md AGENTS.md     # untrack the broken symlinks (keeps the on-disk files)
 /mf:prime                                # stamps real AGENTS.md + intra-repo CLAUDE.md symlink, strips .gitignore lines
 git add AGENTS.md CLAUDE.md .gitignore   # stage the real files and the .gitignore diff
-git commit -m "mindfunnel: move to 0.3.0 split AGENTS.md model"
+git commit -m "mindfunnel: commit project AGENTS.md; drop symlinks into ~/.mindfunnel"
 ```
 
 `git rm --cached` is deliberately NOT automated — untracking already-committed files is a destructive operation on shared history and wants explicit user intent.
 
 ## Anti-patterns
 
-- **Don't run from anywhere but the project root.** Writes in the wrong cwd cause silent confusion later.
-- **Don't replace a pre-existing non-symlink `AGENTS.md` or `CLAUDE.md` without explicit approval.** The user's hand-written file always wins over the stub.
 - **Don't create `PROJECT.md` with placeholder content.** It's created empty on purpose; the user fills it in as the project develops. A non-empty default encourages copy-paste that never gets edited.
-- **Don't add anything new to `.gitignore`.** `/mf:prime` only strips old entries under the new model; it never adds.
+- **Don't add anything new to `.gitignore`.** `/mf:prime` only strips the legacy entries; it never adds.
 - **Don't auto-remove the legacy `SOUL.md` line from `.gitignore`.** It's harmless and touching a tracked file unprompted is out of scope beyond the forced AGENTS.md / CLAUDE.md cleanup.
-- **Don't `git rm --cached` already-committed symlinks during prime.** That's a destructive operation on shared history — flag it, point the user at the troubleshooting entry, let them drive it.
 - **Don't auto-run `/mf:setup`** if `~/.mindfunnel/` is missing. Ask the user; doing it silently hides the coupling.
-- **Don't create a project-root `SOUL.md` or `USER.md`.** Those are user-global; `/mf:setup` manages them in `~/.claude/` and `~/.codex/`. Stamping them per-project was the pre-0.3.0 behaviour for `SOUL.md` and is no longer correct — see Step 4 for the legacy cleanup.
-- **Don't symlink `AGENTS.md` into `~/.mindfunnel/`.** The maintainer's user-global engineering style is a separate file with a separate load path (`~/.claude/CLAUDE.md`); a project's `AGENTS.md` is a committed, project-scoped file owned by the project. Conflating them was the pre-0.3.0 design.
+- **Don't create a project-root `SOUL.md` or `USER.md`.** Those are user-global; `/mf:setup` manages them in `~/.claude/` and `~/.codex/`. Step 4 cleans up a legacy project-root `SOUL.md` symlink.
+- **Don't symlink `AGENTS.md` into `~/.mindfunnel/`.** The maintainer's user-global engineering style is a separate file with a separate load path (`~/.claude/CLAUDE.md`); a project's `AGENTS.md` is a committed, project-scoped file owned by the project.

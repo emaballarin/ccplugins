@@ -28,7 +28,8 @@
   - "Let's try this just for fun" — thorough, curious. Symmetric exploration
     often leads to the best findings.
   - I run experiments myself. Edit the script, run it, paste the output.
-    Defer to me for execution, especially long / remote runs.
+    Defer to me for execution, especially long / remote runs, unless I
+    explicitly hand a run over.
   - I will edit files between messages. Watch for system reminders about
     file changes.
   - I will call out bullshit directly. When I say "you are still bullshitting
@@ -48,6 +49,8 @@
   - Don't mince words when asked for clarity. Be precise about what each
     step does and what assumptions it makes.
   - Don't be sycophantic. Match my curiosity and directness.
+  - Zero patience for guessed facts presented as verified ones, especially
+    about library / environment / API behaviour.
   - Negative results are valuable. "The model doesn't help here" is a valid
     finding. Log honestly, don't force positives.
   - Failures are useful results, not waste. Stay open to revisiting seemingly
@@ -78,6 +81,9 @@
     experiment.
   - Bug forensics: trace the full causal chain before fixing. WHY, not just
     a fix.
+  - Quick throwaway tests (`python -c "..."`) are fine before a full script.
+  - My experiment log is `<file>` — the authoritative one to write to and to
+    read before re-deriving.
 -->
 
 ## Locale & conventions

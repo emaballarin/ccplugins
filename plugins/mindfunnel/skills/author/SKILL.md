@@ -8,7 +8,7 @@ allowed-tools: [Read, Write, Edit, Glob, Grep]
 
 A reference for any document an agent consumes: a skill, an `AGENTS.md` or `CLAUDE.md`, a file reached by a pointer from either. The packaging differs; the writing does not. The same levers make each one **predictable** — the agent taking the same _process_ every run, which is not the same as producing the same output.
 
-When the document is a skill, also read `references/skill-mechanics.md` for frontmatter, the invocation choice, and router skills.
+When the document is a skill, also read `${CLAUDE_PLUGIN_ROOT}/references/skill-mechanics.md` for frontmatter, the invocation choice, and router skills.
 
 ## Context pointers
 
@@ -58,8 +58,8 @@ The strongest criteria are both checkable and exhaustive.
 
 Splitting one document into two spends one of the two loads, so split only when the cut earns it:
 
-- **By sequence** — split a run of steps where the post-completion steps tempt the agent to rush the one in front of it. Keeping them out of view drives more legwork on the current task. Beware the reverse: merging sequences exposes each step's successors to the agent, inviting premature completion.
-- **By invocation** — skill-specific: see `references/skill-mechanics.md`.
+- **By sequence** — split a run of steps only where you have watched the agent rush the current step toward later ones and sharpening its completion criterion did not fix it (see _Clarity_). Keeping them out of view drives more legwork on the current task; otherwise the later steps are useful context and the sequence stays whole.
+- **By invocation** — skill-specific: see `${CLAUDE_PLUGIN_ROOT}/references/skill-mechanics.md`.
 
 ## Leading words
 
@@ -74,14 +74,14 @@ Hunt for opportunities to refactor with leading words. A triad spelled out at th
 
 You win twice: fewer tokens, and a sharper hook for the agent to hang its thinking on. Assume every document is carrying restatements that leading words retire — go and find them.
 
-**Negation** is the failure mode beside this lever. Steering by prohibition drags the forbidden behaviour into context and makes it _more_ available, not less. _Don't think of an elephant_, and the elephant is all there is; the negation is a weak modifier that the strongly-activated concept overruns, so the ban half-reads as an instruction to do the thing. Prompt the **positive** — state the target behaviour ("write one-line comments") so the banned one is never spoken. A prohibition earns its place only as a hard guardrail you cannot phrase positively, and even then, pair it with the positive target so attention lands on what to do.
+**Negation** is the failure mode beside this lever. Steering by prohibition names the forbidden behaviour: a ban on a failure the agent was not going to make anchors it there, and a list of bans never says what success is. Prompt the **positive** — state the target behaviour ("write one-line comments") so the banned one is never spoken. A prohibition earns its place only as a hard guardrail you cannot phrase positively, and even then, pair it with the positive target so attention lands on what to do.
 
 ## Pruning
 
 - Keep each meaning in a **single source of truth**: one authoritative place, so changing the behaviour is a one-place edit. **Duplication** — the same meaning in more than one place — costs maintenance and tokens, and inflates a meaning's prominence on the ladder past its real rank. It is the accidental inverse of a leading word, which repeats a token on purpose, never the meaning.
 - The **environment** is a source of truth too — `package.json` scripts, `pyproject.toml`, config files, the directory layout, `--help` output — and a document that restates it is a **cache**: a copy of a lookup, earning its load only when the lookup is expensive. Cache what the agent cannot find by looking: the unwritten convention, the reason behind a choice, the gotcha no config confesses. Leave the one-file, one-command lookups to the environment, where they cannot go stale.
 - Check every line for **relevance**: does it still bear on what the document does? A line loses relevance by never bearing on the task (mere exposition, or a branch that should be disclosed), or by going stale as the behaviour or world it describes changes. Shorter documents are easier to keep relevant. Without a pruning discipline the default fate is **sediment**: stale layers that settle because adding feels safe and removing feels risky, until you must core down through them to find what is still live.
-- Hunt **no-ops** sentence by sentence: an instruction the model already obeys by default pays load to say nothing. The test — does it change behaviour versus the default? — is model-relative, not reader-relative. Two people disagreeing about a no-op disagree about the default, and settle it by running the document, not by debate. When a sentence fails the test, delete the whole sentence rather than trim words from it. The test also grades leading words: a word too weak to beat the default (_be thorough_, when the agent is already thorough-ish) is a no-op, and the fix is a stronger word (_relentless_), not a different technique.
+- Hunt **no-ops** sentence by sentence: an instruction the model already obeys by default pays load to say nothing. The test — does it change behaviour versus the default? — is model-relative, not reader-relative. Two people disagreeing about a no-op disagree about the default, and settle it by running the document, not by debate. When a sentence fails the test, delete the whole sentence rather than trim words from it. The test also grades leading words: a word too weak to beat the default (_be thorough_, when the agent is already thorough-ish) is a no-op: delete it, or replace it with a checkable completion criterion (see _Demand_). A stronger intensifier (_relentless_, _CRITICAL_) over-applies on current models, which follow instructions literally.
 
 ## Done when
 
@@ -90,4 +90,5 @@ You win twice: fewer tokens, and a sharper hook for the agent to hang its thinki
 - Material only some branches reach sits behind a pointer; material every branch needs is inline.
 - Each meaning has exactly one home, and nothing restates what the environment already answers in one lookup.
 - Every prohibition either became a positive instruction or is a guardrail that could not be phrased as one.
+- Every rule carries its reason and is stated once, at normal volume — no CAPS, stacked bold, or restatement for emphasis.
 - A no-op pass ran over the finished document, sentence by sentence.

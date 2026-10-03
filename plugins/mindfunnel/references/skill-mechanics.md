@@ -8,10 +8,11 @@ A skill is a directory containing a `SKILL.md` whose YAML frontmatter carries:
 
 - **`name`** — must equal the directory name. This is what the human types after the plugin prefix: a skill at `skills/spinup/` inside plugin `mf` is invoked as `/mf:spinup`.
 - **`description`** — the skill's top-level context pointer. Who reads it depends on the invocation choice below.
-- **`allowed-tools`** _(optional)_ — a list restricting the skill to a tool subset. Omit it to inherit the session's tools. A read-only skill that declares `[Read, Glob, Grep]` cannot silently start writing.
+- **`allowed-tools`** _(optional)_ — tools pre-approved, with no permission prompt, during the turn that invokes the skill. It does **not** restrict: every other tool stays callable under the session's permission settings.
+- **`disallowed-tools`** _(optional)_ — tools removed from the agent's pool while the skill is active (cleared at the next user message). The only frontmatter that takes a tool away; a read-only skill still states its contract in the body.
 - **`disable-model-invocation`** _(optional)_ — `true` makes the skill user-only. See below.
 
-Bundled material sits beside the `SKILL.md` (`skills/<name>/…`) when only that skill uses it, or at the plugin root (`references/…`, `templates/…`, `scripts/…`) when several skills share it. Reference it as a bare path token — `references/ledger.md` — rather than a relative link, so the reference stays legible from wherever the skill is installed.
+Bundled material sits beside the `SKILL.md` (`skills/<name>/…`) when only that skill uses it, or at the plugin root (`references/…`, `templates/…`, `scripts/…`) when several skills share it. Claude Code substitutes `${CLAUDE_SKILL_DIR}` and, in a plugin skill, `${CLAUDE_PLUGIN_ROOT}` inside the `SKILL.md` body, so reference plugin-root material as `${CLAUDE_PLUGIN_ROOT}/references/ledger.md` — a bare `references/…` token is read against the skill's own directory, where plugin-root material is not. Material beside the skill takes a relative link (`[reference.md](reference.md)`), or `${CLAUDE_SKILL_DIR}/…` where code needs an absolute path (a kernel import). Neither variable is substituted in files the skill points to, only in `SKILL.md` itself.
 
 ## Invocation
 
