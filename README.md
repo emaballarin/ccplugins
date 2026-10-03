@@ -14,13 +14,13 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 
 ## Plugins
 
-| Name    | Description                                                                                                                                                                                                                                                                                                                                                                                         | Docs                                                   |
-| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `mf`    | **mindfunnel** — project-agnostic session management. Five skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back, plus `/mf:author` — the reference for writing the documents an agent reads.                                                                                                                                             | [plugins/mindfunnel](plugins/mindfunnel/README.md)     |
-| `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, bib-audit, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, paper-review, plus the `computational-scientist` and `deep-researcher` subagents.                                                               | [plugins/ccscience](plugins/ccscience/README.md)       |
-| `ar`    | **autoresearch** — an autonomous experiment loop for any numeric objective. Five skills (`/ar:start`, `/ar:resume`, `/ar:status`, `/ar:report`, `/ar:stop`) that propose one change, measure it, and keep it only if it beats the measured noise floor.                                                                                                                                             | [plugins/autoresearch](plugins/autoresearch/README.md) |
-| `tml`   | **tuneml** — the scientific method for tuning _and_ the speed↔quality frontier, in one place. Five skills (`/tml:audit`, `/tml:plan`, `/tml:round`, `/tml:analyze`, `/tml:review`) that read a pipeline, fix an operating point and a step budget, design experiments with scientific/nuisance/fixed hyperparameters, and return variance-aware adopt verdicts. Replaces the former `parml` plugin. | [plugins/tuneml](plugins/tuneml/README.md)             |
-| `ws`    | **whetstone** — sharpen the thinking before the work, and the work before it lands. `/ws:grill` interviews a plan until nothing is silently assumed; `/ws:test-gate` holds every new test to one value bar; `/ws:test-audit` prunes and consolidates an existing suite, evidence first; `/ws:deslop` cleans AI slop from a diff before review.                                                      | [plugins/whetstone](plugins/whetstone/README.md)       |
+| Name    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                | Docs                                                   |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| `mf`    | **mindfunnel** — project-agnostic session management. Five skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back, plus `/mf:author` — the reference for writing the documents an agent reads.                                                                                                                                                                                    | [plugins/mindfunnel](plugins/mindfunnel/README.md)     |
+| `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, bib-audit, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, canvas-design, doc-coauthoring, web-artifacts-builder, paper-review, plus the `computational-scientist` and `deep-researcher` subagents.                                                                                                      | [plugins/ccscience](plugins/ccscience/README.md)       |
+| `ar`    | **autoresearch** — an autonomous experiment loop for any numeric objective. Five skills (`/ar:start`, `/ar:resume`, `/ar:status`, `/ar:report`, `/ar:stop`) that propose one change, measure it, and keep it only if it beats the measured noise floor.                                                                                                                                                                                    | [plugins/autoresearch](plugins/autoresearch/README.md) |
+| `tml`   | **tuneml** — the scientific method for tuning _and_ the speed↔quality frontier, in one place. Five skills (`/tml:audit`, `/tml:plan`, `/tml:round`, `/tml:analyze`, `/tml:review`) that read a pipeline, fix an operating point and a step budget, design experiments with scientific/nuisance/fixed hyperparameters, and return variance-aware adopt verdicts. Replaces the former `parml` plugin.                                        | [plugins/tuneml](plugins/tuneml/README.md)             |
+| `ws`    | **whetstone** — sharpen the thinking before the work, and the work before it lands. `/ws:grill` interviews a plan until nothing is silently assumed; `/ws:test-gate` holds every new test to one value bar; `/ws:test-audit` prunes and consolidates an existing suite, evidence first; `/ws:deslop` cleans AI slop from a diff before review; `/ws:review-gate` puts a change in front of a fresh-context reviewer before it is acted on. | [plugins/whetstone](plugins/whetstone/README.md)       |
 
 ## Install a plugin
 
@@ -77,7 +77,7 @@ ccplugins/
     └── whetstone/                           # plugin name: ws
         ├── .claude-plugin/plugin.json
         ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
-        ├── skills/{grill,test-gate,test-audit,deslop}/SKILL.md
+        ├── skills/{grill,test-gate,test-audit,deslop,review-gate}/SKILL.md
         │   └── test-audit/references/campaign.md
         └── references/test-value.md
 ```
@@ -115,8 +115,8 @@ protocol behaviour it re-implements. The `tml` plugin is **MIT** with its own
 [NOTICE](plugins/tuneml/NOTICE) that additionally records its adaptation of the
 **CC BY 4.0** Deep Learning Tuning Playbook, with the changes made. The `ws`
 plugin is **MIT** with its own [LICENSE](plugins/whetstone/LICENSE) and a
-[NOTICE](plugins/whetstone/NOTICE) crediting the two MIT upstreams its skills
-are adapted from (`mattpocock/skills` and `openclaw/openclaw`), with the changes
+[NOTICE](plugins/whetstone/NOTICE) crediting the two MIT upstreams its adapted skills
+come from (`mattpocock/skills` and `openclaw/openclaw`), with the changes
 made.
 
 ## Contact

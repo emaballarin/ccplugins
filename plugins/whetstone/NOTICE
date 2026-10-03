@@ -1,8 +1,8 @@
 whetstone (ccplugins) — sharpen the thinking before the work, and the work
 before it lands.
 
-Skills in this plugin are adapted, with modifications, from MIT-licensed prior
-work:
+Skills in this plugin, except `/ws:review-gate` (original to ws), are adapted,
+with modifications, from MIT-licensed prior work:
 
   • mattpocock/skills (MIT, Copyright (c) 2026 Matt Pocock) — the `grilling`
     skill, the source of `/ws:grill`. The design-tree framing, the frontier

@@ -3,9 +3,10 @@
 **whetstone** — sharpen the thinking before the work, and the work before it
 lands.
 
-Four skills. One interviews you about a plan until nothing is left silently
+Five skills. One interviews you about a plan until nothing is left silently
 assumed. Two hold tests to one bar — a gate as they are written, an audit for
-the ones already there. One cleans a diff of AI slop before review.
+the ones already there. One cleans a diff of AI slop before review. One puts
+a change in front of a fresh reader before it is acted on.
 
 ## Install
 
@@ -16,14 +17,15 @@ the ones already there. One cleans a diff of AI slop before review.
 
 ## Skills
 
-| Skill            | When                                      | What it does                                                                                                                                                                                      |
-| ---------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/ws:grill`      | Before committing to an approach          | Maps the subject as a design tree and works it in rounds, asking the whole settled frontier at a time with a recommendation on every question. Ends with the design, the open list, and one exit. |
-| `/ws:test-gate`  | Automatically, whenever tests are written | Four questions, the junk-pattern check, red-before-green for regressions. Extends existing tests, never restructures them. Silent unless a test fails or the tests around it raise a concern.     |
-| `/ws:test-audit` | When a suite needs pruning                | Audits and consolidates existing tests — low-value, implementation-coupled, duplicated — evidence first, then one approved batch. Campaign mode takes a whole subsystem.                          |
-| `/ws:deslop`     | After writing, before `/code-review`      | Strips comment slop, defensive-check slop, type laundering, unrequested fallbacks and style drift from the diff. Behaviour-preserving; reports what it cannot safely fix.                         |
+| Skill             | When                                           | What it does                                                                                                                                                                                                            |
+| ----------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/ws:grill`       | Before committing to an approach               | Maps the subject as a design tree and works it in rounds, asking the whole settled frontier at a time with a recommendation on every question. Ends with the design, the open list, and one exit.                       |
+| `/ws:test-gate`   | Automatically, whenever tests are written      | Four questions, the junk-pattern check, red-before-green for regressions. Extends existing tests, never restructures them. Silent unless a test fails or the tests around it raise a concern.                           |
+| `/ws:test-audit`  | When a suite needs pruning                     | Audits and consolidates existing tests — low-value, implementation-coupled, duplicated — evidence first, then one approved batch. Campaign mode takes a whole subsystem.                                                |
+| `/ws:deslop`      | After writing, before `/code-review`           | Strips comment slop, defensive-check slop, type laundering, unrequested fallbacks and style drift from the diff. Behaviour-preserving; reports what it cannot safely fix.                                               |
+| `/ws:review-gate` | Automatically, before a commit, release or run | Hands the change and a written intent — never the implementer's reasoning — to a fresh-context reviewer with an eight-item defect checklist. Every finding gets an outcome: fixed, reported, or disputed with evidence. |
 
-`/ws:test-gate` is the only model-invoked skill. The other three are
+`/ws:test-gate` and `/ws:review-gate` are model-invoked. The other three are
 **user-only**: they never fire on their own, cost nothing in context, and start
 only when you type them.
 
@@ -122,18 +124,38 @@ It overlaps the built-in `/simplify` only on needless indirection; `/simplify`
 looks for reuse and efficiency, `deslop` for the tells of generated code. Run it
 before `/code-review`, never instead of it.
 
+## `/ws:review-gate`
+
+The context that built a change reads its diff through the reasoning that
+produced it, so it shares the author's blind spots. The gate writes down the
+**intent** — what was asked for, in the request's terms, with no account of
+how it was built — and hands it, the diff and a defect checklist to one fresh
+sub-agent — a new agent, never a fork that inherits the conversation: intent mismatch, silent drops, masked failures, checks that cannot
+fail, quoting, unrun paths, stale restatements, and run validity when a run
+follows. Outside git it reviews the touched files whole. An empty scope is
+never a pass.
+
+It scales with blast radius — a one-flag tweak skips it; an audit script, a
+release, or a change feeding an experiment never does. Training and evaluation
+pipeline diffs also get `/tml:review`, which adds the ML pitfall catalogue; it
+runs inline, so it complements the gate rather than replacing it.
+
 ## Design notes
 
 - **`/ws:grill` is read-only and stateless.** No files, no branches, no state
   directory. The open list lives in the conversation and is restated rather
   than persisted.
-- **One model-invoked skill, three user-only.** `/ws:test-gate` must fire on its
-  own whenever a test is written, or it gates nothing. `/ws:grill` changes how
-  the conversation runs — a blast radius the size of the session. `/ws:deslop`
+- **Two model-invoked skills, three user-only.** `/ws:test-gate` must fire on
+  its own whenever a test is written, or it gates nothing; `/ws:review-gate`
+  likewise at the commit, release or run boundary. It is a skill rather than a
+  blocking Stop hook on purpose: a hook would fire on every turn, and the
+  judgement of when a change is big enough belongs to the agent at the
+  boundary. `/ws:grill` changes how the conversation runs — a blast radius the
+  size of the session. `/ws:deslop`
   and `/ws:test-audit` edit your code. None of these settings is permanent; a
   skill reached for constantly can flip.
-- **The only state is the notes file**, and only when the gate has something to
-  note. `ws` never touches `.gitignore`; whether `./.ws/` is committed is the
+- **The only state is the notes file**, and only when the test gate has something
+  to note. `ws` never touches `.gitignore`; whether `./.ws/` is committed is the
   project's call.
 - **Facts are the agent's job.** Anything findable in the filesystem, git
   history, or a library's real signature gets looked up, never asked. Only

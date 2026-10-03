@@ -66,7 +66,7 @@
         {
             "name": "ws",
             "source": "./plugins/whetstone",
-            "description": "whetstone: sharpen the thinking before the work, and the work before it lands. /ws:grill (user-only) interviews a plan or decision in rounds over its design tree until nothing is silently assumed; /ws:test-gate (model-invoked) holds every new test to a shared value bar and extends rather than restructures existing ones; /ws:test-audit (user-only) audits and consolidates an existing suite, evidence first; /ws:deslop (user-only) strips AI slop from a diff before /code-review. No hooks, no MCP.",
+            "description": "whetstone: sharpen the thinking before the work, and the work before it lands. /ws:grill (user-only) interviews a plan or decision in rounds over its design tree until nothing is silently assumed; /ws:test-gate (model-invoked) holds every new test to a shared value bar and extends rather than restructures existing ones; /ws:test-audit (user-only) audits and consolidates an existing suite, evidence first; /ws:deslop (user-only) strips AI slop from a diff before /code-review; /ws:review-gate (model-invoked) puts a change and its intent — not its reasoning — in front of a fresh-context reviewer before it is committed, released or run. No hooks, no MCP.",
             "category": "productivity",
             "keywords": [
                 "whetstone",
@@ -79,6 +79,7 @@
                 "testing",
                 "test-quality",
                 "code-quality",
+                "code-review",
                 "cleanup"
             ]
         }

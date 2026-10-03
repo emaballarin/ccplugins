@@ -3,11 +3,29 @@
 All notable changes to the `ws` (whetstone) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## 0.2.1 — 2026-09-28
+## 0.3.0 — 2026-10-03
 
-Housekeeping — coordinated marketplace version alignment alongside the `ccsci`
-0.9.0 release (the new `bib-audit` skill). Nothing in this plugin was edited.
-No skill logic changed.
+### Added — `/ws:review-gate`
+
+- **`/ws:review-gate`** — model-invoked. Before a commit, a release, or a run
+  whose result will be acted on, it states the scope, writes the intent from
+  the request (the goal, never the route), and hands both with an eight-item
+  defect checklist to one fresh-context sub-agent: intent mismatch, silent
+  drops, masked failures, checks that cannot fail, quoting and splitting, unrun
+  paths, stale restatements, run validity. Every finding gets an outcome —
+  fixed, reported, or disputed with evidence. Outside git it reviews the
+  touched files whole; an empty scope is never a pass. The reviewer is always a
+  new agent, never a fork that inherits the conversation. Training and
+  evaluation pipeline diffs also get `/tml:review`, which complements the gate
+  rather than replacing it.
+
+Original to `ws` — not adapted from either upstream in [NOTICE](NOTICE).
+
+Supersedes the unreleased 0.2.1, a coordinated marketplace version alignment
+alongside the `ccsci` 0.9.0 release (the new `bib-audit` skill); this release
+carries that alignment.
+
+Install impact: nothing required; the skill is picked up on plugin update.
 
 ## 0.2.0 — 2026-09-26
 
