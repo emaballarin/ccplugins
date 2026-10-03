@@ -10,7 +10,7 @@ Turn the record into something a person can read. Do not iterate.
 
 ## Steps
 
-1. Read state (`cat ./.ar/ar.jsonl | tail -50`, plus `worklog.md` and
+1. Read state (`cat ./.ar/ar.jsonl`, plus `worklog.md` and
    `results.tsv` if present). No `ar.jsonl` means nothing to report — say so and
    stop.
 2. Reconstruct the run per `${CLAUDE_PLUGIN_ROOT}/references/resume-loop.md` §1,
@@ -55,6 +55,6 @@ Turn the record into something a person can read. Do not iterate.
 
 End with a terminal status token as the last line of your reply — `DONE`,
 `DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_CONTEXT` — per
-`references/completion-status.md`. For `/ar:report`, `DONE` once
+`${CLAUDE_PLUGIN_ROOT}/references/completion-status.md`. For `/ar:report`, `DONE` once
 `final_report.md` is written and its path reported; `NEEDS_CONTEXT` if `ar.jsonl`
 is absent or empty (nothing to summarise).

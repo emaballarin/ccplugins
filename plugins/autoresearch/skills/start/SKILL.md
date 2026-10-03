@@ -53,7 +53,7 @@ over. Never silently overwrite a run in progress.
    anything**. Nothing in this step has side effects, which is the point: a
    misfired invocation costs one sentence rather than a branch and a commit in
    somebody's repository.
-2. **Branch and snapshot** — `references/protocol.md` §0. First side effect of
+2. **Branch and snapshot** — `${CLAUDE_PLUGIN_ROOT}/references/protocol.md` §0. First side effect of
    the run; everything after it is recoverable from the snapshot.
 3. **Scaffold** `./.ar/` from `${CLAUDE_PLUGIN_ROOT}/templates/`
    (`ar.config.json`, `benchmark.sh`, `ar-loop.sh`, plus `checks.sh` /
@@ -63,9 +63,9 @@ over. Never silently overwrite a run in progress.
    config to be completed. This is the one point where starting waits on work it
    cannot do itself.
 5. **Measure the noise floor** — `baselineRepeats` baseline runs, reduced to
-   `baseline` and `noiseFloor` per `references/statistics.md`.
+   `baseline` and `noiseFloor` per `${CLAUDE_PLUGIN_ROOT}/references/statistics.md`.
 6. **Write the config header** to `./.ar/ar.jsonl`; seed `research.md`,
-   `worklog.md`, `ideas.md` — see `references/state-schema.md`.
+   `worklog.md`, `ideas.md` — see `${CLAUDE_PLUGIN_ROOT}/references/state-schema.md`.
 7. **Print the status block** and stop. Suggest `/ar:resume`.
 
 ## Read on demand
@@ -82,7 +82,7 @@ Read a reference when the step that needs it is reached — not up front.
 
 End with a terminal status token as the last line of your reply — `DONE`,
 `DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_CONTEXT` — per
-`references/completion-status.md`. For `/ar:start`, `NEEDS_CONTEXT` is the
+`${CLAUDE_PLUGIN_ROOT}/references/completion-status.md`. For `/ar:start`, `NEEDS_CONTEXT` is the
 expected outcome at the harness hand-over (step 4, waiting on `benchmark.sh` and
 the config); `DONE` once the noise floor is measured and the config header is
 written; `BLOCKED` if no clean baseline can be established.

@@ -8,13 +8,13 @@ allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 
 Iterate until the target is met, the budget is spent, or the run is stopped.
 
-## First action, always (MANDATORY)
+## First action, always
 
 Read state from disk before saying or doing anything else. Context is never the
 carrier — this is what makes the loop survive compaction and session resets.
 
 ```bash
-cat ./.ar/ar.jsonl 2>/dev/null | tail -50; git branch --show-current
+cat ./.ar/ar.jsonl 2>/dev/null; git branch --show-current
 ```
 
 No `ar.jsonl` means no run exists — say so and point at `/ar:start`. Otherwise
@@ -26,7 +26,7 @@ before the first iteration.
 
 1. **Never act on a branch this run did not create.** If the current branch is
    not `config.branch`, do **not** switch onto it — create a fresh branch from
-   the present state and open a new segment (`references/protocol.md` §0).
+   the present state and open a new segment (`${CLAUDE_PLUGIN_ROOT}/references/protocol.md` §0).
 2. **One atomic change per iteration.** No compound edits. Two changes give one
    number and no attribution.
 3. **Commit before measuring**, with a `Result: pending` trailer; amend it with
@@ -50,9 +50,13 @@ Pick one hypothesis → apply one change → commit pending → measure → gate
 `checks.sh` → decide keep/discard/crash/checks_failed → amend or revert → append
 to `ar.jsonl` and `results.tsv`, update `research.md`, `worklog.md`, `ideas.md` →
 next. Three consecutive non-improvements switch strategy family; five propose a
-paradigm shift. Full detail in `references/protocol.md` §2–§3.
+paradigm shift. Full detail in `${CLAUDE_PLUGIN_ROOT}/references/protocol.md` §2–§3.
 
-On any stopping condition, write `./.ar/final_report.md` and print — do not run —
+When target, maxRuns or maxSeconds is reached, append the `stopped` sentinel
+as compact JSON, as `/ar:stop` writes it, with the condition as `reason` —
+unless the active segment already holds one; the driver halts on it. An
+interrupt or `/ar:stop` appends nothing here. On any stopping condition, write
+`./.ar/final_report.md`, and print — do not run —
 `git switch <originBranch>`.
 
 ## Read on demand
@@ -70,7 +74,7 @@ Read a reference when the phase that needs it is reached — not up front.
 
 End with a terminal status token as the last line of your reply — `DONE`,
 `DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_CONTEXT` — per
-`references/completion-status.md`. For `/ar:resume`, `DONE` after the iteration
+`${CLAUDE_PLUGIN_ROOT}/references/completion-status.md`. For `/ar:resume`, `DONE` after the iteration
 is measured and kept or reverted (or a stopping condition is hit and the report
 written); `DONE_WITH_CONCERNS` if the harness was flaky or a seed disagreed;
 `BLOCKED` if `checks.sh` or `benchmark.sh` cannot run; `NEEDS_CONTEXT` if the run

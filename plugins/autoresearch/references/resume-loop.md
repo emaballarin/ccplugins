@@ -59,8 +59,9 @@ run by hand:
 tmux new -s ar './.ar/ar-loop.sh'
 ```
 
-It invokes `claude -p "/ar:resume"` repeatedly until the state file shows
-`"status":"stopped"` or a session exits non-zero. Each pass is a **fresh session
+It invokes `claude -p "/ar:resume"` repeatedly until the active segment (after
+the last config header) holds a `"status":"stopped"` sentinel or a session
+exits non-zero. Each pass is a **fresh session
 with an empty context** — which is exactly why §1's disk-first rule is not
 optional.
 

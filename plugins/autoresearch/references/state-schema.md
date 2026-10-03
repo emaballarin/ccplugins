@@ -102,8 +102,9 @@ far back it is allowed to reset. They are written once and never edited.
   otherwise `null`.
 - `confidence` — `improvement / noiseFloor`, or `null` on a deterministic
   harness.
-- A `stopped` line carries `{"run": <n>, "status": "stopped", "reason": "..."}`
-  and is the sentinel `ar-loop.sh` greps for.
+- A `stopped` line carries `{"run":<n>,"status":"stopped","segment":<s>,"reason":"..."}`
+  and is the sentinel `ar-loop.sh` greps for. Write it as compact JSON: older
+  copies of `ar-loop.sh` match `"status":"stopped"` literally.
 
 ---
 

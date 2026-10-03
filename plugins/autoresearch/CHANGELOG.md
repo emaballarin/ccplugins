@@ -3,6 +3,35 @@
 All notable changes to the `ar` (autoresearch) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.4.9 — 2026-10-03
+
+The stop sentinel is now one the driver can see, and natural stops write one.
+
+Fixed:
+
+- **`ar-loop.sh` halts on a `stopped` sentinel however it is spaced.** It
+  matched the literal `"status":"stopped"`, while `/ar:stop` documented — and
+  `json.dumps` writes — `"status": "stopped"`; such a sentinel never stopped the
+  driver, which kept launching passes up to `AR_MAX_PASSES` (200). `/ar:stop`
+  and `state-schema.md` now show the compact form, which also halts copies of
+  `ar-loop.sh` already in a project's `./.ar/`. The driver looks for a sentinel
+  in the active segment (after the last config header): a new segment opened
+  after a stop runs, and a result line that a pass in flight appends after
+  `/ar:stop`'s sentinel no longer hides it. Existing runs keep their copied
+  `./.ar/ar-loop.sh`; re-copy `templates/ar-loop.sh` to get this check.
+- **Natural stops write the sentinel; an interrupt does not.** On target,
+  `maxRuns` or `maxSeconds`, `/ar:resume` (and protocol §4) appended nothing, so the driver started a
+  fresh session for every remaining pass, each rediscovering the stop.
+- **`/ar:resume`, `/ar:status`, `/ar:report` and `/ar:stop` read the whole
+  `ar.jsonl`.** `tail -50` dropped the segment's config header and early keeps
+  once a run passed about 50 lines; `resume-loop.md` §1 reads every line.
+
+Changed:
+
+- Plugin-root references in skill bodies use `${CLAUDE_PLUGIN_ROOT}/…`, which
+  Claude Code substitutes; a bare `references/…` token resolves against the
+  skill's own directory, where those files are not.
+
 ## 0.4.8 — 2026-09-28
 
 Housekeeping — coordinated marketplace version alignment alongside the `ccsci`

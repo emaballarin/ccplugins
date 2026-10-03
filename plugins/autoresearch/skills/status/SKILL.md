@@ -13,7 +13,7 @@ Report where the run stands. Change nothing.
 1. Read state:
 
     ```bash
-    cat ./.ar/ar.jsonl 2>/dev/null | tail -50; git branch --show-current
+    cat ./.ar/ar.jsonl 2>/dev/null; git branch --show-current
     ```
 
     No `ar.jsonl` means no run in this repo — say so, point at `/ar:start`, stop.

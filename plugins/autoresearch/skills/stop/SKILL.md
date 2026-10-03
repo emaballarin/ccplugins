@@ -10,7 +10,7 @@ Halt cleanly, leaving everything recoverable.
 
 ## Steps
 
-1. Read state (`cat ./.ar/ar.jsonl | tail -50`). No `ar.jsonl` means no run to
+1. Read state (`cat ./.ar/ar.jsonl`). No `ar.jsonl` means no run to
    stop — say so and stop.
 2. If `HEAD` carries a `Result: pending` trailer, an iteration was interrupted
    mid-measurement. Leave the commit alone, and record it in the sentinel's
@@ -19,7 +19,7 @@ Halt cleanly, leaving everything recoverable.
    for:
 
     ```json
-    { "run": <n>, "status": "stopped", "segment": <s>, "reason": "<why>" }
+    {"run":<n>,"status":"stopped","segment":<s>,"reason":"<why>"}
     ```
 
 4. Write `./.ar/final_report.md` (see the `/ar:report` skill for its shape).
@@ -45,6 +45,6 @@ Halt cleanly, leaving everything recoverable.
 
 End with a terminal status token as the last line of your reply — `DONE`,
 `DONE_WITH_CONCERNS`, `BLOCKED`, or `NEEDS_CONTEXT` — per
-`references/completion-status.md`. For `/ar:stop`, `DONE` once the
+`${CLAUDE_PLUGIN_ROOT}/references/completion-status.md`. For `/ar:stop`, `DONE` once the
 `status:stopped` sentinel is appended and the report written; `NEEDS_CONTEXT` if
 there is no active run to stop.

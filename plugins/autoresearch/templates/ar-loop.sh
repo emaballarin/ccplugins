@@ -22,7 +22,12 @@ for ((pass = 1; pass <= MAX_PASSES; pass++)); do
         echo "Session exited non-zero; stopping." >&2
         break
     }
-    if tail -n 40 "${STATE}" | grep -q '"status":"stopped"'; then
+    # Halt when the active segment (lines after the last config header) holds a
+    # stopped sentinel, wherever in it: a pass in flight when /ar:stop lands can
+    # append its result after the sentinel, and a new segment clears an old one.
+    if awk '/"config"[[:space:]]*:/ { s = 0 }
+            /"status"[[:space:]]*:[[:space:]]*"stopped"/ { s = 1 }
+            END { exit !s }' "${STATE}"; then
         echo "Loop reported status:stopped — done."
         break
     fi

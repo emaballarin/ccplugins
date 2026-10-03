@@ -187,8 +187,13 @@ The loop ends when, and only when, one of these holds:
 - `targetMetric` reached, honouring `direction`.
 - `maxRuns` iterations completed.
 - `maxSeconds` of wall-clock elapsed since the config header timestamp.
-- `/ar:stop` was invoked, or a `status:stopped` sentinel is present.
+- `/ar:stop` was invoked, or the active segment (after its config header) holds
+  a `status:stopped` sentinel.
 - The operator interrupts.
 
-On any of these, write `./.ar/final_report.md` (see `state-schema.md`) and print
-the command to return to the original branch. Do not switch branches unasked.
+On the first three, append a `stopped` sentinel naming the condition as its
+`reason`, as compact JSON like `/ar:stop` writes it (unless the active segment already
+holds one) — `ar-loop.sh` halts on it. An operator interrupt writes none,
+so a later `/ar:resume` continues. On any of these, write
+`./.ar/final_report.md` (see `state-schema.md`) and print the command to return
+to the original branch. Do not switch branches unasked.
