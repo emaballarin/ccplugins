@@ -3,8 +3,9 @@
 ## What this project is
 
 `ccplugins`: a personal Claude Code plugin marketplace, developed in the
-open. Five plugins: `mf` (mindfunnel), `ccsci` (ccscience), `ar`
-(autoresearch), `tml` (tuneml), `ws` (whetstone).
+open. Six plugins: `mf` (mindfunnel), `ccsci` (ccscience), `ar`
+(autoresearch), `tml` (tuneml), `ws` (whetstone), `ccbar` (ccbar).
+`ccbar` is the one function-hook plugin: TypeScript hooks, no skills.
 
 ## Source layout
 
@@ -15,6 +16,10 @@ plugins/<descriptive-name>/       # one plugin each
 ├── skills/<skill>/SKILL.md       # auto-discovered — no "skills" key in plugin.json
 ├── agents/ references/ templates/
 └── README.md CHANGELOG.md [LICENSE] [NOTICE]
+plugins/ccbar/                    # function hooks instead of skills:
+├── hooks/hooks.json + *.ts(x)    #   the hooks module and its helpers
+├── types/index.d.ts              #   its $.state contract
+└── tests/*.test.ts(x)            #   run by `claude plugin test`, not CI
 tests/                            # Tier-1 static + Tier-2 behavioural validation
 docs/roadmap.md                   # deferred and parked ideas
 ```
@@ -24,6 +29,18 @@ docs/roadmap.md                   # deferred and parked ideas
 - Tests, from the repo root (Python 3.14+ is the declared floor; CI pins
   it): `pip install -r tests/requirements.txt && python -m pytest tests/ -q`.
   What each module checks: `tests/README.md`.
+- `ccbar` (TypeScript, run by Claude Code), not in CI and part of every
+  `ccbar` release:
+
+    ```
+    claude plugin validate plugins/ccbar
+    claude plugin test plugins/ccbar
+    tsc -p plugins/ccbar
+    ```
+
+    `tsc` needs the typings Claude Code lays in `.claude-plugin/types/` when it
+    loads the folder (`claude --plugin-dir plugins/ccbar`).
+
 - Format: `~/bin/hyperformat .` (maintainer-local) — the house formatter;
   never hand-roll its steps. Its import reorder and `ruff format` can undo each
   other, so "N files reformatted" may net to no change: check `git diff --stat`.
@@ -55,6 +72,12 @@ docs/roadmap.md                   # deferred and parked ideas
 
 ## Known pitfalls
 
+- `ccbar` stands on the function-hook API, which is early access and moves
+  between Claude Code releases; it also sits behind a rollout switch, so an
+  install can load nothing. Re-run the three `ccbar` checks after a Claude Code
+  update. The validator's one non-obvious rule: `$` is only ever spelled
+  `$.noun.method(…)` where it is called (`read`/`update` excepted), never
+  stored, passed or returned.
 - Nothing checks the root README's prose, layout tree or license paragraph:
   grep it on every plugin or skill change.
 - `test_referenced_paths.py` checks that a referenced file exists, not that

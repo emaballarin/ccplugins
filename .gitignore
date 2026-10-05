@@ -10,3 +10,6 @@ __pycache__/
 
 # /ws:test-gate and /ws:test-audit keep their working notes in ./.ws/.
 .ws/
+
+# Claude Code lays its API typings into a function-hook plugin it loads from disk.
+plugins/*/.claude-plugin/types/

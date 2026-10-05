@@ -21,6 +21,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 | `ar`    | **autoresearch** — an autonomous experiment loop for any numeric objective. Five skills (`/ar:start`, `/ar:resume`, `/ar:status`, `/ar:report`, `/ar:stop`) that propose one change, measure it, and keep it only if it beats the measured noise floor.                                                                                                                                                                                    | [plugins/autoresearch](plugins/autoresearch/README.md) |
 | `tml`   | **tuneml** — the scientific method for tuning _and_ the speed↔quality frontier, in one place. Five skills (`/tml:audit`, `/tml:plan`, `/tml:round`, `/tml:analyze`, `/tml:review`) that read a pipeline, fix an operating point and a step budget, design experiments with scientific/nuisance/fixed hyperparameters, and return variance-aware adopt verdicts. Replaces the former `parml` plugin.                                        | [plugins/tuneml](plugins/tuneml/README.md)             |
 | `ws`    | **whetstone** — sharpen the thinking before the work, and the work before it lands. `/ws:grill` interviews a plan until nothing is silently assumed; `/ws:test-gate` holds every new test to one value bar; `/ws:test-audit` prunes and consolidates an existing suite, evidence first; `/ws:deslop` cleans AI slop from a diff before review; `/ws:review-gate` puts a change in front of a fresh-context reviewer before it is acted on. | [plugins/whetstone](plugins/whetstone/README.md)       |
+| `ccbar` | **ccbar** — a quiet status band above the prompt, drawn natively by function hooks: model and effort, repository and diff counter, a context bar in the `/context` colours, session tokens counted once per response, and the session and weekly rate limits with reset countdowns. No skills; four hooks.                                                                                                                                 | [plugins/ccbar](plugins/ccbar/README.md)               |
 
 ## Install a plugin
 
@@ -30,6 +31,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 /plugin install ar@ccplugins
 /plugin install tml@ccplugins
 /plugin install ws@ccplugins
+/plugin install ccbar@ccplugins
 ```
 
 ## Layout
@@ -73,12 +75,18 @@ ccplugins/
     │   │               tier-b-systems,tier-c-protocol,tier-d-architecture,
     │   │               modality-map,hardware-notes,pitfalls}.md
     │   └── templates/{findings,frontier,study-spec}.md + results-example.jsonl
-    └── whetstone/                           # plugin name: ws
+    ├── whetstone/                           # plugin name: ws
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
+    │   ├── skills/{grill,test-gate,test-audit,deslop,review-gate}/SKILL.md
+    │   │   └── test-audit/references/campaign.md
+    │   └── references/test-value.md
+    └── ccbar/                               # plugin name: ccbar
         ├── .claude-plugin/plugin.json
-        ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
-        ├── skills/{grill,test-gate,test-audit,deslop,review-gate}/SKILL.md
-        │   └── test-audit/references/campaign.md
-        └── references/test-value.md
+        ├── README.md  CHANGELOG.md  tsconfig.json  # MIT (repository LICENSE)
+        ├── hooks/{hooks.json,register.tsx,band.ts,lib.ts}
+        ├── types/index.d.ts
+        └── tests/{lib,layout}.test.ts + band.test.tsx
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.
@@ -102,9 +110,18 @@ CI runs the same on every push and pull request
 ([`.github/workflows/validate.yml`](.github/workflows/validate.yml)). Details:
 [`tests/README.md`](tests/README.md).
 
+`ccbar` is TypeScript run by Claude Code itself, so its checks need Claude Code
+and stay outside CI. Run them before a `ccbar` release:
+
+```
+claude plugin validate plugins/ccbar
+claude plugin test plugins/ccbar
+tsc -p plugins/ccbar
+```
+
 ## License
 
-The marketplace and the `mf` plugin are MIT — see [LICENSE](LICENSE). The `ccsci`
+The marketplace and the `mf` and `ccbar` plugins are MIT — see [LICENSE](LICENSE). The `ccsci`
 plugin is **Apache-2.0** with its own [plugins/ccscience/LICENSE](plugins/ccscience/LICENSE). The
 `ar` plugin is **MIT** with its own [LICENSE](plugins/autoresearch/LICENSE) and a
 [NOTICE](plugins/autoresearch/NOTICE) crediting the three MIT upstreams whose
