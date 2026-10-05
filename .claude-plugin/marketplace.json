@@ -86,7 +86,7 @@
         {
             "name": "ccbar",
             "source": "./plugins/ccbar",
-            "description": "ccbar: a quiet status band above the prompt, drawn natively by Claude Code's function hooks — model and effort, repository (GitHub owner/name, branch, diff counter), a context bar coloured by the /context categories with used/total and load, the session's total tokens counted once per API response, and the session and weekly rate limits with reset countdowns. Colour carries meaning; refreshes are paced. Function hooks only: no command hooks, no MCP, no settings patching.",
+            "description": "ccbar: a quiet status band above the prompt, drawn natively by Claude Code's function hooks — model and effort, repository (GitHub owner/name, branch, diff counter), a context bar coloured by the /context categories with used/total and load, the session's new tokens (cache reads of the re-sent conversation left out) counted once per API response, and the session and weekly rate limits with reset countdowns. Colour carries meaning; refreshes are paced. Function hooks only: no command hooks, no MCP, no settings patching.",
             "category": "productivity",
             "keywords": [
                 "ccbar",

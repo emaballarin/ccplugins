@@ -65,18 +65,20 @@ type TranscriptLine = {
     message?: { id?: unknown; usage?: Record<string, unknown> };
 };
 
-/** A response's four counts so far (input, output, cache read, cache write): the largest each of its lines has recorded. */
-export type Counts = readonly [number, number, number, number];
+/** A response's new-token counts so far (uncached input, output, cache write): the largest each of its lines has recorded. */
+export type Counts = readonly [number, number, number];
 
 /**
- * Adds the usage in whole JSONL lines to a per-response tally, and returns by how much the total grew.
+ * Adds the new tokens in whole JSONL lines to a per-response tally, and returns by how much the total grew.
  *
- * A response is written as several lines (one per content block), each repeating its usage, so a
- * response counts once, at the largest value any of its lines records for each count. A finished
- * main-loop response repeats the same counts on every line; a subagent's is written only as
- * streaming lines (`stop_reason` null) that are never closed, and the largest they record is the
- * best there is. A later line that raises a response's counts adds only the rise, so lines read in
- * separate passes still count once.
+ * New tokens are a request's uncached input, its cache writes and its output; cache reads are the
+ * conversation re-sent with every request and are left out, so the total grows by what each request
+ * added, not by the history it carried again. A response is written as several lines (one per
+ * content block), each repeating its usage, so a response counts once, at the largest value any of
+ * its lines records for each count. A finished main-loop response repeats the same counts on every
+ * line; a subagent's is written only as streaming lines (`stop_reason` null) that are never closed,
+ * and the largest they record is the best there is. A later line that raises a response's counts
+ * adds only the rise, so lines read in separate passes still count once.
  */
 export function tallyTranscript(text: string, seen: Map<string, Counts>): number {
     let added = 0;
@@ -91,21 +93,13 @@ export function tallyTranscript(text: string, seen: Map<string, Counts>): number
         const message = parsed.message;
         const usage = message?.usage;
         if (!message || !usage || typeof message.id !== "string") continue;
-        const previous = seen.get(message.id) ?? [0, 0, 0, 0];
-        const recorded: Counts = [
-            count(usage.input_tokens),
-            count(usage.output_tokens),
-            count(usage.cache_read_input_tokens),
-            count(usage.cache_creation_input_tokens),
-        ];
+        const previous = seen.get(message.id) ?? [0, 0, 0];
         const merged: Counts = [
-            Math.max(previous[0], recorded[0]),
-            Math.max(previous[1], recorded[1]),
-            Math.max(previous[2], recorded[2]),
-            Math.max(previous[3], recorded[3]),
+            Math.max(previous[0], count(usage.input_tokens)),
+            Math.max(previous[1], count(usage.output_tokens)),
+            Math.max(previous[2], count(usage.cache_creation_input_tokens)),
         ];
-        added +=
-            merged[0] + merged[1] + merged[2] + merged[3] - (previous[0] + previous[1] + previous[2] + previous[3]);
+        added += merged[0] + merged[1] + merged[2] - (previous[0] + previous[1] + previous[2]);
         seen.set(message.id, merged);
     }
     return added;

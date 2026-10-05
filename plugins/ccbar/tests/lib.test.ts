@@ -91,8 +91,8 @@ describe("parsing", () => {
             "",
         ].join("\n");
         const seen = new Map<string, Counts>();
-        // a: 1000 once, not twice; b: its final 98 output tokens, not its streaming 4 on top.
-        expect(tallyTranscript(text, seen)).toBe(2000);
+        // a: 100 once, not twice; b: its final 98 output tokens, not its streaming 4 on top; cache reads never.
+        expect(tallyTranscript(text, seen)).toBe(200);
         expect(tallyTranscript(line("a", "end_turn", 98), seen)).toBe(0);
     });
 
@@ -197,14 +197,14 @@ describe("transcript reading", () => {
     test("a non-ASCII line longer than a chunk is stepped over exactly, at every chunk size", async () => {
         const text = "x".repeat(3) + "é".repeat(400) + "\n" + ["a", "b", "c"].map(usageLine).join("\n") + "\n";
         for (let chunk = 200; chunk <= 300; chunk++) {
-            expect(await tallyAll(text, chunk), `chunk ${chunk}`).toBe(3333);
+            expect(await tallyAll(text, chunk), `chunk ${chunk}`).toBe(3033);
         }
     });
 
     test("many chunks of whole lines (each shorter than a chunk) lose and double nothing", async () => {
         const text = Array.from({ length: 50 }, (_, i) => usageLine(`m${i}`)).join("\n") + "\n";
         for (const chunk of [200, 333, 1000, 1 << 20])
-            expect(await tallyAll(text, chunk), `chunk ${chunk}`).toBe(55_550);
+            expect(await tallyAll(text, chunk), `chunk ${chunk}`).toBe(50_550);
     });
 
     test("a partial last line waits for its end; an empty read is an error, not a skip", async () => {

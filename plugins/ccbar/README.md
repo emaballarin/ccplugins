@@ -4,12 +4,16 @@
 the session: no `statusLine` command, no polling process.
 
 ```
-  Opus 5.5 xhigh  ·  emaballarin/ccplugins ⎇ main (+12 −3)  ·  ██████░░░░░░░░░░░░░░░░░▒ 246k/1M (25%)  ·  Tok Σ 12.7M  ·  Session 9% (4h 21m)  ·  Weekly 27% (2d 3h 7m)
+  Opus 5.5 xhigh  ·  emaballarin/ccplugins ⎇ main (+12 −3)  ·  ██████░░░░░░░░░░░░░░░░░▒ 246k/1M (25%)  ·  Tok Σ 2.4M  ·  Session 9% (4h 21m) · Weekly 27% (2d 3h 7m)
 ```
 
 Here `█` stands for the used window, `░` for the free track and `▒` for the auto-compaction reserve; the band draws all
-three as coloured cells, not as these glyphs. Groups are joined by one faint `·` and packed into rows by measured width. On a narrower terminal the bar first shrinks
-from 24 to 16 cells (and further below 36 columns); only then does the band wrap, always between whole groups.
+three as coloured cells, not as these glyphs. Groups are joined by one faint `·` and packed into rows by measured
+width; the rate-limit windows (`Session`, `Weekly`, and `Spend` behind a gateway) form one group, joined by a closer
+`·`, so they always wrap together. On a narrower terminal the bar first shrinks from 24 to 16 cells (and further below
+36 columns); only then does the band wrap, always between whole groups. Wrapped rows hang under the first row's second
+segment, unless the indent would cost a row or leave a group too wide for the room beside it: then the whole band wraps
+flush left. Below about 45 columns the joined limits no longer fit a row and are cut off at its end.
 
 ## Install
 
@@ -31,13 +35,13 @@ ccbar coexists with a `statusLine` command such as ccstatusline: that one draws 
 
 ## What it shows
 
-| Group          | Example                                  | Definition                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| -------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Model          | `Opus 5.5 xhigh`                         | The main loop's model by name. The effort level follows while extended thinking is on, and nothing follows while it is off.                                                                                                                                                                                                                                                                                                                         |
-| Repository     | `emaballarin/ccplugins ⎇ main (+12 −3)`  | GitHub `owner/name` from the `origin` remote (nothing for other hosts), the branch (`@<sha>` when detached), and inserted/deleted lines from `git diff-files --shortstat` plus `git diff-index --cached --shortstat` against `HEAD` (the empty tree before the first commit), which never touch the index. `(+0 −0)` is a clean tree; when git cannot read the tree the counter is left out, never shown as clean. Untracked files are not counted. |
-| Context        | `██████░░░░░░░░░░░░░░░░░▒ 246k/1M (25%)` | Input tokens the last API response was answered over (uncached, cache write and cache read) against the model's window. The percentage is Claude Code's own; its colour measures load against the auto-compaction point, not against the window.                                                                                                                                                                                                    |
-| Session tokens | `Tok Σ 12.7M`                            | Input + output + cache read + cache write over every API response of the session, subagents included, **counted once per response**, at the largest value any of its transcript lines records. Subagent transcripts record their responses only as streaming lines, with the output count at the last update written, so a subagent's output tokens can read low; its input and cache counts are complete.                                          |
-| Rate limits    | `Session 9% (4h 21m)`                    | `Session` is the five-hour window, `Weekly` the seven-day one: usage as the last API response reported it, and the time to reset, to the minute. Behind a Claude gateway, `Spend` shows the spend limit, which can pass 100%. Absent off a subscription.                                                                                                                                                                                            |
+| Group          | Example                                       | Definition                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Model          | `Opus 5.5 xhigh`                              | The main loop's model by name. The effort level follows while extended thinking is on, and nothing follows while it is off.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Repository     | `emaballarin/ccplugins ⎇ main (+12 −3)`       | GitHub `owner/name` from the `origin` remote (nothing for other hosts), the branch (`@<sha>` when detached), and inserted/deleted lines from `git diff-files --shortstat` plus `git diff-index --cached --shortstat` against `HEAD` (the empty tree before the first commit), which never touch the index. `(+0 −0)` is a clean tree; when git cannot read the tree the counter is left out, never shown as clean. Untracked files are not counted.                                                                                                                                                                                                          |
+| Context        | `██████░░░░░░░░░░░░░░░░░▒ 246k/1M (25%)`      | Input tokens the last API response was answered over (uncached, cache write and cache read) against the model's window. The percentage is Claude Code's own; its colour measures load against the auto-compaction point, not against the window.                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Session tokens | `Tok Σ 2.4M`                                  | **New tokens**: uncached input + cache write + output over every API response of the session, subagents included, **counted once per response**, at the largest value any of its transcript lines records. Cache reads, the conversation re-sent with every request, are left out. A cache write after the cache has expired (after 5 minutes or an hour idle, depending on the cache lifetime in use) counts the rewritten history again. Subagent transcripts record their responses only as streaming lines, with the output count at the last update written, so a subagent's output tokens can read low; its input and cache-write counts are complete. |
+| Rate limits    | `Session 9% (4h 21m) · Weekly 27% (2d 3h 7m)` | `Session` is the five-hour window, `Weekly` the seven-day one: usage as the last API response reported it, and the time to reset, to the minute. Behind a Claude gateway, `Spend` shows the spend limit, which can pass 100%. Absent off a subscription.                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 ## Colours
 
@@ -110,12 +114,18 @@ for it at most once in 5 minutes.
   `{ type: "engine" }` element, which is what `next(e)` returns. With that element in place, Claude Code keeps its own
   hint row live and only adds the plugin's rows. Without it, the plugin "stands in", and Claude Code swaps its row for a
   static dim copy of the hint.
-- **Why `Tok Σ` is lower than ccstatusline's `Total`.** A session transcript writes one line per content block, and each
-  line repeats the full usage of its response. ccstatusline 2.2.30 sums every line, which is about 2.1–2.3× over on the
-  sessions measured. ccbar counts each `message.id` once, at the largest value its lines record for each count, and
-  adds only the rise when a later line raises it. Finished main-loop responses repeat the same counts on every line, so
-  this equals counting each once. Subagent responses are written only as streaming lines (`stop_reason` null) that are
-  never closed: counting only finished lines would miss about nine in ten of them.
+- **What `Tok Σ` counts, and why it is far below ccstatusline's `Total`.** Within one API response the usage fields do
+  not overlap: uncached input, cache write and cache read split the prompt, and output comes on top. Across responses
+  they do: every request re-sends the whole conversation, mostly as cache reads, so a sum that includes them counts
+  the history once per request. On the session measured, cache reads were 97.9% of the metered 115.7M tokens, against
+  2.4M new; they are also billed at about a tenth of the input price, so the metered sum says little about cost or limits
+  (the `Session` and `Weekly` percentages say that). ccbar counts new tokens only. ccstatusline 2.2.30 counts cache
+  reads and, besides, sums every transcript line: a session transcript writes one line per content block, each
+  repeating its response's full usage, which puts it a further 2.1–2.3× over on the sessions measured. ccbar counts each
+  `message.id` once, at the largest value its lines record for each count, and adds only the rise when a later line
+  raises it. Finished main-loop responses repeat the same counts on every line, so this equals counting each once.
+  Subagent responses are written only as streaming lines (`stop_reason` null) that are never closed: counting only
+  finished lines would miss about nine in ten of them.
 - **Reading the transcript.** `$.fs.read` and `$.process.run` both stop at 4 MiB, but transcripts grow far past that.
   ccbar keeps a byte cursor per file (main transcript and each subagent's) and reads only the new whole lines, in 2 MiB
   ranges. A line longer than a range is stepped over by byte counts (`wc`), never by decoded text, which cannot say how

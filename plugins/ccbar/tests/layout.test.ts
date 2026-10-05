@@ -26,7 +26,7 @@ describe("layout", () => {
         expect(rows.length).toBe(1);
         const bar = text(groups(SNAP, 24)[1]!.slice(0, 24));
         expect(text(rows[0]!).replace(bar, "[bar]")).toBe(
-            "Opus 5.5 xhigh  ·  [bar] 246k/1M (25%)  ·  Tok Σ 12.7M  ·  Session 9% (4h 21m)  ·  Weekly 27% (18h 11m)"
+            "Opus 5.5 xhigh  ·  [bar] 246k/1M (25%)  ·  Tok Σ 12.7M  ·  Session 9% (4h 21m) · Weekly 27% (18h 11m)"
         );
     });
 
@@ -82,5 +82,70 @@ describe("repository", () => {
     test("without counts (git could not read the tree) there is no counter at all", () => {
         const repo = { owner: null, name: null, branch: "main", changes: null };
         expect(text(groups({ ...SNAP, repo }, 10)[1]!)).toBe("⎇ main");
+    });
+});
+
+describe("rate limits", () => {
+    test("Session and Weekly wrap together, never split across rows", () => {
+        // One row even with the bar at 16 cells needs `narrow` columns; 3 fewer clip the end of Weekly.
+        const narrow = width(layout(SNAP, 200)[0]!) - 8;
+        const rows = layout(SNAP, narrow - 3);
+        expect(rows.length).toBe(2);
+        expect(text(rows[1]!).trimStart()).toBe("Session 9% (4h 21m) · Weekly 27% (18h 11m)");
+        expect(text(rows[0]!)).not.toContain("Session");
+    });
+});
+
+describe("wrapping", () => {
+    const hang = width([{ text: "Opus 5.5 xhigh  ·  " }]);
+
+    test("continuation rows start under the first row's second segment", () => {
+        const narrow = width(layout(SNAP, 200)[0]!) - 8;
+        const rows = layout(SNAP, narrow - 3);
+        expect(rows.length).toBe(2);
+        expect(text(rows[1]!)).toBe(" ".repeat(hang) + "Session 9% (4h 21m) · Weekly 27% (18h 11m)");
+        for (const row of rows) expect(width(row)).toBeLessThanOrEqual(narrow - 3);
+    });
+
+    test("where a group would not fit beside the indent, rows start at the left edge", () => {
+        const rows = layout(SNAP, 60);
+        expect(rows.length).toBeGreaterThan(1);
+        for (const row of rows) {
+            expect(width(row)).toBeLessThanOrEqual(60);
+            // An indent is a run of bare spaces; a bar cell is a space on a background colour.
+            const lead = row[0]!;
+            expect(lead.bg === undefined && /^ +$/.test(lead.text), "indented").toBe(false);
+        }
+    });
+});
+
+describe("hanging indent cost", () => {
+    // Mirrors layout's choice of bar width, packing flush left: the row count the indent must not exceed.
+    const flatRows = (s: CcbarSnapshot, columns: number): number => {
+        for (const bar of [24, 16]) if (pack(groups(s, bar), columns).length <= 1) return 1;
+        return pack(groups(s, Math.max(6, Math.min(16, columns - 20))), columns).length;
+    };
+    const cases: [string, CcbarSnapshot][] = [
+        [
+            "GitHub repo",
+            {
+                ...SNAP,
+                repo: { owner: "emaballarin", name: "ccplugins", branch: "main", changes: { added: 12, removed: 3 } },
+            },
+        ],
+        [
+            "other repo",
+            { ...SNAP, repo: { owner: null, name: null, branch: "main", changes: { added: 0, removed: 0 } } },
+        ],
+        ["no repo", SNAP],
+        ["thinking off", { ...SNAP, thinking: null }],
+    ];
+
+    test("the indent never costs a row, at any width from 40 to 200 columns", () => {
+        for (const [name, s] of cases) {
+            for (let columns = 40; columns <= 200; columns++) {
+                expect(layout(s, columns).length, `${name} at ${columns}`).toBeLessThanOrEqual(flatRows(s, columns));
+            }
+        }
     });
 });

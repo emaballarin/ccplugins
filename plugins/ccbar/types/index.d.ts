@@ -8,7 +8,7 @@ export type CcbarSnapshot = {
     repo: CcbarRepo | null;
     /** The live context window; null before the first refresh. */
     context: CcbarContext | null;
-    /** Tokens over every API response of the session, subagents included. */
+    /** New tokens (uncached input, cache writes, output) over every API response of the session, subagents included. */
     total: number | null;
     /** The account's rate-limit windows, as the last API response reported them. */
     limits: CcbarLimit[];

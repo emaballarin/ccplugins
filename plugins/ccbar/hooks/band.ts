@@ -11,6 +11,9 @@ export type Group = Run[];
 /** What sits between two groups on a row. */
 export const SEPARATOR: Run = { text: "  ·  ", color: "subtle" };
 
+/** The closer join inside a group of figures of one kind: the rate-limit windows (Session, Weekly, Spend). */
+export const TIGHT: Run = { text: " · ", color: "subtle" };
+
 /** Theme keys by meaning: one colour, one sense. */
 export const COLOR = {
     identity: "claude",
@@ -34,13 +37,17 @@ export function width(runs: Run[]): number {
     return runs.reduce((sum, r) => sum + [...r.text].length, 0);
 }
 
-/** Packs groups into rows no wider than `columns`, `SEPARATOR` between neighbours on a row. */
-export function pack(groups: Group[], columns: number): Run[][] {
+/**
+ * Packs groups into rows no wider than `columns`, `SEPARATOR` between neighbours on a row. Rows after
+ * the first start `indent` columns in, and have that much less room.
+ */
+export function pack(groups: Group[], columns: number, indent = 0): Run[][] {
     const rows: Run[][] = [];
     let row: Run[] = [];
     for (const group of groups) {
+        const room = rows.length === 0 ? columns : columns - indent;
         const joined = row.length > 0 ? [...row, SEPARATOR, ...group] : group;
-        if (row.length > 0 && width(joined) > columns) {
+        if (row.length > 0 && width(joined) > room) {
             rows.push(row);
             row = [...group];
         } else {
@@ -48,10 +55,10 @@ export function pack(groups: Group[], columns: number): Run[][] {
         }
     }
     if (row.length > 0) rows.push(row);
-    return rows;
+    return indent > 0 ? rows.map((r, i) => (i === 0 ? r : [{ text: " ".repeat(indent) }, ...r])) : rows;
 }
 
-/** The band's groups in reading order: model, repository, context, tokens, then each rate limit. */
+/** The band's groups in reading order: model, repository, context, tokens, then the rate limits together. */
 export function groups(s: CcbarSnapshot, barWidth: number): Group[] {
     const out: Group[] = [];
     if (s.model) {
@@ -99,24 +106,36 @@ export function groups(s: CcbarSnapshot, barWidth: number): Group[] {
         out.push(group);
     }
     if (s.total) out.push([{ text: "Tok Σ ", color: COLOR.label }, { text: formatTokens(s.total) }]);
+    // The rate-limit windows wrap as one group: a row never splits Session from Weekly.
+    const limits: Run[] = [];
     for (const l of s.limits) {
-        const group: Run[] = [
+        if (limits.length > 0) limits.push(TIGHT);
+        limits.push(
             { text: `${limitLabel(l.kind)} `, color: COLOR.label },
-            { text: `${l.percent}%`, color: loadColor(l.percent) },
-        ];
+            { text: `${l.percent}%`, color: loadColor(l.percent) }
+        );
         if (l.resetsAt && s.now) {
-            group.push({ text: ` (${formatCountdown(Date.parse(l.resetsAt) - s.now)})`, color: COLOR.label });
+            limits.push({ text: ` (${formatCountdown(Date.parse(l.resetsAt) - s.now)})`, color: COLOR.label });
         }
-        out.push(group);
     }
+    if (limits.length > 0) out.push(limits);
     return out;
 }
 
-/** Rows for `columns`: one row with a 24-cell bar, else one with 16, else wrapped rows with up to 16 (fewer below 36 columns). */
+/**
+ * Rows for `columns`: one row with a 24-cell bar, else one with 16, else wrapped rows with up to 16 (fewer
+ * below 36 columns). Wrapped rows hang under the first row's second segment, unless the indent would cost a
+ * row or leave a group too wide for the room beside it: then the whole band wraps flush left.
+ */
 export function layout(s: CcbarSnapshot, columns: number): Run[][] {
     for (const bar of [24, 16]) {
         const rows = pack(groups(s, bar), columns);
         if (rows.length <= 1) return rows;
     }
-    return pack(groups(s, Math.max(6, Math.min(16, columns - 20))), columns);
+    const wrapped = groups(s, Math.max(6, Math.min(16, columns - 20)));
+    const first = wrapped[0];
+    const flat = pack(wrapped, columns);
+    const hanging = first ? pack(wrapped, columns, width(first) + width([SEPARATOR])) : [];
+    const fits = hanging.length > 0 && hanging.length <= flat.length && hanging.every((r) => width(r) <= columns);
+    return fits ? hanging : flat;
 }

@@ -158,11 +158,11 @@ test("the band draws model, repo, context, tokens and limits on terminal and des
             "/1M",
             "5%",
             "Tok Σ ",
-            "2k",
+            "200",
         ]) {
             expect(await ui.find({ type: "Text", text }), `${surface}: ${text}`).toBeDefined();
         }
-        expect(await ui.find({ type: "Text", text: /3k/ }), `${surface}: m1 counted twice`).toBeUndefined();
+        expect(await ui.find({ type: "Text", text: /^300$/ }), `${surface}: m1 counted twice`).toBeUndefined();
         expect(await ui.find({ type: "Text", text: /thinking/ }), `${surface}: effort alone`).toBeUndefined();
         expect(await ui.find({ type: "Text", text: "  ·  " }), `${surface}: group separator`).toBeDefined();
         expect(await ui.find({ type: "Text", text: /resets in|│/ }), `${surface}: old limit form`).toBeUndefined();
@@ -333,8 +333,8 @@ test("subagent transcripts count too, including responses written only as stream
     await $.session.start({ cwd: ROOT, surface: "terminal", isInteractive: true });
     await clock.settle();
     const ui = await $.ui.mount({ plugin: "ccbar", surface: "terminal", ...BAND });
-    // Main: 2000 (two responses); subagent: 130 → 2130 → "2.1k".
-    expect(await ui.find({ type: "Text", text: "2.1k" }), "main + subagent").toBeDefined();
+    // Main: 200 (two responses, cache reads left out); subagent: 130 → 330.
+    expect(await ui.find({ type: "Text", text: "330" }), "main + subagent").toBeDefined();
     await ui.unmount();
 });
 
@@ -361,6 +361,6 @@ test("a range cut short by head is no read failure, even where tail reports the 
     await $.session.start({ cwd: ROOT, surface: "terminal", isInteractive: true });
     await clock.settle();
     const ui = await $.ui.mount({ plugin: "ccbar", surface: "terminal", ...BAND });
-    expect(await ui.find({ type: "Text", text: "2k" }), "tallied despite the broken-pipe notice").toBeDefined();
+    expect(await ui.find({ type: "Text", text: "200" }), "tallied despite the broken-pipe notice").toBeDefined();
     await ui.unmount();
 });
