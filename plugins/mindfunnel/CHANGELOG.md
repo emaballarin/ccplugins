@@ -3,6 +3,46 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.8.0 — 2026-10-09
+
+Adds `/mf:park` and `/mf:unpark`, which carry a project's session scratchpads
+across a reboot. Scratchpads live under `/tmp`, which a reboot usually clears.
+
+New:
+
+- **`/mf:park`** finds the project's scratchpads — this session's, named in the
+  system prompt and checked against `$CLAUDE_CODE_SESSION_ID`, and its sibling
+  sessions' — triages them with the person (keep or drop, a reason for each
+  drop; `all` keeps every file and symlink) and copies what is kept into
+  `<project root>/.mf/park/<session-id>/` with a `MANIFEST.md`. Empty
+  directories and special files are never kept. Inside git, `.mf/park/` goes
+  into `.git/info/exclude` unless git already ignores it; exit status 3 says
+  when it could not be made ignored.
+- **`/mf:unpark`** restores a snapshot into the scratchpad (this session's;
+  another session's only on request), verifies every entry and deletes the
+  snapshot; `--keep` retains it. An entry the target already holds differently
+  is never overwritten: it is listed, or with `--beside` its parked version
+  goes under `PARKED-<session-id>/`.
+- The copying is two scripts, `scripts/park.sh` and `scripts/unpark.sh`: every
+  file checked by sha256 and every symlink by its target, a park moved into
+  place only once verified, a restore that puts each entry in place under a
+  temporary name, and one class of outcome per exit status, each routed by its
+  skill.
+- Both skills are user-invoked: they write into the project and into `/tmp`.
+- `/mf:spinup` notes snapshots still parked, report only.
+
+Changed:
+
+- `templates/AGENTS.md` re-synced with the live baseline: "Fresh-context
+  review" covers a results write-up too, checked against its sources — every
+  figure recomputed from the raw outputs, every "never" or "every" tested row
+  by row.
+- NOTICE names the six original skills, and the README counts them.
+
+Install impact: nothing to migrate; the two skills appear on update. The
+template reaches new machines only, as `/mf:setup` never overwrites an existing
+`~/.mindfunnel/AGENTS.md`: copy the change by hand to have it there.
+
 ## 0.7.8 — 2026-10-03
 
 `/mf:dump` and `/mf:spinup` find the memory directory Claude Code actually
