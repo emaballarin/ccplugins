@@ -107,7 +107,9 @@ python -m pytest tests/ -q
 ```
 
 CI runs the same on every push and pull request
-([`.github/workflows/validate.yml`](.github/workflows/validate.yml)). Details:
+([`.github/workflows/validate.yml`](.github/workflows/validate.yml)), less one
+local-only check: the shipped `mf` `AGENTS.md` template against the live
+`~/.mindfunnel/AGENTS.md`, skipped where that file is absent. Details:
 [`tests/README.md`](tests/README.md).
 
 `ccbar` is TypeScript run by Claude Code itself, so its checks need Claude Code

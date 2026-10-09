@@ -86,7 +86,9 @@ docs/roadmap.md                   # deferred and parked ideas
 - `§` section anchors are unchecked; prefer item references (`C7`), which
   `test_evidence_grades.py` resolves.
 - `plugins/mindfunnel/templates/AGENTS.md` drifts behind the live
-  `~/.mindfunnel/AGENTS.md`: diff them before an `mf` release. Sync live →
+  `~/.mindfunnel/AGENTS.md`: `tests/test_template_drift.py` fails locally
+  until they are byte-identical (it skips where no live file exists, as in
+  CI), so run the suite before an `mf` release. Sync live →
   shipped: copy `AGENTS.md` verbatim; never copy `SOUL.md` / `USER.md`
   (personal, and this repo is public) — port only the generic patterns of
   their live edits, as placeholder examples, when warranted.
