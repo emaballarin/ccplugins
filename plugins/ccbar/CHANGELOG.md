@@ -3,6 +3,16 @@
 All notable changes to the `ccbar` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.0 — 2026-10-09
+
+Two settings, in `/config`; both default to the band as it was.
+
+- **Token total (`tokens`)**: a choice. `new` (the default) counts new tokens, as before; `metered` adds the cache reads. Each response still counts once, subagents included. Changing it reloads ccbar, which rescans the transcript.
+- **Clickable repository and branch (`links`, off by default)**: on GitHub, `owner/name` links to the repository and the branch to its `tree/<branch>` page; a detached `@<sha>` is not linked. The branch link is built from the local name, so an unpushed branch opens a 404. Off by default because where Claude Code does not detect OSC 8 hyperlinks (Apple Terminal, xterm, screen, tmux before 3.4; Konsole and foot without `FORCE_HYPERLINK=1`), each link prints its URL after its text, which can push the rest of the row off the band: at 160 columns, the context bar, tokens and rate limits.
+- The two `.tsx` sources are in the house formatter's form; formatting only. Checked on Claude Code 2.1.295 as well as 2.1.289.
+
+Install impact: none; set either in `/config` to use it.
+
 ## 0.2.0 — 2026-10-05
 
 - **`Tok Σ` counts new tokens**: uncached input, cache writes and output. Cache reads, the conversation re-sent with every request, are left out. They were 97.9% of the metered total on the session measured (115.7M against 2.4M new), so the figure now shows how far the conversation has grown rather than how often it was re-sent. Still counted once per response, subagents included. The number shown drops sharply on upgrade: that is the definition changing, not data lost.

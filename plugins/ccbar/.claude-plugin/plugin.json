@@ -1,6 +1,6 @@
 {
     "name": "ccbar",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "ccbar — a quiet status band above the prompt, drawn natively by Claude Code's function hooks: the model and its effort, the repository (GitHub owner/name and branch, optionally as links; staged+unstaged diff), a context bar coloured by the /context categories with used/total and load, the session's new tokens (cache reads of the re-sent conversation left out, or counted too when set) counted once per API response, and the session and weekly rate limits with their reset countdowns. Colour carries meaning (identity, mode, load), and refreshes are paced: a 60 s idle tick plus every turn end. Function hooks only: no command hooks, no MCP, no settings patching.",
     "author": {
         "name": "Emanuele Ballarin",
