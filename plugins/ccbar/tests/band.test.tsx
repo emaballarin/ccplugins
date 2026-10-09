@@ -314,9 +314,9 @@ test("subagent transcripts count too, including responses written only as stream
     on("fs.exists", async (_$, e) => ({ value: e.path === TRANSCRIPT || e.path === SUBAGENTS }));
     on("fs.list", async (_$, e) => ({
         value:
-            e.path === SUBAGENTS
-                ? [{ name: "agent-x.jsonl", kind: "file" as const, size: 0, mtimeMs: NOW, isLink: false }]
-                : [],
+            e.path === SUBAGENTS ?
+                [{ name: "agent-x.jsonl", kind: "file" as const, size: 0, mtimeMs: NOW, isLink: false }]
+            :   [],
     }));
     on("fs.stat", async (_$, e) => ({
         value: {
@@ -354,9 +354,9 @@ test("a range cut short by head is no read failure, even where tail reports the 
     }));
     on("process.run", async (_$, e) => ({
         value:
-            e.argv[0] === "sh" && e.argv[4] === "1"
-                ? { ...ran(JSONL), stderr: "tail: error writing 'standard output': Broken pipe\n" }
-                : ran("", 1),
+            e.argv[0] === "sh" && e.argv[4] === "1" ?
+                { ...ran(JSONL), stderr: "tail: error writing 'standard output': Broken pipe\n" }
+            :   ran("", 1),
     }));
     await $.session.start({ cwd: ROOT, surface: "terminal", isInteractive: true });
     await clock.settle();

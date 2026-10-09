@@ -140,11 +140,9 @@ export const register: Register = (on) => {
             await patch({
                 thinking: {
                     effort:
-                        observedEffort !== undefined
-                            ? observedEffort
-                            : typeof configured === "string"
-                              ? configured
-                              : null,
+                        observedEffort !== undefined ? observedEffort
+                        : typeof configured === "string" ? configured
+                        : null,
                 },
             });
         };
@@ -162,9 +160,9 @@ export const register: Register = (on) => {
             ]);
             // A repository with no commit yet diffs the index against the empty tree.
             const base =
-                head.exitCode === 0
-                    ? "HEAD"
-                    : (await $.process.run(["git", "hash-object", "-t", "tree", "/dev/null"])).stdout.trim();
+                head.exitCode === 0 ?
+                    "HEAD"
+                :   (await $.process.run(["git", "hash-object", "-t", "tree", "/dev/null"])).stdout.trim();
             const [unstaged, staged] = await Promise.all([
                 $.process.run(["git", "diff-files", "--shortstat"]),
                 $.process.run(["git", "diff-index", "--cached", "--shortstat", base]),
