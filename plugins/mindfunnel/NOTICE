@@ -21,8 +21,9 @@ Codex-specific per-skill YAML) and add the frontmatter and bundled-resource
 conventions used by this marketplace, plus two further invocation tests
 (side effects, and interaction-mode blast radius).
 
-The other four skills in this plugin — /mf:setup, /mf:prime, /mf:dump and
-/mf:spinup — are original work and derive from no external source.
+The other six skills in this plugin — /mf:setup, /mf:prime, /mf:dump,
+/mf:spinup, /mf:park and /mf:unpark — are original work and derive from no
+external source.
 
 Original copyright notices remain with their respective authors. This derivative
 retains attribution as required by the MIT License. No endorsement by the

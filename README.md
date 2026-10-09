@@ -16,7 +16,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 
 | Name    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                | Docs                                                   |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
-| `mf`    | **mindfunnel** — project-agnostic session management. Five skills (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`) that funnel session state into auto-memory and back, plus `/mf:author` — the reference for writing the documents an agent reads.                                                                                                                                                                                    | [plugins/mindfunnel](plugins/mindfunnel/README.md)     |
+| `mf`    | **mindfunnel** — project-agnostic session management. Skills that funnel session state into auto-memory and back (`/mf:setup`, `/mf:prime`, `/mf:dump`, `/mf:spinup`), carry the session scratchpads across a reboot (`/mf:park`, `/mf:unpark`), plus `/mf:author` — the reference for writing the documents an agent reads.                                                                                                               | [plugins/mindfunnel](plugins/mindfunnel/README.md)     |
 | `ccsci` | **ccscience** — research & scientific-computing skills adapted from Claude Science: literature-review, bib-audit, pdf-explore, the figure-style / figure-composer / paper-narrative trilogy, paper-review, plus the `computational-scientist` and `deep-researcher` subagents.                                                                                                                                                             | [plugins/ccscience](plugins/ccscience/README.md)       |
 | `ar`    | **autoresearch** — an autonomous experiment loop for any numeric objective. Five skills (`/ar:start`, `/ar:resume`, `/ar:status`, `/ar:report`, `/ar:stop`) that propose one change, measure it, and keep it only if it beats the measured noise floor.                                                                                                                                                                                    | [plugins/autoresearch](plugins/autoresearch/README.md) |
 | `tml`   | **tuneml** — the scientific method for tuning _and_ the speed↔quality frontier, in one place. Five skills (`/tml:audit`, `/tml:plan`, `/tml:round`, `/tml:analyze`, `/tml:review`) that read a pipeline, fix an operating point and a step budget, design experiments with scientific/nuisance/fixed hyperparameters, and return variance-aware adopt verdicts. Replaces the former `parml` plugin.                                        | [plugins/tuneml](plugins/tuneml/README.md)             |
@@ -48,8 +48,9 @@ ccplugins/
     ├── mindfunnel/                          # plugin name: mf
     │   ├── .claude-plugin/plugin.json
     │   ├── README.md  CHANGELOG.md  NOTICE
-    │   ├── skills/{setup,prime,dump,spinup,author}/SKILL.md
+    │   ├── skills/{setup,prime,dump,spinup,park,unpark,author}/SKILL.md
     │   ├── references/{ledger,skill-mechanics}.md
+    │   ├── scripts/{park,unpark}.sh
     │   └── templates/{AGENTS,project-AGENTS,PROJECT,SOUL,USER}.md
     ├── ccscience/                           # plugin name: ccsci
     │   ├── .claude-plugin/plugin.json
@@ -98,8 +99,10 @@ frontmatter validity, `plugin.json` ↔ `CHANGELOG.md` version parity, marketpla
 integrity, README ↔ disk skill-table sync, referenced bundled-path existence, the
 `ccsci` kernel ↔ SKILL.md entrypoint contract, and the `tml` grading contract
 (every tier-catalogue item carries an evidence grade, every change item also
-declares a quality exposure, and both ladders match the reference). It reads
-files only (no plugin code runs), so it needs nothing beyond `pytest` + `PyYAML`.
+declares a quality exposure, and both ladders match the reference). Beside these
+static checks, a behavioural tier runs the pure `ccsci` kernel helpers and `mf`'s
+park/unpark scripts (the latter skip without bash, GNU tar, sha256sum and git). It
+needs nothing beyond `pytest` + `PyYAML`.
 
 ```
 pip install -r tests/requirements.txt

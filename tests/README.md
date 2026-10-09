@@ -60,6 +60,36 @@ This tier earns its keep: writing it surfaced a live defect in `extract_dois`
 inherited from the Claude Science original and fixed in ccsci 0.7.0. The
 regression case is parametrised in the file.
 
+## Behavioural — `mf`'s park scripts (`test_park_scripts.py`)
+
+Runs `plugins/mindfunnel/scripts/park.sh` and `unpark.sh` as `/mf:park` and
+`/mf:unpark` do, on throwaway trees in `tmp_path`. The contract is that no path
+loses, overwrites or deletes an entry the person did not give up:
+
+- **round trips**: an identical tree (a space, a leading dash, a backslash,
+  symlinks, a symlink-only scratchpad), popped after; identical entries already
+  at the target pass, unrelated ones stay, a leftover temporary is replaced;
+- **park**: a drop list matches exact paths and `/`-ended prefixes only, a line
+  matching nothing is exit 6, an empty or absent one keeps everything (the
+  `NR==FNR` regression); a failed park leaves nothing; a newline in a name, an
+  empty scratchpad, a snapshot inside the scratchpad are refused; an unrestored
+  snapshot is exit 4 with counts that hold under another locale and count
+  symlinks, replaced only under `--replace`; unreadable or malformed records
+  are exit 5, with no counts;
+- **unpark**: a differing entry, a symlink in its place or on its path, and an
+  exact symlink target are conflicts that keep the snapshot (exit 1), and
+  `--beside` restores their parked versions under `PARKED-<id>/` instead, with or
+  without `--keep`; a directory where a file belongs still lists every
+  differing entry; a snapshot changed or corrupted since the park is exit 4; an
+  uncreatable target is exit 5 and a failed pop exit 3, both with the snapshot
+  whole; the restored manifest never overwrites or writes through a file; an
+  unknown option, a `.partial` snapshot and overlapping paths touch nothing;
+- **git**: `.mf/park/` lands in the project's own `.git/info/exclude`, once, even
+  after a last line with no newline; a negation rule leaves the snapshot in
+  place with exit 3; a project outside git parks without one.
+
+Skips without bash, GNU tar, sha256sum or git.
+
 ## When a check fails
 
 The message names the offending file and value. Three cases need a test edit

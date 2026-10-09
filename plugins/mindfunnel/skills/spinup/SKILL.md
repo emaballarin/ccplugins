@@ -60,6 +60,10 @@ If `ledger.jsonl` exists in the memory dir, replay it for trust-ranked, provenan
 
 Budget this like any other read: skip entirely if the ledger is absent or empty; otherwise skim to the entries relevant to the user's question.
 
+### Step 3c: Note parked scratchpads
+
+If `<project root>/.mf/park/*/MANIFEST.md` exists, `/mf:park` saved scratchpads that are still parked: never restored, or restored with `--keep`. List each (session id, parked date, file count) under **Pending / next action**, with `/mf:unpark` as the way back. Report only: restoring is unpark's job.
+
 ### Step 4: Verify claims you're about to cite
 
 For each specific claim you plan to put in the summary:

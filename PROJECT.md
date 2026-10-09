@@ -14,7 +14,7 @@ open. Six plugins: `mf` (mindfunnel), `ccsci` (ccscience), `ar`
 plugins/<descriptive-name>/       # one plugin each
 ├── .claude-plugin/plugin.json    # short `name` + `version`
 ├── skills/<skill>/SKILL.md       # auto-discovered — no "skills" key in plugin.json
-├── agents/ references/ templates/
+├── agents/ references/ templates/ scripts/
 └── README.md CHANGELOG.md [LICENSE] [NOTICE]
 plugins/ccbar/                    # function hooks instead of skills:
 ├── hooks/hooks.json + *.ts(x)    #   the hooks module and its helpers
