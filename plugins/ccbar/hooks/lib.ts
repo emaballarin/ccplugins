@@ -65,8 +65,8 @@ type TranscriptLine = {
     message?: { id?: unknown; usage?: Record<string, unknown> };
 };
 
-/** A response's new-token counts so far (uncached input, output, cache write): the largest each of its lines has recorded. */
-export type Counts = readonly [number, number, number];
+/** A response's counts so far (uncached input, output, cache write, cache read): the largest each of its lines has recorded. */
+export type Counts = readonly [number, number, number, number];
 
 /**
  * Adds the new tokens in whole JSONL lines to a per-response tally, and returns by how much the total grew.
@@ -78,9 +78,10 @@ export type Counts = readonly [number, number, number];
  * its lines records for each count. A finished main-loop response repeats the same counts on every
  * line; a subagent's is written only as streaming lines (`stop_reason` null) that are never closed,
  * and the largest they record is the best there is. A later line that raises a response's counts
- * adds only the rise, so lines read in separate passes still count once.
+ * adds only the rise, so lines read in separate passes still count once. `metered` adds the cache
+ * reads too, each response still counted once.
  */
-export function tallyTranscript(text: string, seen: Map<string, Counts>): number {
+export function tallyTranscript(text: string, seen: Map<string, Counts>, metered = false): number {
     let added = 0;
     for (const line of text.split("\n")) {
         if (!line.includes('"usage"')) continue;
@@ -93,13 +94,15 @@ export function tallyTranscript(text: string, seen: Map<string, Counts>): number
         const message = parsed.message;
         const usage = message?.usage;
         if (!message || !usage || typeof message.id !== "string") continue;
-        const previous = seen.get(message.id) ?? [0, 0, 0];
+        const previous = seen.get(message.id) ?? [0, 0, 0, 0];
         const merged: Counts = [
             Math.max(previous[0], count(usage.input_tokens)),
             Math.max(previous[1], count(usage.output_tokens)),
             Math.max(previous[2], count(usage.cache_creation_input_tokens)),
+            Math.max(previous[3], count(usage.cache_read_input_tokens)),
         ];
-        added += merged[0] + merged[1] + merged[2] - (previous[0] + previous[1] + previous[2]);
+        const sum = (c: Counts): number => c[0] + c[1] + c[2] + (metered ? c[3] : 0);
+        added += sum(merged) - sum(previous);
         seen.set(message.id, merged);
     }
     return added;

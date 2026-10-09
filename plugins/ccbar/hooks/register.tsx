@@ -63,6 +63,8 @@ type Jobs = { all: (withBreakdown: boolean) => void; tokens: () => void; mode: (
 export const register: Register = (on, options) => {
     /** Off unless switched on: where a terminal lacks OSC 8 a link prints its URL and pushes the band off its row. */
     const links = options.links === true;
+    /** `Tok Σ` counts new tokens unless set to `metered`, which adds the cache reads. */
+    const metered = options.tokens === "metered";
     // Set by session.start: the refreshers close over that hook's `$`, which is never stored or passed.
     let jobs: Jobs | null = null;
     // The effort the last main-loop turn ran at, after any downgrade for the model (classic.Stop):
@@ -292,7 +294,7 @@ export const register: Register = (on, options) => {
                     return { first, newlines };
                 },
                 (lines) => {
-                    total += tallyTranscript(lines, seen);
+                    total += tallyTranscript(lines, seen, metered);
                 }
             );
         };

@@ -174,6 +174,37 @@ test("the band draws model, repo, context, tokens and limits on terminal and des
     }
 });
 
+test("set to metered, Tok Σ adds the cache reads", { options: { tokens: "metered" } }, async ($, on) => {
+    engineBottom(on);
+    const clock = mock.clock(on, { now: NOW });
+    mock.env(on, { HOME });
+    on("ui.log", async () => ({ value: undefined }));
+    on("session.model", async () => ({ value: "claude-opus-5-5" }));
+    on("config.list", async () => ({ value: [THINKING(false)] }));
+    on("session.id", async () => ({ value: SID }));
+    on("session.root", async () => ({ value: ROOT }));
+    on("fs.exists", async (_$, e) => ({ value: e.path === TRANSCRIPT }));
+    on("fs.stat", async (_$, e) => ({
+        value: {
+            kind: "file" as const,
+            size: e.path === TRANSCRIPT ? new TextEncoder().encode(JSONL).length : 0,
+            mtimeMs: NOW,
+            isLink: false,
+        },
+    }));
+    on("fs.list", async () => ({ value: [] }));
+    on("process.run", async (_$, e) => ({
+        value: e.argv[0] === "sh" && e.argv[4] === "1" && e.argv[5] === TRANSCRIPT ? ran(JSONL) : ran("", 1),
+    }));
+    await $.session.start({ cwd: ROOT, surface: "terminal", isInteractive: true });
+    await clock.settle();
+    const ui = await $.ui.mount({ plugin: "ccbar", surface: "terminal", ...BAND });
+    // Two responses of 2 + 98 new tokens and 900 cache reads each: 200 new, 2k metered.
+    expect(await ui.find({ type: "Text", text: /^2k$/ }), "metered total").toBeDefined();
+    expect(await ui.find({ type: "Text", text: /^200$/ }), "new-only total").toBeUndefined();
+    await ui.unmount();
+});
+
 test("the band yields to a survey", async ($, on) => {
     engineBottom(on);
     const clock = mock.clock(on, { now: NOW });

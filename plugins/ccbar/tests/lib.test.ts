@@ -114,6 +114,28 @@ describe("parsing", () => {
         expect(tallyTranscript(line(30), seen)).toBe(26);
         expect(tallyTranscript(line(12), seen)).toBe(0);
     });
+
+    test("metered adds the cache reads, still once per response at its largest", () => {
+        const line = (id: string, read: number) =>
+            JSON.stringify({
+                message: {
+                    id,
+                    stop_reason: null,
+                    usage: {
+                        input_tokens: 2,
+                        output_tokens: 98,
+                        cache_creation_input_tokens: 5,
+                        cache_read_input_tokens: read,
+                    },
+                },
+            });
+        const text = [line("a", 900), line("a", 900), line("b", 1000)].join("\n");
+        expect(tallyTranscript(text, new Map()), "new").toBe(210);
+        const seen = new Map<string, Counts>();
+        expect(tallyTranscript(text, seen, true), "metered").toBe(210 + 900 + 1000);
+        expect(tallyTranscript(line("b", 1200), seen, true), "a later, larger read adds the rise").toBe(200);
+        expect(tallyTranscript(line("b", 0), seen, true), "a later line without the read takes nothing away").toBe(0);
+    });
 });
 
 describe("context bar", () => {
