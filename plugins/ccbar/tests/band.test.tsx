@@ -212,13 +212,18 @@ test("thinking off leaves its slot blank, and failing refreshers leave the rest 
 });
 
 /** A session in a repository whose git answers `git`; every source not stubbed fails quietly. */
-const repoSession = async ($: Engine, on: On, git: (argv: string) => ProcessRunResult): Promise<void> => {
+const repoSession = async (
+    $: Engine,
+    on: On,
+    git: (argv: string) => ProcessRunResult,
+    remote: string | null = null
+): Promise<void> => {
     engineBottom(on);
     const clock = mock.clock(on, { now: NOW });
     on("ui.log", async () => ({ value: undefined }));
     on("session.model", async () => ({ value: "claude-opus-5-5" }));
     on("config.list", async () => ({ value: [THINKING(false)] }));
-    on("session.repo", async () => ({ value: { root: ROOT, remote: null, internal: false, name: null } }));
+    on("session.repo", async () => ({ value: { root: ROOT, remote, internal: false, name: null } }));
     on("process.run", async (_$, e) => ({ value: git(e.argv.join(" ")) }));
     await $.session.start({ cwd: ROOT, surface: "terminal", isInteractive: true });
     await clock.settle();
@@ -234,6 +239,55 @@ test("a detached HEAD shows its short hash", async ($, on) => {
     const ui = await $.ui.mount({ plugin: "ccbar", surface: "terminal", ...BAND });
     expect(await ui.find({ type: "Text", text: "@abcdef0" }), "short hash").toBeDefined();
     expect(await ui.find({ type: "Text", text: "+0" }), "clean counter").toBeDefined();
+    await ui.unmount();
+});
+
+/** Git on branch `feat/x` with a clean tree. */
+const onFeature = (argv: string): ProcessRunResult => {
+    if (argv === "git branch --show-current") return ran("feat/x\n");
+    if (argv === "git rev-parse --verify -q HEAD") return ran("abcdef0123456789\n");
+    if (argv.startsWith("git diff-")) return ran("");
+    return ran("", 1);
+};
+
+test(
+    "with links on, GitHub owner/name links to the repository and the branch to its tree",
+    { options: { links: true } },
+    async ($, on) => {
+        await repoSession($, on, onFeature, "https://github.com/emaballarin/ccplugins.git");
+        for (const surface of ["terminal", "desktop"] as const) {
+            const ui = await $.ui.mount({ plugin: "ccbar", surface, ...BAND });
+            const links = await ui.findAll({ type: "Link" });
+            expect(
+                links.map((l) => l.props.href),
+                surface
+            ).toEqual([
+                "https://github.com/emaballarin/ccplugins",
+                "https://github.com/emaballarin/ccplugins/tree/feat/x",
+            ]);
+            expect(await ui.find({ type: "Text", text: /^emaballarin\/$/ }), `${surface}: owner drawn`).toBeDefined();
+            expect(await ui.find({ type: "Text", text: /^ccplugins$/ }), `${surface}: name drawn`).toBeDefined();
+            expect(await ui.find({ type: "Text", text: /^feat\/x$/ }), `${surface}: branch drawn`).toBeDefined();
+            await ui.unmount();
+        }
+    }
+);
+
+test("links are off by default, even on GitHub", async ($, on) => {
+    await repoSession($, on, onFeature, "https://github.com/emaballarin/ccplugins.git");
+    for (const surface of ["terminal", "desktop"] as const) {
+        const ui = await $.ui.mount({ plugin: "ccbar", surface, ...BAND });
+        expect(await ui.find({ type: "Text", text: /^feat\/x$/ }), `${surface}: branch`).toBeDefined();
+        expect(await ui.findAll({ type: "Link" }), `${surface}: links`).toEqual([]);
+        await ui.unmount();
+    }
+});
+
+test("a repository elsewhere draws its branch with no link", { options: { links: true } }, async ($, on) => {
+    await repoSession($, on, onFeature, "git@gitlab.com:o/n.git");
+    const ui = await $.ui.mount({ plugin: "ccbar", surface: "terminal", ...BAND });
+    expect(await ui.find({ type: "Text", text: "feat/x" }), "branch").toBeDefined();
+    expect(await ui.findAll({ type: "Link" }), "links").toEqual([]);
     await ui.unmount();
 });
 

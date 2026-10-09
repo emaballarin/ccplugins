@@ -2,8 +2,8 @@
 import type { CcbarSnapshot } from "../types";
 import { contextPieces, formatCountdown, formatTokens, layBar, limitLabel } from "./lib";
 
-/** A stretch of text in one style; colours are theme keys. */
-export type Run = { text: string; color?: string; bg?: string; bold?: boolean };
+/** A stretch of text in one style; colours are theme keys, and `href` makes it a link. */
+export type Run = { text: string; color?: string; bg?: string; bold?: boolean; href?: string };
 
 /** Runs that stay together on one row. */
 export type Group = Run[];
@@ -58,6 +58,17 @@ export function pack(groups: Group[], columns: number, indent = 0): Run[][] {
     return indent > 0 ? rows.map((r, i) => (i === 0 ? r : [{ text: " ".repeat(indent) }, ...r])) : rows;
 }
 
+/** A row cut into spans: consecutive runs that share a link stay together, every other run stands alone. */
+export function linkSpans(row: Run[]): Run[][] {
+    const spans: Run[][] = [];
+    for (const r of row) {
+        const last = spans.at(-1);
+        if (r.href && last?.[0]?.href === r.href) last.push(r);
+        else spans.push([r]);
+    }
+    return spans;
+}
+
 /** The band's groups in reading order: model, repository, context, tokens, then the rate limits together. */
 export function groups(s: CcbarSnapshot, barWidth: number): Group[] {
     const out: Group[] = [];
@@ -71,8 +82,19 @@ export function groups(s: CcbarSnapshot, barWidth: number): Group[] {
     if (s.repo) {
         const r = s.repo;
         const group: Run[] = [];
-        if (r.owner && r.name) group.push({ text: `${r.owner}/`, color: COLOR.label }, { text: r.name });
-        if (r.branch) group.push({ text: group.length > 0 ? " ⎇ " : "⎇ ", color: COLOR.label }, { text: r.branch });
+        // On GitHub, owner/name opens the repository and the branch its tree; a detached `@<sha>` is no branch.
+        const home =
+            r.owner && r.name ?
+                `https://github.com/${encodeURIComponent(r.owner)}/${encodeURIComponent(r.name)}`
+            :   undefined;
+        const tree =
+            home && r.branch && !/^@[0-9a-f]{7}$/.test(r.branch) ?
+                `${home}/tree/${r.branch.split("/").map(encodeURIComponent).join("/")}`
+            :   undefined;
+        if (r.owner && r.name)
+            group.push({ text: `${r.owner}/`, color: COLOR.label, href: home }, { text: r.name, href: home });
+        if (r.branch)
+            group.push({ text: group.length > 0 ? " ⎇ " : "⎇ ", color: COLOR.label }, { text: r.branch, href: tree });
         // Drawn whenever git could read the tree: a quiet (+0 −0) says it is clean.
         if (r.changes) {
             const { added, removed } = r.changes;

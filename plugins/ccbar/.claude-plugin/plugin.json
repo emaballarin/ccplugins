@@ -19,5 +19,13 @@
         "function-hooks",
         "mod"
     ],
-    "types": "./types/index.d.ts"
+    "types": "./types/index.d.ts",
+    "userConfig": {
+        "links": {
+            "type": "boolean",
+            "title": "Clickable repository and branch",
+            "description": "Draw the GitHub owner/name and the branch as links (OSC 8 hyperlinks). Turn on only where Claude Code detects OSC 8 (the links in its replies are clickable); elsewhere each link prints its URL after its text, which pushes the context bar, tokens and rate limits off the band's row. Konsole and foot need FORCE_HYPERLINK=1 to be detected.",
+            "default": false
+        }
+    }
 }

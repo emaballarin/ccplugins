@@ -3,7 +3,8 @@ import { atom, read, update } from "claude-code";
 import type { Register } from "claude-code";
 
 import type { CcbarContext, CcbarSnapshot } from "../types";
-import { layout } from "./band";
+import type { Run } from "./band";
+import { layout, linkSpans } from "./band";
 import type { Counts, Cursor } from "./lib";
 import { drainLines, parseGithub, parseShortstat, prettyModel, tallyTranscript } from "./lib";
 
@@ -59,7 +60,9 @@ function singleFlight(task: () => Promise<void>): () => Promise<void> {
 
 type Jobs = { all: (withBreakdown: boolean) => void; tokens: () => void; mode: () => void };
 
-export const register: Register = (on) => {
+export const register: Register = (on, options) => {
+    /** Off unless switched on: where a terminal lacks OSC 8 a link prints its URL and pushes the band off its row. */
+    const links = options.links === true;
     // Set by session.start: the refreshers close over that hook's `$`, which is never stored or passed.
     let jobs: Jobs | null = null;
     // The effort the last main-loop turn ran at, after any downgrade for the model (classic.Stop):
@@ -365,17 +368,20 @@ export const register: Register = (on) => {
         if (e.props.hasSurvey) return next(e);
         const s = await read($, snap);
         if (!s.model && !s.context) return next(e);
-        const { Box, Text } = $.ui.resolve(e);
+        const { Box, Text, Link } = $.ui.resolve(e);
         const rows = layout(s, Math.max(20, e.props.bodyColumns - EDGE_COLUMNS));
+        const run = (r: Run) => (
+            <Text color={r.color} backgroundColor={r.bg} bold={r.bold}>
+                {r.text}
+            </Text>
+        );
         return (
             <Box flexDirection="column" paddingLeft={2} marginTop={2}>
                 {rows.map((row) => (
                     <Text wrap="truncate-end">
-                        {row.map((r) => (
-                            <Text color={r.color} backgroundColor={r.bg} bold={r.bold}>
-                                {r.text}
-                            </Text>
-                        ))}
+                        {linkSpans(row).map((span) =>
+                            links && span[0]?.href ? <Link href={span[0].href}>{span.map(run)}</Link> : span.map(run)
+                        )}
                     </Text>
                 ))}
             </Box>

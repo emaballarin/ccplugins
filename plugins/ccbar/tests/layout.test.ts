@@ -1,6 +1,6 @@
 import { describe, expect, test } from "claude-code/testing";
 
-import { groups, layout, loadColor, pack, SEPARATOR, width } from "../hooks/band";
+import { groups, layout, linkSpans, loadColor, pack, SEPARATOR, width } from "../hooks/band";
 import type { CcbarSnapshot } from "../types";
 
 const NOW = Date.parse("2026-10-04T00:00:00Z");
@@ -82,6 +82,50 @@ describe("repository", () => {
     test("without counts (git could not read the tree) there is no counter at all", () => {
         const repo = { owner: null, name: null, branch: "main", changes: null };
         expect(text(groups({ ...SNAP, repo }, 10)[1]!)).toBe("⎇ main");
+    });
+
+    const HOME = "https://github.com/emaballarin/ccplugins";
+
+    test("on GitHub, owner/name links to the repository and the branch to its tree, path-encoded", () => {
+        const repo = { owner: "emaballarin", name: "ccplugins", branch: "feat/x#1%2", changes: null };
+        expect(groups({ ...SNAP, repo }, 10)[1]!.map((r) => [r.text, r.href])).toEqual([
+            ["emaballarin/", HOME],
+            ["ccplugins", HOME],
+            [" ⎇ ", undefined],
+            ["feat/x#1%2", `${HOME}/tree/feat/x%231%252`],
+        ]);
+    });
+
+    test("a detached HEAD has no tree to open, and a repository elsewhere no page at all", () => {
+        const detached = { owner: "emaballarin", name: "ccplugins", branch: "@abcdef0", changes: null };
+        expect(groups({ ...SNAP, repo: detached }, 10)[1]!.map((r) => r.href)).toEqual([
+            HOME,
+            HOME,
+            undefined,
+            undefined,
+        ]);
+        const at = { owner: "emaballarin", name: "ccplugins", branch: "@release", changes: null };
+        expect(groups({ ...SNAP, repo: at }, 10)[1]!.at(-1)!.href, "a branch named @…").toBe(`${HOME}/tree/%40release`);
+        const elsewhere = { owner: null, name: null, branch: "main", changes: { added: 1, removed: 0 } };
+        expect(
+            groups({ ...SNAP, repo: elsewhere }, 10)[1]!
+                .map((r) => r.href)
+                .filter(Boolean)
+        ).toEqual([]);
+    });
+
+    test("consecutive runs sharing a link make one span; every other run stands alone", () => {
+        const repo = { owner: "o", name: "n", branch: "main", changes: { added: 1, removed: 0 } };
+        expect(linkSpans(groups({ ...SNAP, repo }, 10)[1]!).map((s) => [text(s), s[0]!.href])).toEqual([
+            ["o/n", "https://github.com/o/n"],
+            [" ⎇ ", undefined],
+            ["main", "https://github.com/o/n/tree/main"],
+            [" (", undefined],
+            ["+1", undefined],
+            [" ", undefined],
+            ["−0", undefined],
+            [")", undefined],
+        ]);
     });
 });
 
