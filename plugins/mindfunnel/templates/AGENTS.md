@@ -186,11 +186,15 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   mismatch, distribution shift, dead-code path, stale cache, and so on).
   For each, name the minimal diagnostic that would catch it. This goes
   in the plan, ahead of the same confirmation.
-- **Fresh-context review before acting on a change.** Before a commit, a
-  release, or a run whose result will be acted on, have a reviewer with
-  fresh context check the diff against the stated intent — not against
-  your reasoning — then fix or report what it finds. Scale with blast
-  radius. An autonomous loop the maintainer explicitly started (e.g. `/ar`)
+- **Fresh-context review before acting on a change or a results write-up.**
+  Before a commit, a release, or a run whose result will be acted on, have
+  a reviewer with fresh context check the diff against the stated intent —
+  not against your reasoning — then fix or report what it finds. A results
+  write-up — numbers transcribed, derived or ranked from outputs — gets the
+  same reviewer before hand-over, checked against its sources instead of the
+  intent: every figure recomputed from the raw outputs, every "never" or
+  "every" tested row by row, since the aggregating script can itself be
+  wrong. Scale with blast radius. An autonomous loop the maintainer explicitly started (e.g. `/ar`)
   is exempt: its own measurement gates each iteration commit.
 - **Use a to-do list for anything multi-step.** Any request that
   decomposes into a list of tasks — or that is complex enough to have
