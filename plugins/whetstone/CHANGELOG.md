@@ -3,6 +3,13 @@
 All notable changes to the `ws` (whetstone) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.2 — 2026-10-09
+
+Housekeeping — coordinated marketplace version alignment alongside the `mf`
+0.8.0 release (the new `park` and `unpark` skills) and the `ccbar` 0.3.0 release
+(its `links` and `tokens` settings). Nothing in this plugin was edited. No skill
+logic changed.
+
 ## 0.3.1 — 2026-10-03
 
 Fixed:
