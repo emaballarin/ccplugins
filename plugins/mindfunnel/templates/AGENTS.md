@@ -175,7 +175,8 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
 
 - **Plan and wait for structural work; edit directly for iteration.**
   Structural changes, multi-file refactors, anything touching shared or
-  remote infrastructure, and anything asked for as a review: present the
+  remote infrastructure (jobs run under a standing hand-off excepted —
+  §Important constraints), and anything asked for as a review: present the
   findings and the plan — not a diff — and wait for explicit go-ahead
   before applying fixes. Single-file experimental iteration (tweak a
   script, change a flag, rerun) goes straight to the edit; deliberation
@@ -311,7 +312,7 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
       15 minutes** — run it locally.
     - **Long jobs, and anything that benefits from significant compute** —
       remote box. Write the job, print the command, let the maintainer
-      launch it.
+      launch it — unless a standing hand-off covers the box (below).
     - **Everything else, and anything touching shared or remote
       infrastructure** — print the exact command for local or remote
       execution, and ask. The answer is often "just run it locally"; that
@@ -319,7 +320,11 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
     - **An explicit hand-off settles it.** When the maintainer asks for
       the run, or explicitly invokes an agent built to run compute (e.g.
       `computational-scientist`), run what the task needs, long jobs
-      included. When that intent is clear but not explicit, judge; when
+      included. A **standing hand-off** — a machine `USER.md` hands to
+      agents — counts as explicit while that machine is available and
+      usable: launch, watch and collect jobs there yourself, within the
+      policy its notes set; changes to the machine itself still go to
+      the maintainer. When that intent is clear but not explicit, judge; when
       in real doubt, ask — one more prompt beats a long job freezing the
       machine.
 - **Never route around a human-required control.** When a step blocks on

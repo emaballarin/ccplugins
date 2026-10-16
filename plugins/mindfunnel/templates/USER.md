@@ -84,6 +84,10 @@
 <!-- Example:
   - `<your-lib>`: personal library, at `<private-index-url>`.
   - Cluster: `<hostname>:/<path>`. Use `srun` for Python in job scripts.
+  - Agent box — a standing hand-off: `<ssh alias>`. While it is
+    available and usable, long jobs go there and the agent launches,
+    watches and collects them itself; access, GPU policy and the job
+    recipe in `~/.mindfunnel/machines/<box>.md`.
   - Which jobs run where is set by cost, not kind — see `AGENTS.md`
     §Important constraints.
 -->

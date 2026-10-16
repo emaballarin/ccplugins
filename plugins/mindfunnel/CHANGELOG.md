@@ -3,6 +3,17 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+Templates:
+
+- **`AGENTS.md` re-synced: standing hand-offs.** A machine that `USER.md`
+  hands to agents counts as an explicit hand-off while it is available and
+  usable: agents launch, watch and collect long jobs there themselves, within
+  the policy its notes set, and changes to the machine itself still go to the
+  maintainer. §Planning & execution excepts such jobs from plan-and-wait.
+- **`USER.md`** gains an example line for such an agent box.
+
 ## 0.8.0 — 2026-10-09
 
 Adds `/mf:park` and `/mf:unpark`, which carry a project's session scratchpads
