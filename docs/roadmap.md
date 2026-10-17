@@ -11,7 +11,8 @@ no remote telemetry, no vendored runtime, no auto-running background processes.
 W2 (provenance/trust ledger, `mf` 0.4.1), and W3 (completion-status protocol,
 `ar` 0.2.1) are committed and pushed; A2 + A3 were additionally generalized as
 universal, agent-neutral guidance in the `mindfunnel` AGENTS.md template. The
-Deferred / Parked / Dropped items below are unchanged.
+Deferred / Parked / Dropped items below were unchanged by that landing; later
+additions carry their own dates.
 
 Two committed workstreams, built in parallel:
 
@@ -29,12 +30,12 @@ Plus a scoped adoption (completion-status protocol) and two parked items.
 
 ## Scope
 
-| Status                | Item                                                                                                                                                                         |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **DONE** (2026-07-23) | W1 Tier-1 validation + CI · W2 ledger (`mf` 0.4.1) · W3 completion-status (`ar` 0.2.1) · A2+A3 generalized as universal `mindfunnel` AGENTS.md guidance                      |
-| **DEFERRED**          | SKILL.md generation from `.tmpl` — build only if ≥3 skills carry the same block verbatim _and_ it changes more than once                                                     |
-| **PARKED**            | Full AskUserQuestion decision-brief ceremony (compressed form adopted universally; full rides on generation) · Codex second-opinion skill (`codex exec` verified — see note) |
-| **DROPPED**           | Importing gstack skills (investigate / health / office-hours / retro / cso / …) — no demonstrated need; would inflate surface                                                |
+| Status                | Item                                                                                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **DONE** (2026-07-23) | W1 Tier-1 validation + CI · W2 ledger (`mf` 0.4.1) · W3 completion-status (`ar` 0.2.1) · A2+A3 generalized as universal `mindfunnel` AGENTS.md guidance                               |
+| **DEFERRED**          | SKILL.md generation from `.tmpl` — build only if ≥3 skills carry the same block verbatim _and_ it changes more than once                                                              |
+| **PARKED**            | Full AskUserQuestion decision-brief ceremony (compressed form adopted universally; full rides on generation) · Codex second-opinion skill (`codex exec` verified — see note)          |
+| **DROPPED**           | Importing gstack skills (investigate / health / office-hours / retro / cso / …) — no demonstrated need; would inflate surface · `paper-review` line anchoring (2026-10-18 — see note) |
 
 ---
 
@@ -193,6 +194,38 @@ would be an **explicit juncture** (model decides "this is hard," or a skill step
 "if N hypotheses fail → cold-read"), not a daemon watching the reasoning trace.
 Fallback when the binary is absent: dispatch an independent Claude subagent via the
 Agent tool. ~40 lines if built. Not designed further until requested.
+
+---
+
+## Dropped note — `paper-review` line anchoring (2026-10-18)
+
+`scripts/line_anchor.py` mapped quoted phrases to page and margin line in a
+line-numbered PDF (`pdfplumber`; phrases in, page and line out), with Tier-2
+tests for its line assignment, matching and column handling. It was never
+shipped: two fresh-context reviews found layouts where it reports a wrong line
+with exit 0, and a wrong line number in a signed review is silent. Parked on
+2026-10-17, dropped on 2026-10-18; the code was not kept. `paper-review`
+anchors stay line reference plus quoted phrase, the phrase being what finds the
+passage again.
+
+It was correct, checked against `lineno`'s own `\linelabel` values, on: single column,
+`pagewise`, two-column `switch`, `\rightlinenumbers`, balanced two-column pages
+with the gutter numbering (columnsep 10–20 pt), tall floats, editorial overlays
+off the text baselines (ranges near halfway).
+
+It was wrong on these:
+
+- a two-column page whose right column is short (last page): the two-column
+  test fails and text takes the other column's numbers (10–15 of ~75 lines);
+- a rising, right-aligned table column (years, sizes) or a listing's own line
+  numbers, read as line numbers; on a two-column page this corrupts the page;
+- an off-centre gutter (`twoside`): columns are split at the page middle, not
+  the measured gutter;
+- `\modulolinenumbers`: nearest printed number, not interpolated;
+- mixed fonts on one baseline: words bucketed by rounded `bottom` split one
+  line into several (about a third of phrases not found, exit 1);
+- a missing `--phrases-file` raises instead of exiting 2; a footnote below the
+  last numbered line takes the last number.
 
 ---
 

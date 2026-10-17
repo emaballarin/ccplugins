@@ -6,11 +6,17 @@
 
 summary → title → review → confidence → (confidential comment, only when the form has one and the reviewer asks). Each is drafted by the reviewer; Claude drafts on "draft it". The order matters: the summary fixes what the paper claims, the title fixes why the score is what it is, and the review then has both to anchor to.
 
+Where the form provides no structure, the review supplies it. A single comments box carries the summary and the title as its first two paragraphs (SUMMARY, ASSESSMENT), then the blocks of the band's table, and closes with the confidence note when the form has no confidence box. The confidential comment never moves into a box the authors see. A numeric field the rubric does not cover — language quality, an overall rating — gets a proposed value with one line of evidence; the reviewer sets it.
+
+## Box format
+
+Settled in the frame, at the latest before the first draft. Plain text is ASCII only, with symbols spelled out or written in ASCII (R^2, <=). Unicode is plain text with symbols as characters (R², σ², ≤, −, ×). In both, list items are `- ` with a blank line between them and nothing is marked up. A box that renders Markdown, LaTeX or both gets that markup. Every draft, whatever the format, is handed over inside a code fence (`text` for plain text and Unicode) so the terminal shows it as it will be pasted, not rendered. A draft with a marked gap for a kept `unverified` item (`references/anchors.md`) also gets a warning line outside the fence, above and below it, naming every gap. When the form does not tell, suggest Unicode for text others will read.
+
 ## Summary — 2 to 4 sentences
 
 - Describes the paper in its own framing: what it does, the main result as the authors claim it, the setting, and each experiment named with what it actually compares (which arms, which class). Taking no position.
 - The reviewer's translation of the contribution ("this is ridge regression under another name") belongs in the review, not here. The summary is what the authors would recognise.
-- Symbols only if the paper's; no new shorthand. Growth rates and bounds are stated in words when the box is plain text.
+- Symbols only if the paper's; no new shorthand. Growth rates and bounds are stated in words in a plain-text (ASCII) box.
 - A robustness check or an experiment that lives only in the appendix is mentioned factually, with its location; the judgement on that placement is review content.
 
 Check: does every sentence describe something the paper says? Is every experiment named? Is any sentence a verdict?
@@ -28,6 +34,8 @@ Check: could chairs reconstruct the score from the title alone? Does every claus
 
 Score-determining items come first, in their own paragraphs, and a reader who stops after them already knows why. Total 400–600 words; past roughly 700 a reject reads as uncertain or vindictive, and an accept as padding.
 
+A recomputed number that carries the score is a point value from the printed figures or a public source, with the rounding assumption stated once and the extreme of the rounding range shown only where it decides the point. A reproduction that goes in (a paper about software — the skill's _A check the reviewer ran_) is given whole — what was run, on what, and what came out — even past the word budget.
+
 **Strong reject (flawed or trivial)**
 
 | Block             | Words   | Content                                                                                                                  |
@@ -41,7 +49,7 @@ Score-determining items come first, in their own paragraphs, and a reader who st
 
 | Block                 | Words   | Content                                                                                                                                                                  |
 | --------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Strengths             | 70–100  | Honest logging, a clean reproduction, a good protocol — the things that survive revision.                                                                                |
+| Strengths             | 70–100  | Honest logging, a clean reproduction by the authors, a good protocol — the things that survive revision.                                                                 |
 | Score-determining (a) | 120–190 | The first reason, with the evidence the paper itself contains for it.                                                                                                    |
 | Score-determining (b) | 100–160 | The second reason: the measurement that measures the wrong thing, the comparison announced and not reported.                                                             |
 | Secondary             | 100–130 | Untested causal claims, confounds, an uninformative metric column, the missing baseline, the absent literature — each in one clause with a line reference.               |
@@ -58,11 +66,11 @@ Score-determining items come first, in their own paragraphs, and a reader who st
 
 **Strong accept**
 
-| Block     | Words   | Content                                               |
-| --------- | ------- | ----------------------------------------------------- |
-| Strengths | 150–200 | The contribution and why it is one; what was checked. |
-| Minor     | 50–100  | Typos, a missing citation, a figure to relabel.       |
-| Judgement | 30–50   | The score and, if any, the one reservation.           |
+| Block     | Words   | Content                                                                                                                                  |
+| --------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Strengths | 150–200 | The contribution and why it is one; what was checked: the mathematics in one sentence and, for a paper about software, the reproduction. |
+| Minor     | 50–100  | Typos, a missing citation, a figure to relabel.                                                                                          |
+| Judgement | 30–50   | The score and, if any, the one reservation.                                                                                              |
 
 Between bands ("1.5"): use the lower band's table and say in the judgement which side of the line the paper sits on and why.
 
@@ -74,6 +82,7 @@ The list Claude gives the reviewer before the review is drafted, pruned or exten
 - The stitching: the decomposition is the reviewer's working; the arc line is the deliverable.
 - Re-deriving the authors' mathematics — one sentence naming what was checked.
 - Private inferences (`inferred` anchors).
+- Reruns and reproductions, for a paper about the world (`reproduced` anchors) — they shape what is raised; the run never appears.
 - The paper they could have written — one sentence in the judgement, as the reason the fix is a reframing and not a revision.
 - Material the paper itself calls "not evidence" or "a pilot" — one clause; its self-scoping is a strength line, not a weakness.
 - Related-work gaps beyond the ones that change the score.
@@ -85,10 +94,11 @@ The list Claude gives the reviewer before the review is drafted, pruned or exten
 
 Applied to every draft the reviewer pastes, and to Claude's own drafts when asked to draft:
 
-1. **Substantive**, listed first: a claim the text does not support; a score-determining point missing; a fact wrong (a number, a section, an attribution, a name); two blocks contradicting each other ("well written" in strengths, "working notes" in comments); a question where a statement is needed; a design choice called a bug; an inference stated as a finding; an `unverified` item used without the reviewer's stated decision to keep it; a venue statistic (acceptance rate, score distribution) without its source.
-2. **Wording**, listed second: broken LaTeX, tense, hedges that soften a finding, hyphenation, spelling (the reviewer's variety of English), a dangling clause, "proper"/"actual"/"simply".
-3. Each item carries its fix. The revised block follows only when the reviewer asks ("output the updated version").
-4. The **final pass** is errors only — "No gross mistakes. One word to fix: …" — and adds no new content. A judgement call that changes nothing factual is flagged as optional, in one line.
+1. **Substantive**, listed first: an unfilled marked gap for a kept `unverified` item (`references/anchors.md`), always at the top; a claim the text does not support; a score-determining point missing; a fact wrong (a number, a section, an attribution, a name); two blocks contradicting each other ("well written" in strengths, "working notes" in comments); a question where a statement is needed; a design choice called a bug; an inference stated as a finding; a rerun or reproduction disclosed in a review of a paper about the world (the reviewer's code, the run's output, or that it was run) without the reviewer's stated decision; the reviewer's script quoted for a recomputation; an `unverified` item used without the reviewer's stated decision to keep it; a venue statistic (acceptance rate, score distribution) without its source.
+2. **Wording**, listed second: broken LaTeX, markup or characters the box format does not render, tense, hedges that soften a finding, hyphenation, spelling (the reviewer's variety of English), a dangling clause, "proper"/"actual"/"simply".
+3. **After a cut** — a draft that removes or merges a block — check what the block carried: numbering, references back into it, claims elsewhere (assessment, judgement) whose support lived there, and points the reviewer had asked to keep. List them among the substantive items; restoring one is the reviewer's call.
+4. Each item carries its fix. The revised block follows only when the reviewer asks ("output the updated version").
+5. The **final pass** is errors only — "No gross mistakes. One word to fix: …" — and adds no new content. It never reports no gross mistakes while a marked gap remains. A judgement call that changes nothing factual is flagged as optional, in one line.
 
 ## Confidence
 
@@ -101,10 +111,10 @@ On request, or whenever the conversation is about to be compacted, in this fixed
 ```
 ## State — DD/MM/YYYY, <venue>
 
-Rubric: <scale, one line per band, or "unsourced">. Rebuttal: <yes/no>. Form: <fields>.
+Rubric: <scale, one line per band, or "unsourced">. Rebuttal: <yes/no>. Form: <fields>; box format <format>.
 Scores: <paper A> N · <paper B> N · … (ordering, if calibrated across siblings)
 
-<paper A> — DONE / IN PROGRESS (<which deliverable is next>).
+<paper A> — about <the world / software> — DONE / IN PROGRESS (<which deliverable is next>).
 Kept: <one line per fact the review rests on, each with its line reference and phrase>.
 Unverified: <items, or "none">.
 

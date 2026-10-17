@@ -3,6 +3,81 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.10.2 — 2026-10-19
+
+`paper-review` gains the rules a journal review taught.
+
+New:
+
+- **Frame field: box format** — plain text (ASCII), Unicode, Markdown, LaTeX or
+  Markdown+LaTeX, settled with the reviewer at the latest before the first
+  draft. Unicode is the suggestion for text others will read when the form does
+  not tell. Plain-text and Unicode drafts use `- ` list items with a blank line
+  between them; every draft is handed over in a code fence, `text` for those
+  two. Growth rates and bounds go in words only in a plain-text (ASCII) box. The
+  context dump records the format.
+- **Frame field: paper kind** — about the world (reviewed as written) or about
+  software (reviewed through the reproduction). Released code alone does not
+  make a paper about software. Until settled, about the world; settled before
+  any check of the reviewer's enters a draft. The context dump records it per
+  paper.
+- **Novelty is cross-checked.** A claim of novelty is searched under its own
+  name and under a plain description before calibration, and §2 is not done
+  until every such claim has been searched or, offline, held on the
+  `unverified` heading. A held search that later finds no precedent clears the
+  item; one that finds a precedent is handled like any literature (below).
+- **The reviewer's own checks enter as what they established**, Claude's
+  included, whether they confirm the paper or contradict it. For a paper about
+  the world: a number recomputed from printed values or a public source enters
+  as `derived`, with its source and never the script; a rerun or reproduction
+  of the paper's experiment or code (new anchor tag `reproduced`) stays private
+  as an act and shapes what is raised. For a paper about software, the
+  reproduction is part of the review. Other cases go to the reviewer. The error
+  check flags a disclosed rerun or a quoted script, and the don't-address
+  defaults list reruns. A check Claude runs works in a temporary directory and
+  leaves nothing behind; Claude runs a reproduction only when the reviewer asks
+  for one.
+- **A kept `unverified` item is a marked gap in Claude's drafts** (naming it as
+  unchecked in the confidence note is not writing it):
+  `[[UNVERIFIED — FILL IN BEFORE SUBMITTING: …]]`, never Claude's wording, with
+  a warning line above and below the fenced draft naming every gap. An unfilled
+  gap tops every error check as substantive, the final pass cannot clear a draft
+  that has one, and Done-when requires none to remain.
+- **A recomputed number that carries the score** is a point value with its
+  rounding assumption stated once, the extreme of the rounding range shown only
+  where it decides the point; a reproduction that goes in is given whole, even
+  past the word budget.
+- **Where the form provides no structure, the review supplies it:** a
+  deliverable without a box of its own goes into a box that exists (a single
+  comments box opens with SUMMARY and ASSESSMENT and closes with the confidence
+  note when there is no confidence box; otherwise the box the reviewer names),
+  the confidential comment never moves into a box the authors see, and a
+  numeric field the rubric does not cover gets a proposed value with one line
+  of evidence.
+
+Changed:
+
+- **Literature counts in the ledger only once checked:** until its primary
+  source has been checked, its row reads `known from [source] — unverified`
+  and the item is on the `unverified` heading (was: only when the check could
+  not be made).
+- **Oddities gain three checks:** a derived number that does not recompute from
+  its sources, reported quantities that break an identity binding them, and a
+  table's scale against an independent source (the public data, the stated
+  generator).
+- **Inferences stay out by default, conditionals included.** A conditional whose
+  premise the paper never states is an inference; the reviewer may bring one
+  in, stated as their reading.
+- **The error check covers cuts:** numbering, references back into a removed
+  block, claims that lost their support, and points the reviewer asked to keep,
+  listed among the substantive items. Its wording check flags markup or
+  characters the box format does not render.
+- **§4 points at the error check** in `references/deliverables.md`, through to
+  its final pass, instead of restating its categories.
+- **Strengths name whose work it is:** "a clean reproduction by the authors"
+  (weak reject); a strong accept's "what was checked" is the mathematics in one
+  sentence and, for a paper about software, the reproduction.
+
 ## 0.10.1 — 2026-10-09
 
 Housekeeping — coordinated marketplace version alignment alongside the `mf`

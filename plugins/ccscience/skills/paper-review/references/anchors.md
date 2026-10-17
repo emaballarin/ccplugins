@@ -28,7 +28,7 @@ Status vocabulary:
 - `evidenced` — a reported result supports it at the stated configuration. Note the configuration and the seed count; "one condition, not a sweep" is a finding.
 - `asserted` — stated, with no supporting result or derivation shown.
 - `by construction` — true of the setup, not a finding. The tell is a claim that would hold for any data.
-- `known from [source]` — in the literature, source checked (abstract at minimum). Write `known from [source] — unverified` when the check could not be made; see below.
+- `known from [source]` — in the literature, source checked (abstract at minimum). Write `known from [source] — unverified` until the check is made; see below.
 - `announced, not reported` — the paper says it will show X and X appears in no table, figure or sentence.
 - `confounded` — evidenced, but the comparison changes more than one thing at once.
 
@@ -53,8 +53,9 @@ Tag vocabulary — what the reading rests on, and therefore where it may go:
 
 - `stated` — the paper says it. May enter the review with its line and phrase.
 - `derived` — follows from stated facts, with the derivation shown. The facts are the paper's, or an outside source's once that source has been checked. Cites every fact it rests on (row 2 cites two lines). May enter the review with its derivation.
-- `inferred` — explains the data, but the paper never says it. Never reaches the review; it lives here to guide what to ask for or look at.
-- `unverified` — rests on an outside source (a precedent, an attribution, a prior result) not yet checked against its primary source. Never in Claude's drafts; flagged by every error check on the reviewer's. See _Unverified items_ for the three ways it is settled.
+- `inferred` — explains the data, but the paper never says it. Stays out of the review unless the reviewer brings it in, stated as their reading; it lives here to guide what to ask for or look at.
+- `reproduced` — rests on a rerun or reproduction of the paper's experiment or code, by the reviewer or Claude; a number recomputed from printed values or a public source is `derived`. For a paper about software it enters with what was run, on what, and what came out; for a paper about the world it stays out and shapes what is raised. Other cases: ask the reviewer (SKILL.md, _A check the reviewer ran_).
+- `unverified` — rests on an outside source (a precedent, an attribution, a prior result) not yet checked against its primary source, or is a novelty judgement whose search could not run. Never written by Claude: in Claude's drafts a kept item is a marked gap (_Unverified items_); flagged by every error check on the reviewer's until it is checked, dropped or kept. See _Unverified items_ for the ways it is settled.
 
 ## Missing
 
@@ -67,7 +68,9 @@ Four headings; any may be empty, and an empty heading is stated as empty so its 
 
 ## Unverified items
 
-A separate heading, kept from the first recap to the last. An item leaves it only by being verified — then retagged `derived`, citing the source and how it was checked (abstract, full text, the paper's own references) — or dropped. The reviewer may keep one in the review regardless; that is their call, but it must be a stated decision, and a kept item stays under this heading and is named in the confidence note. Until an item is verified, dropped or explicitly kept, every error check on a draft that uses it flags it as substantive: an unchecked attribution in a signed review is the failure this heading exists to prevent. When the session is offline, say so once and keep the heading anyway.
+A separate heading, kept from the first recap to the last. An item leaves it only by being verified — then retagged `derived`, citing the source and how it was checked (abstract, full text, the paper's own references) — or dropped; a novelty judgement held for a search that could not run also leaves it when the search, once run, finds no precedent. The reviewer may keep one in the review regardless; that is their call, but it must be a stated decision, and a kept item stays under this heading and is named in the confidence note. Until an item is verified, dropped or explicitly kept, every error check on a draft that uses it flags it as substantive: an unchecked attribution in a signed review is the failure this heading exists to prevent. When the session is offline, say so once and keep the heading anyway.
+
+When Claude drafts a block a kept item belongs in, the item is a marked gap, never Claude's wording: `[[UNVERIFIED — FILL IN BEFORE SUBMITTING: <what goes here>]]`. The gap is loud on purpose, because a draft pasted into the form with a gap still in it is a broken review: a warning line outside the fence, above and below the draft, names every gap and says the draft is not ready to submit. Every error check lists an unfilled gap first, as substantive, and the final pass cannot report no gross mistakes while one remains. A gap the reviewer has filled keeps their wording through every later version Claude outputs.
 
 ## Decisive experiment
 
@@ -79,6 +82,9 @@ Coincidences and internal inconsistencies to check, one line each, with a sugges
 
 - two unrelated results agreeing to the last digit (copy-paste, or both sitting on a trivial floor — compute the floor);
 - a certificate whose sample size cannot deliver the stated confidence (recompute the zero-failure bound);
-- a metric that changes definition between rows of one table (a value jumping an order of magnitude across a "bug fix").
+- a metric that changes definition between rows of one table (a value jumping an order of magnitude across a "bug fix");
+- a derived number — a percentage, a ratio, a gain — that does not recompute from the values it is derived from (find which printed values do reproduce it: the match usually names the error);
+- reported quantities that break an identity binding them — two metrics that determine each other on one test set, parts that must sum to a total — checked row by row from the printed values, allowing for their rounding;
+- a table whose scale an independent source can check — the public data it was computed on, the generator the paper states: one statistic recomputed from that source confirms or falsifies it.
 
 An oddity is not a finding until the cause is established; it is a place to look.
