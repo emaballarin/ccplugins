@@ -3,7 +3,10 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 0.8.1 — 2026-10-17
+
+`templates/AGENTS.md` re-synced with the live baseline: standing hand-offs, and
+one new rule under "Important constraints".
 
 Templates:
 
@@ -12,7 +15,15 @@ Templates:
   usable: agents launch, watch and collect long jobs there themselves, within
   the policy its notes set, and changes to the machine itself still go to the
   maintainer. §Planning & execution excepts such jobs from plan-and-wait.
+- **`AGENTS.md`: a session is not a scheduler.** Work that must follow a long
+  job is queued where that job runs, at launch, never left to a session's plan
+  to start later: sessions end without warning, and a hand-off that lives only
+  in the conversation idles the machine until someone notices.
 - **`USER.md`** gains an example line for such an agent box.
+
+Existing machines keep their current baseline — `/mf:setup` never overwrites
+`~/.mindfunnel/AGENTS.md` — so copy the changed bullets across by hand to pick
+them up.
 
 ## 0.8.0 — 2026-10-09
 

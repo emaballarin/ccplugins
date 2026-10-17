@@ -327,6 +327,10 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
       the maintainer. When that intent is clear but not explicit, judge; when
       in real doubt, ask — one more prompt beats a long job freezing the
       machine.
+- **A session is not a scheduler.** Work that must follow a long job is
+  queued where that job runs, at launch — never left to a session's plan
+  to start it later. Sessions end without warning; a hand-off that lives
+  only in the conversation idles the machine until someone notices.
 - **Never route around a human-required control.** When a step blocks on
   a signature, interactive auth, a review gate, or a confirmation, stop
   and hand it back with the exact command — never disable it, skip it
