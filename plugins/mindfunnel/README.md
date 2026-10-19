@@ -47,7 +47,7 @@ After the first few cycles the memory stabilises into a compact set of files tha
 
 ## What sits where
 
-- **`~/.mindfunnel/`** — shared, machine-wide. Your `SOUL.md` (who you are — private), baseline `AGENTS.md` (project-agnostic engineering guidelines), `USER.md` (per-machine preferences — shell, Python defaults, formatter paths, multi-agent hook bridges), and a `PROJECT.md.example` you can crib from. `/mf:setup` creates this; nothing else touches it.
+- **`~/.mindfunnel/`** — shared, machine-wide. Your `SOUL.md` (who you are — private), baseline `AGENTS.md` (project-agnostic engineering guidelines), `USER.md` (per-machine preferences — shell, Python defaults, formatter paths, multi-agent hook bridges), and a `PROJECT.md.example` you can crib from. `/mf:setup` creates this; nothing else touches it. Notes you add there yourself — one per machine in `machines/`, say — live alongside.
 - **`~/.claude/{CLAUDE,SOUL,USER}.md` and `~/.codex/{AGENTS,SOUL,USER}.md`** — symlinks into the matching files in `~/.mindfunnel/`. Give Claude Code and Codex a stable pointer to the same user-global baseline and personal content. `/mf:setup` creates these, for each agent installed (`~/.codex/` meaning `$CODEX_HOME` when set); they are the only files the plugin writes outside `~/.mindfunnel/`, the current project root, the session scratchpad (`/mf:unpark`) and the temporary drop lists `/mf:park` writes with `mktemp`.
 - **`./.mf/park/`** — snapshots `/mf:park` writes and `/mf:unpark` restores and deletes: the kept files, their sha256 sums and a `MANIFEST.md` of what was kept and dropped, and why. Local only — excluded from git through `.git/info/exclude`. A snapshot stays until it is restored: another session's waits there for that session. The scripts behind both skills are `scripts/park.sh` and `scripts/unpark.sh`.
 - **Project root** — a committed project-scoped `AGENTS.md` (real file, stamped from the bundled stub), a committed intra-repo `CLAUDE.md` symlink pointing at `./AGENTS.md`, and a real, project-local `PROJECT.md`. All three are owned by the project and checked into source control. Nothing here points into `~/.mindfunnel/` — the maintainer's user-global engineering style is loaded separately via `~/.claude/CLAUDE.md`. `SOUL.md` and `USER.md` are deliberately **not** stamped into projects — they're user-global.
@@ -63,7 +63,7 @@ After `/mf:setup`, open `~/.mindfunnel/SOUL.md` and replace the example scaffold
 - **How you work** — fast-iteration vs. deliberate, tolerance for sycophancy, communication preferences.
 - **What to avoid** — specific anti-patterns you've hit before.
 - **Locale & conventions** — language, date / time format, locale defaults.
-- **Technical environment** — personal libraries, compute environment, where heavy commands belong.
+- **Technical environment** — a pointer to `USER.md`, which holds the machine facts.
 
 `SOUL.md` is intentionally _not_ stamped into any project by `/mf:prime`. It lives user-global at `~/.mindfunnel/SOUL.md`, reachable via `~/.claude/SOUL.md` and `~/.codex/SOUL.md` (both managed by `/mf:setup`). Your private trait file shapes every session on every project without ever leaving your machine. The maintainer's user-global `~/.mindfunnel/AGENTS.md` (project-agnostic engineering style) is loaded the same way via `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` — also user-global, never stamped into projects. Each project's own `./AGENTS.md` is a separate, project-scoped file, committed like any other source file.
 
@@ -76,6 +76,7 @@ Also after `/mf:setup`, open `~/.mindfunnel/USER.md` and capture what's specific
 - **Version control** — signing and push policy, anything an agent must not route around.
 - **Language conventions** — default Python version, run flags, preferred layout, formatter / linter paths, personally-preferred libraries.
 - **Multi-agent hook bridges** — relevant if you run Claude Code + Codex in parallel and share hooks / instructions between them.
+- **Personal libraries and compute** — internal packages, and where work runs: the machines and clusters you use, which of them are handed to agents, and one note per machine in `~/.mindfunnel/machines/`.
 
 `USER.md` complements `SOUL.md`: `SOUL.md` describes _you_, `USER.md` describes _your machine_. Both are user-global and symlinked identically — `/mf:setup` creates `~/.claude/{SOUL,USER}.md` and `~/.codex/{SOUL,USER}.md` pointing at `~/.mindfunnel/`, so both agents reach the same source of truth. Neither is ever stamped into a project by `/mf:prime`.
 
@@ -91,7 +92,7 @@ After `/mf:prime`, open the (empty) `PROJECT.md` in the project root and capture
 
 This removes the plugin skills from Claude Code. It does **not** touch `~/.mindfunnel/`, `~/.claude/projects/*/memory/`, or any project-local files — your memory, your scaffolding, and your `SOUL.md` / `USER.md` edits all survive the uninstall.
 
-To also remove the machine-wide scaffolding:
+To also remove the machine-wide scaffolding — this deletes your `SOUL.md`, `USER.md` and any notes you keep under `~/.mindfunnel/` (such as `machines/`), so copy out what you want first:
 
 ```
 rm -rf ~/.mindfunnel/

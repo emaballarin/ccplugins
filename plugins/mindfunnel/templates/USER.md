@@ -83,11 +83,24 @@
 
 <!-- Example:
   - `<your-lib>`: personal library, at `<private-index-url>`.
-  - Cluster: `<hostname>:/<path>`. Use `srun` for Python in job scripts.
+  - Cluster you run jobs on yourself: `<hostname>:/<path>`. Use `srun`
+    for Python in job scripts.
+  - Remote machines and clusters: one note each in
+    `~/.mindfunnel/machines/` — policy, access, gotchas. Read a machine's
+    note before a session's first job there, and when a call to it fails.
   - Agent box — a standing hand-off: `<ssh alias>`. While it is
     available and usable, long jobs go there and the agent launches,
-    watches and collects them itself; access, GPU policy and the job
-    recipe in `~/.mindfunnel/machines/<box>.md`.
+    watches and collects them itself; what "available and usable" means,
+    access, GPU policy and the job recipe in
+    `~/.mindfunnel/machines/<box>.md`.
+  - Cluster — a standing hand-off through its scheduler only:
+    `<ssh alias>`. The agent submits, watches and collects jobs itself,
+    with minimal work on the login node; what "available and usable"
+    means, partition policy and the hand-off's terms in
+    `~/.mindfunnel/machines/<cluster>.md`.
+  - Which machine for a long job: `<box>` whenever the job fits there,
+    otherwise the handed-off `<cluster>`; a job that needs
+    `<large-memory GPU>` goes straight to that cluster.
   - Which jobs run where is set by cost, not kind — see `AGENTS.md`
     §Important constraints.
 -->

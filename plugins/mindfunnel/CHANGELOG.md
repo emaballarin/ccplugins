@@ -3,6 +3,35 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.8.2 — 2026-10-19
+
+`templates/SOUL.md` catches up with the standing hand-off that 0.8.1 added to
+`AGENTS.md`.
+
+Templates:
+
+- **`SOUL.md`: the "I run experiments myself" example names its exception.**
+  An agent box or cluster that `USER.md` hands to agents is a standing
+  hand-off: while it is available and usable, as its note in
+  `~/.mindfunnel/machines/` defines it, long runs there are the agent's to
+  launch, watch and report. Clusters count as well as single boxes.
+- **`SOUL.md`: decision criteria on a handed-off machine.** The agent states
+  them and launches; the maintainer challenges them while the run goes.
+- **`USER.md` gains the examples `SOUL.md` points at:** one note per remote
+  machine or cluster in `~/.mindfunnel/machines/`, read before a session's
+  first job there and when a call to it fails, and defining when the machine
+  is "available and usable"; a cluster handed off through its scheduler only,
+  with minimal work on the login node, kept apart from a cluster you run on
+  yourself; a default machine per long job.
+- **README:** the `USER.md` checklist gains personal libraries and compute;
+  the `SOUL.md` checklist's technical environment is a pointer to `USER.md`;
+  the uninstall recipe warns that it deletes your own notes under
+  `~/.mindfunnel/`, `machines/` included.
+
+Existing machines keep their current `SOUL.md` and `USER.md` — `/mf:setup`
+never overwrites either — and the changed lines are commented-out examples, so
+no install needs action.
+
 ## 0.8.1 — 2026-10-17
 
 `templates/AGENTS.md` re-synced with the live baseline: standing hand-offs, and
