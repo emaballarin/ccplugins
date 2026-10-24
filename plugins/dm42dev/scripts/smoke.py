@@ -1,6 +1,6 @@
 """Smoke test for a dm42sim build: graphics modes, virtual variables, decimal arithmetic,
 number formatting, menus, PNG snapshots, compile/decode, refused commands, the Free42
-Configuration switches, and the stack depth under NSTK."""
+Configuration switches, the stack depth under NSTK, and the clock (TIME, DATE)."""
 
 import json
 import pathlib
@@ -66,6 +66,27 @@ def config_checks(binary: str) -> list[str]:
     return bad
 
 
+# (actions, expected X, text expected in the top row): the fixed clock, Thursday 01/01/2026
+# 00:00, of which TIME and DATE read part. The 7 in Y shows that each pushed a value.
+CLOCK = [
+    ("key 7\ncmd TIME\nstate\n", "0", "0:00:00"),
+    ("key 7\ncmd DATE\nstate\n", "1.012026", "THU"),
+    ("key 7\ncmd YMD\ncmd DATE\nstate\n", "2026.0101", "THU"),
+]
+
+
+def clock_checks(binary: str) -> list[str]:
+    """TIME and DATE, which crashed dm42sim before 0.2.1."""
+    bad = []
+    for actions, want, row in CLOCK:
+        proc = subprocess.run([binary, "run", "-"], input=actions, capture_output=True, text=True, check=False)
+        states = [e for e in map(json.loads, proc.stdout.splitlines()) if e.get("event") == "state"]
+        got = (states[-1]["x"], states[-1]["y"], row in states[-1]["rows"][0]) if proc.returncode == 0 and states else f"exit {proc.returncode}"
+        if got != (want, "7", True):
+            bad.append(f"{actions!r}: expected X = {want}, Y = 7 and {row!r} shown, got {got}")
+    return bad
+
+
 def png_lit(path: pathlib.Path) -> tuple[int, int, int]:
     """(width, height, black pixels) of an 8-bit greyscale PNG as dm42sim writes it."""
     data = path.read_bytes()
@@ -116,10 +137,11 @@ def main(binary: str) -> int:
         if not steps or '"SMOKE"' not in steps[0] or len(steps) != len(source):
             bad.append(f"compile/decode: {len(source)} source steps, {len(steps)} decoded")
     bad += config_checks(binary)
+    bad += clock_checks(binary)
     if bad:
         print("smoke: FAIL\n  " + "\n  ".join(bad))
         return 1
-    print(f"smoke: OK ({len(EXPECTED) + 2 + len(REFUSALS) + 1} checks)")
+    print(f"smoke: OK ({len(EXPECTED) + 2 + len(REFUSALS) + 1 + len(CLOCK)} checks)")
     return 0
 
 

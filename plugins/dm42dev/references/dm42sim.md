@@ -63,7 +63,7 @@ Not emulated — check on the device:
 - timed displays: `SHOW`, `MEM` and the other displays that clear after a delay clear at once here;
 - the DM42's direct letter keys in ALPHA entry (type with `text`), the F-key shortcuts without a menu, printing (discarded), and power-off;
 - memory limits (`MEM` reports about 1 GB free): a program that leaves values on the stack, or builds data, in a loop never runs out here, so watch `depth` and the variables after it ends;
-- the clock: the date is fixed at 01/01/2026 00:00 and the random seed at 42;
+- the clock: it is fixed at Thursday 01/01/2026 00:00 (`TIME` gives 0, `DATE` 1.012026 in MDY), and the random seed at 42;
 - which configuration a given unit runs: fork 3.3.10 may differ from its firmware, and the original DM42 leaves out `N→BS N→BD N→DS N→DD BS→N DS→N` from firmware 3.25 (manual §2.8.1) — they run here.
 
 ## Recipe: run a program and look at the result

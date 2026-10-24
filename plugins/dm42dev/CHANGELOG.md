@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.1 — 2026-10-25
+
+### Fixed
+
+- **`TIME` and `DATE` crashed `dm42sim`** with a segmentation fault, in every build since 0.1.0. The core asks the emulator's clock for only part of the time and date, and passes `NULL` for the rest. The emulator wrote all three values regardless. It now fills in only what is asked for. The clock stays fixed at Thursday 01/01/2026 00:00: `TIME` gives 0, `DATE` 1.012026 (2026.0101 in YMD) and shows THU, and `DATE` then `DOW` gives 4.
+- **Smoke test**: 28 checks, up from 25. The three new ones read `TIME` and `DATE`, in MDY and YMD, and all three fail on 0.2.0.
+
+### Verified
+
+- **The crash search**: every built-in command with an ASCII name (297 of them) was run through `cmd` on two starting stacks, 594 runs. The only crashes were `TIME` and `DATE`, and nothing hung.
+- **The callbacks**: every call from the core to the emulator's callbacks that passes `NULL` was checked. Only the clock call wrote through one; the print callback ignores its arguments.
+
+### Install
+
+- After updating, run `/dm42:setup` again. Only the compile step reruns.
+
 ## 0.2.0 — 2026-10-24
 
 A program that ran out of memory on a DM42n with the endless stack passed every test in 0.1.0. `dm42sim` had no Dynamic Stack Extension switch, so `NSTK` was refused, and its `cmd` let that refusal through without an error. Only setting flag 80 directly reached the endless stack, skipping the switch.

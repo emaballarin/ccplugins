@@ -278,10 +278,15 @@ int shell_date_format() { return 0; }
 bool shell_clk24() { return true; }
 void shell_print(const char *text, int length, const char *bits, int bytesperline, int x, int y, int width,
                  int height) {}
+// A fixed clock: 01/01/2026 00:00, a Thursday. The core asks for part of it and passes
+// NULL for the rest (TIME: the time only; DATE: the date and weekday).
 void shell_get_time_date(uint4 *time, uint4 *date, int *weekday) {
-    *time = 0;
-    *date = 20260101;
-    *weekday = 4;
+    if (time != NULL)
+        *time = 0;
+    if (date != NULL)
+        *date = 20260101;
+    if (weekday != NULL)
+        *weekday = 4;
 }
 void shell_message(const char *message) { last_message = message; }
 void shell_log(const char *message) {}
