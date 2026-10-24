@@ -22,6 +22,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 | `tml`   | **tuneml** — the scientific method for tuning _and_ the speed↔quality frontier, in one place. Five skills (`/tml:audit`, `/tml:plan`, `/tml:round`, `/tml:analyze`, `/tml:review`) that read a pipeline, fix an operating point and a step budget, design experiments with scientific/nuisance/fixed hyperparameters, and return variance-aware adopt verdicts. Replaces the former `parml` plugin.                                        | [plugins/tuneml](plugins/tuneml/README.md)             |
 | `ws`    | **whetstone** — sharpen the thinking before the work, and the work before it lands. `/ws:grill` interviews a plan until nothing is silently assumed; `/ws:test-gate` holds every new test to one value bar; `/ws:test-audit` prunes and consolidates an existing suite, evidence first; `/ws:deslop` cleans AI slop from a diff before review; `/ws:review-gate` puts a change in front of a fresh-context reviewer before it is acted on. | [plugins/whetstone](plugins/whetstone/README.md)       |
 | `ccbar` | **ccbar** — a quiet status band above the prompt, drawn natively by function hooks: model and effort, repository (optionally linked) and diff counter, a context bar in the `/context` colours, new session tokens (or all metered ones, when set) counted once per response, and the session and weekly rate limits with reset countdowns. No skills; four hooks.                                                                         | [plugins/ccbar](plugins/ccbar/README.md)               |
+| `dm42`  | **dm42** — write, review and debug HP-42S-family RPN programs, the SwissMicros DM42n first. `/dm42:rpn` is the workflow and the verified reference, with a round-trip check for the lines the text parser drops; `/dm42:setup` builds `dm42sim`, SwissMicros' own Free42 core compiled as for the device and driven headless by action scripts that return JSON.                                                                           | [plugins/dm42dev](plugins/dm42dev/README.md)           |
 
 ## Install a plugin
 
@@ -32,6 +33,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 /plugin install tml@ccplugins
 /plugin install ws@ccplugins
 /plugin install ccbar@ccplugins
+/plugin install dm42@ccplugins
 ```
 
 ## Layout
@@ -82,12 +84,19 @@ ccplugins/
     │   ├── skills/{grill,test-gate,test-audit,deslop,review-gate}/SKILL.md
     │   │   └── test-audit/references/campaign.md
     │   └── references/test-value.md
-    └── ccbar/                               # plugin name: ccbar
+    ├── ccbar/                               # plugin name: ccbar
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md  CHANGELOG.md  tsconfig.json  # MIT (repository LICENSE)
+    │   ├── hooks/{hooks.json,register.tsx,band.ts,lib.ts}
+    │   ├── types/index.d.ts
+    │   └── tests/{lib,layout}.test.ts + band.test.tsx
+    └── dm42dev/                             # plugin name: dm42
         ├── .claude-plugin/plugin.json
-        ├── README.md  CHANGELOG.md  tsconfig.json  # MIT (repository LICENSE)
-        ├── hooks/{hooks.json,register.tsx,band.ts,lib.ts}
-        ├── types/index.d.ts
-        └── tests/{lib,layout}.test.ts + band.test.tsx
+        ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
+        ├── skills/{rpn,setup}/SKILL.md
+        ├── references/{rpn-semantics,dm42n,dm42sim}.md
+        └── scripts/{build.sh,dm42sim.sh,roundtrip.py,smoke.py,smoke.42}
+            └── sim/{dm42sim.cc,io.cc,io.h}
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.
@@ -137,7 +146,11 @@ protocol behaviour it re-implements. The `tml` plugin is **MIT** with its own
 plugin is **MIT** with its own [LICENSE](plugins/whetstone/LICENSE) and a
 [NOTICE](plugins/whetstone/NOTICE) crediting the two MIT upstreams its adapted skills
 come from (`mattpocock/skills` and `openclaw/openclaw`), with the changes
-made.
+made. The `dm42` plugin is **MIT** with its own [LICENSE](plugins/dm42dev/LICENSE)
+and a [NOTICE](plugins/dm42dev/NOTICE) recording the third-party code its build
+downloads (SwissMicros' Free42 fork, GPL-2.0; the Intel decimal library,
+BSD-3-Clause) and the DM42PGM front-end behaviour (BSD-3-Clause) its emulator
+adapts.
 
 ## Contact
 

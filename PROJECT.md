@@ -3,9 +3,11 @@
 ## What this project is
 
 `ccplugins`: a personal Claude Code plugin marketplace, developed in the
-open. Six plugins: `mf` (mindfunnel), `ccsci` (ccscience), `ar`
-(autoresearch), `tml` (tuneml), `ws` (whetstone), `ccbar` (ccbar).
-`ccbar` is the one function-hook plugin: TypeScript hooks, no skills.
+open. Seven plugins: `mf` (mindfunnel), `ccsci` (ccscience), `ar`
+(autoresearch), `tml` (tuneml), `ws` (whetstone), `ccbar` (ccbar), `dm42`
+(dm42dev). `ccbar` is the one function-hook plugin: TypeScript hooks, no
+skills. `dm42` is the one that compiles native code: `/dm42:setup` builds a
+C++ emulator into the user's cache directory, outside the repository.
 
 ## Source layout
 

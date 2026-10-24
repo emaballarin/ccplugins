@@ -1,0 +1,61 @@
+dm42 (ccplugins) — develop HP-42S-family RPN programs, the SwissMicros DM42n
+first.
+
+The plugin's own files are MIT-licensed (see LICENSE). It ships no third-party
+code. When run, scripts/build.sh downloads and compiles on the local machine:
+
+  • SwissMicros' fork of Free42 — GPL-2.0; Free42 is Copyright (C) 2004-2025
+    Thomas Okken, the DM42 extensions are SwissMicros'. Fetched from
+    github.com/swissmicros/free42 at commit
+    a7c705e476cfd6d83d7d8b90042999f386367813 ("Version 3.3.10").
+
+  • The Intel Decimal Floating-Point Math Library — BSD-3-Clause, Copyright (c)
+    2011 Intel Corp. — from the archive bundled with that fork, patched and
+    built by the fork's own script.
+
+The resulting dm42sim binary links this GPL-2.0 code and is therefore covered
+by the GPL-2.0. It is built locally and is not distributed by this plugin.
+
+scripts/sim/dm42sim.cc adapts behaviour of the DMCP front end in SwissMicros'
+DM42PGM (github.com/swissmicros/DM42PGM at commit
+3270592f2be6f6d0316e1a0f482a1faecc14aaa9, dm/dm42_fns.cc): the separate
+hi-res graphics layer and when it is cleared, 2x2 drawing in the 200x120
+mode, the saving and restoring of the core display around menus, the
+treatment of menu labels, and the rule that keys 1-6 keep their functions
+while F1-F6 act as the menu keys. It follows DM42PGM's names and logic for
+these hooks. DM42PGM is distributed under this licence:
+
+    BSD 3-Clause License
+
+    Copyright (c) 2015-2025, SwissMicros
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    * Neither the name of the copyright holder nor the names of its
+      contributors may be used to endorse or promote products derived from
+      this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+    PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+    TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+HP-42S is a Hewlett-Packard product; DM42, DM42n and DMCP are SwissMicros
+products. This plugin is not affiliated with either company.

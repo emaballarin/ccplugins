@@ -1,0 +1,63 @@
+@ Smoke test for dm42sim (see smoke.py for the expected results).
+@ Phase 1 draws in 400x240 mode; phase 2 checks 200x120 pixel doubling.
+LBL "SMOKE"
+"GrMod"
+ASTO ST X
+3
+STO IND ST Y        @ 400x240 graphics.
+"ResX"
+ASTO ST X
+RCL IND ST X
+STO "RX"
+"ResY"
+ASTO ST X
+RCL IND ST X
+STO "RY"
+WIDTH
+STO "WD"
+HEIGHT
+STO "HT"
+CLLCD
+1
+1
+PIXEL               @ Row 1, column 1.
+240
+400
+PIXEL               @ Row 240, column 400.
+-5
+1
+PIXEL               @ Negative row: all of row 5.
+1
+-7
+PIXEL               @ Negative column: all of column 7.
+CLA
+255
+XTOA
+100
+200
+AGRAPH              @ Eight pixels: column 200, rows 100 to 107.
+1
+3
+/
+STO "THIRD"
+1234567.25
+STO "BIG"
+1E30
+STO "HUGE"
+STOP
+"GrMod"
+ASTO ST X
+2
+STO IND ST Y        @ 200x120 graphics.
+CLLCD
+1
+1
+PIXEL               @ One 2x2 block.
+CLA
+255
+XTOA
+10
+10
+AGRAPH              @ Eight pixels, drawn as a 2x16 block.
+STOP
+END
