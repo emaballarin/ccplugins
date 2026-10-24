@@ -18,9 +18,9 @@ ROOT=${DM42SIM_HOME:-${XDG_CACHE_HOME:-$HOME/.cache}/dm42}
 [[ $ROOT == /* ]] || ROOT=$PWD/$ROOT
 PREFIX=$ROOT/${FORK_SHA:0:12}
 JOBS=$(nproc 2>/dev/null || echo 4)
-# This script and the emulator's sources decide whether to recompile; they and the
-# smoke test decide readiness.
-BUILT=$(cat "$HERE"/build.sh "$HERE"/sim/*.cc "$HERE"/sim/*.h | sha256sum | cut -c1-16)-${FORK_SHA:0:12}
+# This script, the emulator's sources and its core patch decide whether to recompile;
+# they and the smoke test decide readiness.
+BUILT=$(cat "$HERE"/build.sh "$HERE"/sim/*.cc "$HERE"/sim/*.h "$HERE"/sim/*.patch | sha256sum | cut -c1-16)-${FORK_SHA:0:12}
 READY=$BUILT-$(cat "$HERE"/smoke.42 "$HERE"/smoke.py | sha256sum | cut -c1-16)
 
 stamp_is() { [[ -x $PREFIX/bin/dm42sim && $(cat "$PREFIX/bin/$1" 2>/dev/null) == "$2" ]]; }
@@ -72,9 +72,17 @@ if ! stamp_is .built "$BUILT"; then
     arm64 | aarch64) FLAGS+=(-fsigned-char -DBID_SIZE_LONG=8) ;;
     arm*) FLAGS+=(-fsigned-char -DBID_SIZE_LONG=4) ;;
     esac
-    rm -rf obj bin && mkdir -p obj bin
+    rm -rf obj bin patched && mkdir -p obj bin patched
+    # The one change to the core, applied to a copy so that src/ stays as downloaded:
+    # display_error() also records the error it shows, which is how dm42sim tells a
+    # command the calculator refused with an error (sim/core_display.patch).
+    cp src/common/core_display.cc patched/
+    patch -s -p0 -d patched <"$HERE/sim/core_display.patch" ||
+        { echo "sim/core_display.patch does not apply to this core" >&2; exit 1; }
+    core=()
+    for f in src/common/core_*.cc; do [[ $f == */core_display.cc ]] || core+=("$f"); done
     echo "compiling the core and dm42sim" >&2
-    printf '%s\0' src/common/core_*.cc src/common/shell_spool.cc "$HERE"/sim/dm42sim.cc "$HERE"/sim/io.cc |
+    printf '%s\0' "${core[@]}" patched/core_display.cc src/common/shell_spool.cc "$HERE"/sim/dm42sim.cc "$HERE"/sim/io.cc |
         xargs -0 -P "$JOBS" -I{} sh -c 'g++ "$@" -c "$0" -o "obj/$(basename "$0" .cc).o"' {} "${FLAGS[@]}"
     g++ -o bin/dm42sim obj/*.o lib/gcc111libbid.a
     echo "$BUILT" >bin/.built

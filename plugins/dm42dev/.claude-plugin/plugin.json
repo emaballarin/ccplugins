@@ -1,7 +1,7 @@
 {
     "name": "dm42",
-    "version": "0.1.0",
-    "description": "dm42 — write, review and debug HP-42S-family RPN programs, the SwissMicros DM42n first (also DM42, Free42, Plus42). /dm42:rpn (model-invoked) is the workflow and the verified reference: program-text rules, stack lift, flags, locals, menus, GETKEY vs GETKEY1, PIXEL/AGRAPH, the DM42 virtual variables and graphics modes, with a round-trip check that catches the lines the text parser silently drops. /dm42:setup (user-only) builds dm42sim: SwissMicros' own Free42 core, compiled as for the device, driven headless by an action script that returns JSON — screen text, PNG snapshots, stack, variables, flags, executed steps. No hooks, no MCP.",
+    "version": "0.2.0",
+    "description": "dm42 — write, review and debug HP-42S-family RPN programs, the SwissMicros DM42n first (also DM42, Free42, Plus42). /dm42:rpn (model-invoked) is the workflow and the verified reference: program-text rules, stack lift, flags, locals, menus, GETKEY vs GETKEY1, PIXEL/AGRAPH, the DM42 virtual variables and graphics modes, with a round-trip check that catches the lines the text parser silently drops. /dm42:setup (user-only) builds dm42sim: SwissMicros' own Free42 core, compiled as for the device, driven headless by an action script that returns JSON — screen text, PNG snapshots, stack and its depth, variables, flags, the Free42 Configuration switches, executed steps — whose cmd and text actions stop on any refusal. No hooks, no MCP.",
     "author": {
         "name": "Emanuele Ballarin",
         "email": "emanuele@ballarin.cc"

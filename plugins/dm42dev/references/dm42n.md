@@ -24,6 +24,11 @@ Sources as in [rpn-semantics.md](rpn-semantics.md), plus **[PGM]** DM42PGM (`git
 - **Detect a DM42** without breaking on Free42 or Plus42: `SF 25 "ResX" ASTO ST X RCL IND ST X FC?C 25 GTO <not a DM42>`.
 - `GrMod` persists after the program ends: save it, and restore it once the user has seen the picture (after a `GETKEY1`).
 
+## Free42 Configuration [PGM `dm42_fns.cc`]
+
+- SETUP → Settings → Free42 Configuration holds three switches: Dynamic Stack Extension (allows `NSTK`, the endless stack), Singular Matrix Error and Matrix Overflow Error. A calculator starts with all three off (`stat_config_ptr`). They live in RAM that survives a reset, not in the state file, so Load Clean State keeps them.
+- With Dynamic Stack Extension on, a program that leaves values on the stack can run out of memory: see the endless stack in [rpn-semantics.md](rpn-semantics.md). Matrix Overflow Error acts in the linear-algebra routines, a matrix product for one, not in element-wise matrix arithmetic [F `core_linalg1.cc`]. `dm42sim` sets the three with `config`.
+
 ## Graphics modes [M §3.4; PGM; SM `core_display.cc`, `core_commands2.cc`]
 
 - In mode 2 or 3, `PIXEL` and `AGRAPH` take columns 1…`ResX` and rows 1…`ResY`, with the same rounding and negative-coordinate lines as in the classic mode.

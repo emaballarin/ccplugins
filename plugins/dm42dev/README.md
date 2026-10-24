@@ -22,7 +22,7 @@ Then run `/dm42:setup` once to build the emulator.
 | Skill         | When                                                                     | What it does                                                                                                                                                                                                                                                                   |
 | ------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `/dm42:rpn`   | Automatically, whenever a calculator program is written, reviewed or run | Reference first, then the program text in house style, a compile with a round trip that catches lines the parser drops, emulator runs over every input and exit path, an independent check of any picture or number, and a hand-over listing what only the device can confirm. |
-| `/dm42:setup` | Once, and after a plugin update changes the emulator                     | Downloads SwissMicros' Free42 core at a pinned commit, compiles it as for the device with decimal arithmetic, and runs a smoke test of the DM42 graphics modes, virtual variables and precision.                                                                               |
+| `/dm42:setup` | Once, and after a plugin update changes the emulator                     | Downloads SwissMicros' Free42 core at a pinned commit, compiles it as for the device with decimal arithmetic, and runs a smoke test of the DM42 graphics modes, virtual variables, precision, refused commands and the stack switches.                                         |
 
 `/dm42:rpn` is model-invoked. `/dm42:setup` is **user-only**: it downloads and
 compiles, so it starts only when you type it.
@@ -38,18 +38,26 @@ are the menu keys while the top row keeps its own functions. It is the DM42n
 build: the original DM42 lacks six of its functions, the conversions
 to and from IEEE binary and decimal number formats. The result runs programs with the DM42's virtual
 variables (`GrMod`, `ResX`, `ResY`, `RefLCD`, `DevID`, `Vbat`), its 200×120 and
-400×240 graphics modes, and 34-digit decimal arithmetic.
+400×240 graphics modes, and 34-digit decimal arithmetic. The core is compiled
+as published but for a two-line patch, which records the error a command shows, so
+that a command the calculator refuses with an error is reported.
 
-It reads an action script — load, `xeq`, keys, variables, flags, snapshots —
-and answers in JSON lines: the screen's text rows, the stack, `ALPHA`,
+It reads an action script — load, `xeq`, keys, variables, flags, the Free42
+Configuration switches (the endless stack among them), snapshots — and answers
+in JSON lines: the screen's text rows, the stack and its depth, `ALPHA`,
 variables (locals marked by level), flags, the graphics mode, executed steps,
 and PNG snapshots on request. It also compiles program text to `.raw` and
 decodes it back; `scripts/dm42sim.sh` runs it from anywhere, and
 `scripts/roundtrip.py` checks that every source line survived a compile. The manual is
 [references/dm42sim.md](references/dm42sim.md).
 
+The endless stack is reached as on the calculator: turn Dynamic Stack Extension
+on with `config dynstack 1`, then run `NSTK`. Setting the stack-mode flag (80)
+directly is refused, because it would skip that switch and leave the emulator
+in a state the device cannot reach.
+
 What it cannot show is DMCP's side: speed, the effect of `RefLCD`, DMCP's own
-screens and stack display, and power management. Executed steps are the
+screens and stack display, memory limits, and power management. Executed steps are the
 portable measure; the device has the last word.
 
 Requirements: bash, curl, tar, gzip, patch, make, gcc, g++, awk, od, which,

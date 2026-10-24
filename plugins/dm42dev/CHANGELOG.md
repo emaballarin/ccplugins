@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.2.0 — 2026-10-24
+
+A program that ran out of memory on a DM42n with the endless stack passed every test in 0.1.0. `dm42sim` had no Dynamic Stack Extension switch, so `NSTK` was refused, and its `cmd` let that refusal through without an error. Only setting flag 80 directly reached the endless stack, skipping the switch.
+
+### Fixed
+
+- **`cmd` and `text` stop on errors.** A command the calculator refuses with an error message now ends the script with an error event quoting it. Before, only a squeak counted, so _Big Stack Disabled_, _Divide by 0_ and _Invalid Data_ all passed in silence, contrary to `dm42sim.md`. To see the error, the core is compiled with a two-line patch (`scripts/sim/core_display.patch`): `display_error()` also records the error it shows. `build.sh` applies the patch to a copy of that file, leaving the downloaded source as fetched, and the patch is part of the build stamp.
+- **`flag 80` is refused.** It is the stack mode. Set directly, `flag 80 1` skipped the Dynamic Stack Extension check: the device cannot reach that state, and a later `L4STK` restore fails in it with _Big Stack Disabled_. `flag 80 0` left extra levels on a 4-level stack. The error points to `config dynstack 1` with `cmd NSTK`, and to `cmd 4STK`.
+
+### Added
+
+- **`config dynstack|mxsing|mxovfl 0|1`**: the three switches of the DM42's Free42 Configuration menu (Dynamic Stack Extension, Singular Matrix Error, Matrix Overflow Error). They start off, as on a new calculator, and are set as DM42PGM sets them. Switching `dynstack` off returns an `NSTK` stack to `4STK`.
+- **New `state` fields**: `depth` (stack levels) and `config` (the three switches).
+- **Smoke test**: 25 checks, up from 18. It now covers error refusals, all three switches, and the stack under `NSTK` and back. It also covers two things that must not count as refusals: an `AVIEW` of an error's text, and a test's Yes or No. On the 0.1.0 build the five refusal and stack checks fail and the two guards pass. The Yes/No guard was added after a draft of this release reported every test as refused.
+- **References**:
+    - `rpn-semantics.md` explains the endless stack and `L4STK`: it records the mode, runs on four levels and restores the mode on return; the abandoned-run and _Big Stack Disabled_ exceptions are included.
+    - `dm42n.md` covers the Free42 Configuration switches: where they live, their defaults, and what Matrix Overflow Error covers.
+    - `dm42sim.md` covers the new action, the new fields, the patch, memory limits and a recipe for running under the endless stack.
+- **`/dm42:rpn` step 4**: one run under the endless stack for a DM42 target, with `depth` checked against the promise.
+
+### Verified
+
+- Two regression suites were rerun on the new build:
+    - 20 action scripts of a 252-step graphics program, against the 0.1.0 build: no differences beyond the new fields, and 9 of 9 frames byte-identical.
+    - 10 endless-stack scripts, against a 0.1.0 build with Dynamic Stack Extension forced on: no differences beyond the new fields.
+
+### Install
+
+- After updating, run `/dm42:setup` again. The build stamp changed, so the wrapper refuses the 0.1.0 build until then. Only the compile step reruns; the downloaded core and the Intel library are reused.
+
 ## 0.1.0 — 2026-10-24
 
 First release.

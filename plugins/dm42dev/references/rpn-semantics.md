@@ -17,6 +17,7 @@ Each rule was read in the source or exercised in the cores in October 2026. Sour
 - `R↓` (`RDN`) moves Y→X, Z→Y, T→Z, X→T. `X<>Y` swaps.
 - A test (`X<Y?`, `FS? n`, …) runs the next line when true and skips it when false.
 - Comment the stack after every step whose effect is not obvious (`@ Y: row, X: column`); stack-order mistakes are the commonest silent bug.
+- **The endless stack.** With Dynamic Stack Extension on, `NSTK` gives a stack with no top: a push loses nothing [F `docmd_nstk`]. A program written for four levels that leaves values behind, say on every pass of a loop, then grows the stack until _Insufficient Memory_. A 1.6-million-step drawing program left 326,587 values in `dm42sim` (`config dynstack 1`) and stopped with that error on a DM42n. Start such a program with `L4STK`. It records the mode in force, runs on four levels, and when the program returns restores that mode, with the levels below the top four [F `push_stack_state`, `pop_func_state`]. Two exceptions. A run stopped inside the program and abandoned for another program gets the mode back with only four levels. And if Dynamic Stack Extension is switched off before the program ends, the restore fails with _Big Stack Disabled_. `L4STK` works only in a running program; from the keyboard it is _Restricted Operation_ [F `docmd_l4stk`].
 
 ## Flags
 

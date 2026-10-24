@@ -8,7 +8,9 @@
 // adds on DMCP is re-implemented headless where it changes what a program sees:
 // the display hooks, and the rule that keys 1-6 keep their own functions while a
 // menu shows, F1-F6 being the menu keys. DMCP itself (system menus, files, LCD
-// refresh timing, speed, power) is out of scope.
+// refresh timing, speed, power) is out of scope. The core is compiled as published
+// but for a two-line patch (core_display.patch): display_error() records the error it
+// shows, so that a command refused with an error is reported (dm42sim_error).
 //
 //   dm42sim run [ACTIONS|-]    run an action script; JSON lines out
 //   dm42sim compile IN OUT.raw program text (or .raw) to .raw, as txt2raw does
@@ -33,6 +35,7 @@
 #include "shell_spool.h"
 
 int vartype2string(const vartype *v, char *buf, int buflen, int max_mant_digits = 12);
+extern int dm42sim_error;  // core_display.patch: the error display_error() last showed
 
 static const int LCD_W = 400, LCD_H = 240, DISP_BYTES = 17 * 16;
 static std::vector<unsigned char> lcd(LCD_W *LCD_H);  // DMCP LCD, as drawn in GrMod 2 and 3
@@ -331,20 +334,34 @@ static void menu_key(int n) {
     settle(k);
 }
 
+static std::string refusal;  // the error message of the last refused command, if any
+
 // A built-in command by name, or (is_text) one character typed in ALPHA entry.
-// Returns false when the calculator squeaked, i.e. refused it.
+// Returns false when the calculator refused it: it squeaked, or it showed an error
+// (whose message goes to refusal).
 static bool command(const std::string &name, bool is_text) {
     bool enq;
     int rep;
     char audio = flags.f.audio_enable;
     flags.f.audio_enable = 1;
     squeaked = false;
+    dm42sim_error = ERR_NONE;
     bool k = core_keydown_command(name.c_str(), is_text, &enq, &rep);
     if (!enq)
         k = core_keyup();
     settle(k);
     flags.f.audio_enable = audio;
-    return !squeaked;
+    refusal.clear();
+    // Not errors: a test's answer, which the core shows through display_error() too
+    // (handle_error, core_main.cc), and a stop.
+    int e = dm42sim_error;
+    if (e == ERR_YES || e == ERR_NO || e == ERR_STOP)
+        e = ERR_NONE;
+    if (e == -1)  // a custom error text, kept in lasterr_text rather than the table
+        refusal = hp_text(lasterr_text, lasterr_length);
+    else if (e != ERR_NONE)
+        refusal = hp_text(errors[e].text, errors[e].length);
+    return !squeaked && e == ERR_NONE;
 }
 
 static int key_code(const std::string &k) {
@@ -438,7 +455,7 @@ static void emit_state() {
     const char *reg[] = {"x", "y", "z", "t"};
     for (int i = 0; i < 4 && i <= sp; i++)
         s += std::string(",\"") + reg[i] + "\":" + jstr(value_text(stack[sp - i]));
-    s += ",\"lastx\":" + jstr(value_text(lastx));
+    s += ",\"depth\":" + std::to_string(sp + 1) + ",\"lastx\":" + jstr(value_text(lastx));
     s += ",\"alpha\":" + jstr(hp_text(reg_alpha, reg_alpha_length));
     s += ",\"angle\":" + std::string(flags.f.rad ? "\"RAD\"" : flags.f.grad ? "\"GRAD\"" : "\"DEG\"");
     s += ",\"grmod\":" + std::to_string(graphics_mode());
@@ -454,7 +471,10 @@ static void emit_state() {
     s += "],\"cmdline\":" + jstr(edit_line) + ",\"flags\":\"";
     for (int i = 0; i < 100; i++)
         s += flags.farray[i] ? '1' : '0';
-    s += "\",\"vars\":{";
+    s += std::string("\",\"config\":{\"dynstack\":") + (core_settings.allow_big_stack ? "1" : "0")
+         + ",\"mxsing\":" + (core_settings.matrix_singularmatrix ? "1" : "0")
+         + ",\"mxovfl\":" + (core_settings.matrix_outofrange ? "1" : "0") + "}";
+    s += ",\"vars\":{";
     bool first = true;
     for (int i = 0; i < vars_count; i++) {
         std::string name = hp_text(vars[i].name, vars[i].length);
@@ -570,7 +590,8 @@ static int run_actions(std::istream &in) {
             }
         } else if (verb == "cmd") {
             if (!command(arg, false))
-                return fail("the calculator refused command " + arg + where);
+                return fail("the calculator refused command " + arg + (refusal.empty() ? "" : ": " + refusal)
+                            + where);
         } else if (verb == "text") {
             if (!core_alpha_menu())
                 return fail("text needs ALPHA entry (SHIFT ENTER, or a prompt in ALPHA mode)" + where);
@@ -578,7 +599,7 @@ static int run_actions(std::istream &in) {
                 if (c == "\xc3\xb7")
                     return fail("÷ is character 0, which the core's text input cannot type" + where);
                 if (!command(c, true))
-                    return fail("the calculator refused " + c + where);
+                    return fail("the calculator refused " + c + (refusal.empty() ? "" : ": " + refusal) + where);
             }
         } else if (verb == "run") {
             press(KEY_RUN);
@@ -602,7 +623,27 @@ static int run_actions(std::istream &in) {
             argv >> n >> v;
             if (n < 0 || n > 99 || (v != 0 && v != 1))
                 return fail("flag takes a number 0-99 and 0 or 1" + where);
+            if (n == 80)  // set directly: 1 skips the Dynamic Stack Extension check, 0 keeps extra levels
+                return fail("flag 80 is the stack mode: cmd NSTK (after config dynstack 1) or cmd 4STK" + where);
             flags.farray[n] = (char) v;
+        } else if (verb == "config") {
+            // The switches of the DM42's Free42 Configuration menu, set as DM42PGM sets them
+            // (dm42_fns.cc: sync_dynstackext, get_f42conf_mxsing, get_f42conf_mxovfl).
+            std::string name, value, extra;
+            argv >> name >> value >> extra;
+            if ((value != "0" && value != "1") || !extra.empty()
+                || (name != "dynstack" && name != "mxsing" && name != "mxovfl"))
+                return fail("config takes dynstack, mxsing or mxovfl and 0 or 1" + where);
+            bool on = value == "1";
+            if (name == "dynstack") {
+                if (on != core_settings.allow_big_stack) {  // as sync_dynstackext: only on a change
+                    core_settings.allow_big_stack = on;
+                    core_update_allow_big_stack();  // off: back to 4STK, as on the device
+                }
+            } else if (name == "mxsing")
+                core_settings.matrix_singularmatrix = on;
+            else
+                core_settings.matrix_outofrange = on;
         } else if (verb == "mode") {
             if (arg != "RAD" && arg != "GRAD" && arg != "DEG")
                 return fail("mode is DEG, RAD or GRAD" + where);

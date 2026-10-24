@@ -1,0 +1,15 @@
+--- core_display.cc
++++ core_display.cc
+@@ -1381,7 +1381,12 @@
+     }
+ }
+ 
++/* dm42sim: the error this function last showed (ERR_NONE: none), so the
++ * emulator can tell a command the calculator refused with an error. */
++int dm42sim_error = ERR_NONE;
++
+ void display_error(int error) {
++    dm42sim_error = error;
+     clear_row(0);
+     int err_len;
+     const char *err_text;

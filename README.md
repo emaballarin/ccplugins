@@ -96,7 +96,7 @@ ccplugins/
         ├── skills/{rpn,setup}/SKILL.md
         ├── references/{rpn-semantics,dm42n,dm42sim}.md
         └── scripts/{build.sh,dm42sim.sh,roundtrip.py,smoke.py,smoke.42}
-            └── sim/{dm42sim.cc,io.cc,io.h}
+            └── sim/{dm42sim.cc,io.cc,io.h,core_display.patch}
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.

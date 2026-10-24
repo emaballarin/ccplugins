@@ -2,7 +2,8 @@ dm42 (ccplugins) — develop HP-42S-family RPN programs, the SwissMicros DM42n
 first.
 
 The plugin's own files are MIT-licensed (see LICENSE). It ships no third-party
-code. When run, scripts/build.sh downloads and compiles on the local machine:
+code beyond the few context lines quoted in scripts/sim/core_display.patch. When
+run, scripts/build.sh downloads and compiles on the local machine:
 
   • SwissMicros' fork of Free42 — GPL-2.0; Free42 is Copyright (C) 2004-2025
     Thomas Okken, the DM42 extensions are SwissMicros'. Fetched from
@@ -13,8 +14,10 @@ code. When run, scripts/build.sh downloads and compiles on the local machine:
     2011 Intel Corp. — from the archive bundled with that fork, patched and
     built by the fork's own script.
 
-The resulting dm42sim binary links this GPL-2.0 code and is therefore covered
-by the GPL-2.0. It is built locally and is not distributed by this plugin.
+build.sh applies scripts/sim/core_display.patch, a two-line change, to a copy of
+the fork's common/core_display.cc. The resulting dm42sim binary links this
+GPL-2.0 code and is therefore covered by the GPL-2.0. It is built locally and is
+not distributed by this plugin.
 
 scripts/sim/dm42sim.cc adapts behaviour of the DMCP front end in SwissMicros'
 DM42PGM (github.com/swissmicros/DM42PGM at commit

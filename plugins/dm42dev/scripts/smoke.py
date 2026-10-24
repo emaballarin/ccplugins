@@ -1,5 +1,6 @@
 """Smoke test for a dm42sim build: graphics modes, virtual variables, decimal arithmetic,
-number formatting, menus, PNG snapshots, and compile/decode."""
+number formatting, menus, PNG snapshots, compile/decode, refused commands, the Free42
+Configuration switches, and the stack depth under NSTK."""
 
 import json
 import pathlib
@@ -32,6 +33,37 @@ EXPECTED = [
     (2, "menu", ["FCN", "PGM", "REAL", "CPX", "MAT", "MEM"]),
     (3, "menu", []),
 ]
+
+
+# (actions, error message expected in the error event, or None for a clean run)
+SQUARE = "cmd ENTER\ncmd *\n"
+REFUSALS = [
+    ("cmd 1/X\n", "Divide by 0"),  # an error, not a squeak: needs core_display.patch
+    ("cmd NSTK\n", "Big Stack Disabled"),  # Dynamic Stack Extension is off by default
+    ("key SHIFT ENTER\ntext Divide by 0\nkey ENTER\ncmd AVIEW\n", None),  # a message is not an error
+    ("cmd X=0?\ncmd X<0?\n", None),  # nor is a test's Yes or No, which the core shows as an error code
+    ("config mxsing 1\nkey 2 ENTER 2\ncmd NEWMAT\ncmd INVRT\n", "Singular Matrix"),
+    ("config mxovfl 1\nkey 1 ENTER 1\ncmd NEWMAT\nkey 9 E 4 9 9\ncmd +\n" + SQUARE * 4, "Out of Range"),
+]
+STACK = "config dynstack 1\ncmd NSTK\nkey 1 ENTER 2 ENTER 3 ENTER 4 ENTER 5\nstate\nconfig dynstack 0\nstate\n"
+
+
+def config_checks(binary: str) -> list[str]:
+    """Commands refused with an error, the config switches, and the stack depth under NSTK."""
+    bad = []
+    for actions, want in REFUSALS:
+        proc = subprocess.run([binary, "run", "-"], input=actions, capture_output=True, text=True, check=False)
+        errors = [e["error"] for e in map(json.loads, proc.stdout.splitlines()) if e.get("event") == "error"]
+        if want is None and (proc.returncode != 0 or errors):
+            bad.append(f"{actions!r}: expected no error, got exit {proc.returncode} {errors}")
+        elif want is not None and (proc.returncode != 2 or not errors or want not in errors[0]):
+            bad.append(f"{actions!r}: expected an error naming {want!r}, got exit {proc.returncode} {errors}")
+    proc = subprocess.run([binary, "run", "-"], input=STACK, capture_output=True, text=True, check=False)
+    states = [e for e in map(json.loads, proc.stdout.splitlines()) if e.get("event") == "state"]
+    got = [(s["depth"], s["flags"][80], s["config"]["dynstack"]) for s in states]
+    if got != [(9, "1", 1), (4, "0", 0)]:
+        bad.append(f"NSTK, then dynstack 0: expected depth 9 then 4, got {got}")
+    return bad
 
 
 def png_lit(path: pathlib.Path) -> tuple[int, int, int]:
@@ -83,10 +115,11 @@ def main(binary: str) -> int:
         ]
         if not steps or '"SMOKE"' not in steps[0] or len(steps) != len(source):
             bad.append(f"compile/decode: {len(source)} source steps, {len(steps)} decoded")
+    bad += config_checks(binary)
     if bad:
         print("smoke: FAIL\n  " + "\n  ".join(bad))
         return 1
-    print(f"smoke: OK ({len(EXPECTED) + 2} checks)")
+    print(f"smoke: OK ({len(EXPECTED) + 2 + len(REFUSALS) + 1} checks)")
     return 0
 
 
