@@ -81,7 +81,11 @@ def clock_checks(binary: str) -> list[str]:
     for actions, want, row in CLOCK:
         proc = subprocess.run([binary, "run", "-"], input=actions, capture_output=True, text=True, check=False)
         states = [e for e in map(json.loads, proc.stdout.splitlines()) if e.get("event") == "state"]
-        got = (states[-1]["x"], states[-1]["y"], row in states[-1]["rows"][0]) if proc.returncode == 0 and states else f"exit {proc.returncode}"
+        got = (
+            (states[-1]["x"], states[-1]["y"], row in states[-1]["rows"][0])
+            if proc.returncode == 0 and states
+            else f"exit {proc.returncode}"
+        )
         if got != (want, "7", True):
             bad.append(f"{actions!r}: expected X = {want}, Y = 7 and {row!r} shown, got {got}")
     return bad
