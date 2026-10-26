@@ -54,7 +54,7 @@ An `{"event": "error"}` line stops the script with exit status 2: an unknown act
 
 ## Faithful, and not
 
-Faithful: the calculator core of fork 3.3.10 with its DM42 extensions, decimal arithmetic, programs, keys and menus with the DM42's top-row rule, the hi-res layer and its clearing rules, `GrMod` 2 pixel doubling. The Intel decimal library is built with the fork's patches, so `hypot` treats the smaller argument as negligible from an exponent gap of 69; SwissMicros' prebuilt firmware library uses 68 (DM42PGM's `lib/hypot_fix.patch`, confirmed in its ARM code). Both are safe, since 51 suffices at 34 digits; they differ only at a gap of exactly 68, where 40 random cases gave identical results.
+Faithful: the calculator core of fork 3.3.10 with its DM42 extensions, decimal arithmetic, programs, keys and menus with the DM42's top-row rule, the hi-res layer and its clearing rules, `GrMod` 2 pixel doubling. The Intel decimal library is built with the fork's patches, so `hypot` treats the smaller argument as negligible from an exponent gap of 69, which Intel's own library writes as `35+34` from 2.0 Update 3 on; `build.sh` refuses any other gap. SwissMicros' prebuilt firmware library uses 68 (DM42PGM's `lib/hypot_fix.patch`, confirmed in its ARM code). Both are safe, since 51 suffices at 34 digits; they differ only at a gap of exactly 68, where 40 random cases gave identical results.
 
 Not emulated — check on the device:
 

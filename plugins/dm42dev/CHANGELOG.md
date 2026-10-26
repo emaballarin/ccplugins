@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.2.2 — 2026-10-26
+
+### Added
+
+- **`build.sh` holds `hypot` to an exponent gap of 69.** From that gap between the two exponents on, the Intel decimal library's `bid128_hypot` returns the larger argument without computing. `dm42sim` uses 69, the value Intel's own library writes as `35+34` from 2.0 Update 3 (April 2024) on, up to the current 2.0 Update 5; the fork's patches already give it. SwissMicros' prebuilt firmware library uses 68 (DM42PGM's `lib/hypot_fix.patch`). A fork pin with any other gap now stops the build with an error, where before it would have changed results without notice. Only the spellings `69` and `35+34` are accepted. The check reads the patched library source on every build, so caches built before 0.2.2 are checked too. A refused build also withdraws the ready stamp, so `build.sh --path` and `dm42sim.sh` stop using the binary until a build passes.
+
+### Fixed
+
+- **`sed` is listed** among the required tools, in `build.sh`, `/dm42:setup` and the README. The fork's library script always needed it, and `build.sh` now calls it as well.
+
+### Verified
+
+- **The check**: it accepts the pinned source (`69`), Intel's 2.0 Update 5 source (`35+34`) and `35 + 34`. It refuses 68, 35, `35 + 33`, `34+35`, `0105`, a missing or duplicated shortcut line, a missing file and two library trees, 12 cases in all. A real build on a cache copy patched to 68 stopped before compiling, left no build stamp, and `build.sh --path` then refused the binary it had been serving.
+- **Smoke test**: 28 checks, OK.
+
+### Install
+
+- After updating, run `/dm42:setup` again. Only the compile step reruns.
+
 ## 0.2.1 — 2026-10-25
 
 ### Fixed

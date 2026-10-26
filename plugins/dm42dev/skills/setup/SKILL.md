@@ -11,7 +11,7 @@ Builds `dm42sim` into `$DM42SIM_HOME`, else `$XDG_CACHE_HOME/dm42`, else `~/.cac
 
 ## Steps
 
-1. **Check the tools**: `bash curl tar gzip patch make gcc g++ awk od which python3 sha256sum`, each with `command -v`, and Python 3.14 or later (the marketplace's floor): `python3 -c 'import sys; sys.exit(sys.version_info < (3, 14))'`. Done when all are present; otherwise name the missing ones with the package that provides them on this system, and stop — installing is the person's call.
+1. **Check the tools**: `bash curl tar gzip patch make gcc g++ awk sed od which python3 sha256sum`, each with `command -v`, and Python 3.14 or later (the marketplace's floor): `python3 -c 'import sys; sys.exit(sys.version_info < (3, 14))'`. Done when all are present; otherwise name the missing ones with the package that provides them on this system, and stop — installing is the person's call.
 
 2. **Build**: `bash "${CLAUDE_PLUGIN_ROOT}/scripts/build.sh"`, in the background when the harness supports it. The script stops at the first failure; its last line on success is the binary's path, preceded by `smoke: OK`. Add `--rebuild` only when the person asks for a clean build. Done when the exit status is 0 and `bash "${CLAUDE_PLUGIN_ROOT}/scripts/build.sh" --path` prints the same path.
 

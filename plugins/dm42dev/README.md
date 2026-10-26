@@ -60,7 +60,7 @@ What it cannot show is DMCP's side: speed, the effect of `RefLCD`, DMCP's own
 screens and stack display, memory limits, and power management. Executed steps are the
 portable measure; the device has the last word.
 
-Requirements: bash, curl, tar, gzip, patch, make, gcc, g++, awk, od, which,
+Requirements: bash, curl, tar, gzip, patch, make, gcc, g++, awk, sed, od, which,
 Python 3.14+, sha256sum, and
 network on the first build. The build lives in `~/.cache/dm42/<commit>/`
 (`$XDG_CACHE_HOME/dm42` when that is set; override with `DM42SIM_HOME`).

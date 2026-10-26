@@ -6,7 +6,7 @@
 #   build.sh --rebuild  delete this pin's build directory first
 #   build.sh --path     print the path of a ready binary, or fail; never builds
 #
-# Needs: bash, curl, tar, gzip, patch, make, gcc, g++, awk, od, which, python3 (3.14+),
+# Needs: bash, curl, tar, gzip, patch, make, gcc, g++, awk, sed, od, which, python3 (3.14+),
 # sha256sum; flock, when present, keeps two builds from colliding.
 # Network on the first build. Location: $DM42SIM_HOME, else $XDG_CACHE_HOME/dm42,
 # else ~/.cache/dm42.
@@ -59,6 +59,19 @@ if [[ ! -f lib/gcc111libbid.a ]]; then
     [[ -f src/gtk/gcc111libbid.a ]] || { echo "Intel library build failed; see $PREFIX/intel.log" >&2; exit 1; }
     mkdir -p lib && cp src/gtk/gcc111libbid.a lib/
 fi
+
+# hypot returns the larger argument outright from this exponent gap on. dm42sim uses 69,
+# which Intel writes as 35+34 from 2.0 Update 3 on; DM42PGM's firmware library uses 68.
+# The library is built from this source, so it is checked on every build.
+hypot=(src/gtk/IntelRDFPMathLib*/LIBRARY/src/bid128_hypot.c)
+gap=$(sed -nE 's/.*exponent_x - exponent_y >= ([0-9+ ]+)\).*/\1/p' "${hypot[@]}" 2>/dev/null || true)
+gap69='^(69|35 *\+ *34)$'
+[[ ${#hypot[@]} == 1 && $gap =~ $gap69 ]] || {
+    rm -f bin/.ready
+    echo "bid128_hypot.c must shortcut at an exponent gap of 69 (35+34), found '${gap:-none}';" \
+        "if src/ is missing or damaged, build.sh --rebuild fetches it again" >&2
+    exit 1
+}
 
 if ! stamp_is .built "$BUILT"; then
     # The core as for the device (ARM), with decimal (BCD) arithmetic like the DM42n.
