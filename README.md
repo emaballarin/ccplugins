@@ -106,9 +106,10 @@ New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marke
 A dependency-light `pytest` suite keeps the marketplace internally consistent —
 frontmatter validity, `plugin.json` ↔ `CHANGELOG.md` version parity, marketplace
 integrity, README ↔ disk skill-table sync, referenced bundled-path existence, the
-`ccsci` kernel ↔ SKILL.md entrypoint contract, and the `tml` grading contract
+`ccsci` kernel ↔ SKILL.md entrypoint contract, the `tml` grading contract
 (every tier-catalogue item carries an evidence grade, every change item also
-declares a quality exposure, and both ladders match the reference). Beside these
+declares a quality exposure, and both ladders match the reference), and the
+structural Markdown validity of `mf`'s shipped templates. Beside these
 static checks, a behavioural tier runs the pure `ccsci` kernel helpers and `mf`'s
 park/unpark scripts (the latter skip without bash, GNU tar, sha256sum and git). It
 needs nothing beyond `pytest` + `PyYAML`.
