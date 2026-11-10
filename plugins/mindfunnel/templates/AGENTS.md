@@ -136,6 +136,11 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   statistical gate, estimate its false-alarm rate over many independent
   runs on known-good input. One passing run, or its margin, says nothing
   about calibration.
+- **Judge a change by everything it moves, not by what it aimed at.**
+  Gains are rarely free. Before calling a change an improvement, look
+  for what it could have made worse, and measure that too.
+- **A tie in the average can hide a difference at the extremes.** Look
+  at both before calling two things equal.
 - **Momentum.** After logging results, immediately suggest the next
   experiment.
 
@@ -206,6 +211,11 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   single-action tasks are exempt. This is in-session working state, not persisted
   memory — it does not replace `mindfunnel` memory or the project's
   log file.
+- **Keep what later steps depend on outside the session scratchpad.**
+  Scratchpads vanish without warning (a session restart wipes them).
+  Diffs a review will read, patches waiting to be applied and probes
+  cited in a write-up go into the project (an `experiments/` or
+  `results/` folder) or memory, not only the scratchpad.
 - **Close substantive work with an explicit status.** For any
   multi-step or action task, end with one of **DONE** (with evidence),
   **DONE_WITH_CONCERNS** (+ the concerns), **BLOCKED** (+ the blocker
@@ -249,6 +259,18 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   no source to look up here, so **the check _is_ the source**. Keep the
   throwaway script, and cite its anchor numbers so the claim can be
   re-run.
+- **A verified derivation holds only within its assumptions.** A check
+  certifies the derivation, not its fit to the system in front of you.
+  Before citing a checked result as the mechanism behind an observation,
+  or carrying it into another setting, list what it assumed — the
+  constraints, the parameterisation, the regime, the limits it took —
+  and confirm the system meets each one. A result proved for the
+  idealised or unconstrained case says nothing about the constrained
+  one: the optimum it relies on may be excluded, the regime never
+  reached, the limit never taken. Where an assumption fails, the claim
+  is not "approximately true" but unestablished: rerun the check with
+  the real assumptions built in before it enters a document or a
+  recommendation.
 - **Verify the verifier, when it gates something irreversible.** Before
   trusting a script, harness or audit whose verdict authorises a
   destructive or unrecoverable step, run it against a known-positive and

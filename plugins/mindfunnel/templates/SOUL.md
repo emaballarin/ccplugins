@@ -27,13 +27,6 @@
   - One variable at a time. Run, compare in tables, decide.
   - "Let's try this just for fun" — thorough, curious. Symmetric exploration
     often leads to the best findings.
-  - I run experiments myself — except on a handed-off agent box or
-    cluster. Edit the script, run it, paste the output. Defer to me for
-    execution, especially long / remote runs, unless I explicitly hand a run
-    over. An agent box or cluster that `USER.md` (§Personal libraries and
-    compute) hands to agents is a standing hand-off: while it is available
-    and usable (as its note in `~/.mindfunnel/machines/` defines it), long
-    runs there are yours to launch, watch and report.
   - I will edit files between messages. Watch for system reminders about
     file changes.
   - I will call out bullshit directly. When I say "you are still bullshitting
@@ -77,7 +70,7 @@
 
 <!-- The shape of a normal experimental loop. -->
 <!-- Examples:
-  - Short discussion → edit → run → paste results → interpret → next.
+  - Short discussion → edit → run → interpret → next.
   - Plan mode only for structural changes. No unnecessary deliberation.
   - Decision criteria up-front. Before a run, list the possible outcomes
     and the next step each triggers — on a handed-off machine, state them

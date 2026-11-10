@@ -3,6 +3,27 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+Templates:
+
+- **`SOUL.md`: the "I run experiments myself … defer to me for execution"
+  example is gone.** Where a job runs and who launches it is `AGENTS.md`
+  §Important constraints and the machine notes `USER.md` points at, so
+  `SOUL.md` no longer restates it. The rhythm example loses its "paste results"
+  step to match: edit → run → interpret → next.
+- **`AGENTS.md` re-synced with the live baseline:** four new rules — judge a
+  change by everything it moves, not only what it aimed at; a tie in the
+  average can hide a difference at the extremes (both under Evidence and
+  interpretation); keep what later steps depend on outside the session
+  scratchpad (Planning & execution); a verified derivation holds only within
+  its assumptions (Autonomy and asking).
+
+Existing machines keep their current `~/.mindfunnel/AGENTS.md` and `SOUL.md` —
+`/mf:setup` never overwrites either — so copy the four new `AGENTS.md` rules
+across by hand to pick them up; the `SOUL.md` change touches only a
+commented-out example and needs no action.
+
 ## 0.8.2 — 2026-10-19
 
 `templates/SOUL.md` catches up with the standing hand-off that 0.8.1 added to
