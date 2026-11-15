@@ -18,11 +18,37 @@ Templates:
   interpretation); keep what later steps depend on outside the session
   scratchpad (Planning & execution); a verified derivation holds only within
   its assumptions (Autonomy and asking).
+- **`AGENTS.md` re-synced again.** Three more rules: data that made a choice
+  cannot judge it (Evidence and interpretation); a time written into a log
+  comes from the clock (Written artifacts and logs); call the established
+  rule, don't restate it (Handling existing code). Three rewordings: the
+  docstring rule says which scripts need docstrings — those meant to be run by
+  someone else, later, or more than a few times — and absorbs the separate
+  "leave experimental scripts undocumented" bullet; "Be direct" says that
+  calling a disaster a disaster and a provisional signal provisional are the
+  same honesty; "30 seconds of verification" becomes "checking the primary
+  source".
+- **`AGENTS.md` §Memory system rewritten.** Project memory is the harness's
+  own — directory, file format, index — and mindfunnel widens one thing only:
+  project state, results and decisions are saved even where the harness's own
+  guidance would skip them as status, as a record of finished work, or because
+  the project's committed log also holds them. The log is the full record;
+  memory carries what a resuming session needs and points to it.
+
+Skills:
+
+- **`/mf:dump` writes the frontmatter Claude Code specifies** — `name`,
+  `description`, and the type under `metadata:` — where it used to put `type:`
+  at the top level. It leaves any other key Claude Code has added, and moves a
+  top-level `type:` under `metadata:` when it next updates that file. A new
+  "Important" item states the one deliberate difference from Claude Code's own
+  memory guidance: project state is saved.
 
 Existing machines keep their current `~/.mindfunnel/AGENTS.md` and `SOUL.md` —
-`/mf:setup` never overwrites either — so copy the four new `AGENTS.md` rules
-across by hand to pick them up; the `SOUL.md` change touches only a
-commented-out example and needs no action.
+`/mf:setup` never overwrites either — so copy the new `AGENTS.md` rules and its
+Memory system section across by hand to pick them up; the `SOUL.md` change
+touches only a commented-out example and needs no action. Existing memory
+files need no migration.
 
 ## 0.8.2 — 2026-10-19
 

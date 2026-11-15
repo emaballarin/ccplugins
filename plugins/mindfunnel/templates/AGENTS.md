@@ -60,10 +60,14 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   check hides everything it was silently passing. The unmasked defect is not a
   regression caused by the fix and will not present as one — it looks like a
   problem that was always there, because it was.
-- **Succinct docstrings everywhere; extra comments sparingly, only when
-  they clarify non-obvious intent.** Docstrings are documentation, not
+- **Succinct docstrings; extra comments sparingly, only when they
+  clarify non-obvious intent.** Docstrings are documentation, not
   comments — a one-line `"""..."""` on modules / functions / classes is
-  the baseline.
+  the baseline. A script carries them whenever it will be met again:
+  when it is meant to be run by the maintainer, by another agent, or by
+  you beyond the near future, or more than a few times. Only a one-off
+  (or k-off) script for your own immediate use may go without, and
+  without type annotations.
 - **Track dependencies.** Note any new external requirements clearly.
 - **Security awareness.** Avoid hardcoded secrets; flag potential
   security concerns.
@@ -73,7 +77,10 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
 - **Lead with the answer.** Tables with deltas over prose. Compare old vs
   new with numbers.
 - **Be direct.** "50× worse", "catastrophic", "identical" — not hedged
-  language.
+  language. State what things are, unfiltered, and neither over- nor
+  under-sold: a disaster is called a disaster, and a provisional signal
+  is called provisional (§Evidence and interpretation). Both serve the
+  same honesty.
 - **Name the unit.** Every count or measure carries its unit — lines,
   words, bytes, tokens — never a bare number.
 - **Never estimate wall-clock effort.** No "~2 hours of careful work", no
@@ -141,6 +148,11 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   for what it could have made worse, and measure that too.
 - **A tie in the average can hide a difference at the extremes.** Look
   at both before calling two things equal.
+- **Data that made a choice cannot judge it.** Whatever was selected on
+  some data is flattered by that data, so compare things only on data
+  that selected none of them. Check every side: taking the selection off
+  one leaves the other's, and the comparison then leans the other way.
+  Where a side stays on its selecting data, say which way it leans.
 - **Momentum.** After logging results, immediately suggest the next
   experiment.
 
@@ -165,6 +177,9 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   or the reverse — amending only the detailed entry leaves the headline actively
   misleading, and whoever reads it will correctly deprioritise the item on a
   description that is no longer true.
+- **A time written into a log comes from the clock.** Take any timestamp
+  that goes into a log, note or report from `date` at the moment of
+  writing; never write the time you expect it to be.
 - **No "the user" in written artifacts.** When writing into logs,
   docstrings, comments, Markdown notes, commit messages, PR
   descriptions, plan files, or any prose deliverable, don't frame
@@ -243,7 +258,7 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   source _before_ coding around it: `gym.make(env_id).observation_space`,
   `help(func)`, the canonical docs page, the library's source, or a
   one-line REPL probe. Mental models and training-data pattern-matching
-  are NOT substitutes for 30 seconds of verification — they generate
+  are NOT substitutes for checking the primary source — they generate
   confidently-wrong assumptions that surface at runtime as deep rework.
   Same rule in one sentence: **search and investigate before guessing**,
   and if search is not feasible, ask.
@@ -320,12 +335,15 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   symbols), and run the project's linter before declaring done.
 - **When delegating edits to a sub-agent**, include "grep for removed
   symbols, run the linter, compile-check imports" in the delegation brief.
-- **Leave experimental scripts undocumented** — no docstrings or type
-  annotations there unless asked.
 - **State the contract; point at the source.** Pasted function bodies go
   stale silently, and the prose around them still reads as authoritative.
   Document the contract and the public surface; quote only the kernels
   where the code _is_ the specification, and link the rest.
+- **Call the established rule; don't restate it.** When a project already
+  implements a decision or selection procedure, a new component invokes
+  that implementation instead of describing a variant of it. Where the
+  existing rule does not fit, say so and get the deviation approved
+  before building it.
 
 ## Important constraints
 
@@ -380,12 +398,31 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
 
 ## Memory system
 
-If the `mindfunnel` plugin is available on this machine, session-persistent
-memory is managed by `/mf:dump` and `/mf:spinup`, with per-project files
-under `~/.claude/projects/<slug>/memory/`. Use it freely: dump at natural
-checkpoints — a result logged, a decision taken, before a long or risky step —
-and at context saturation; auto-compaction keeps a session going but writes
-nothing to project memory. Spin up on resume when asked to do so.
+Project memory is the harness's own: on Claude Code, the per-project
+directory `~/.claude/projects/<slug>/memory/`, with the file format, the
+index and the update-rather-than-duplicate habit the harness describes.
+Follow those as given. The `mindfunnel` plugin, where available on this
+machine, adds two commands over that same memory — `/mf:dump` to
+consolidate a session into it, `/mf:spinup` to resume from it — and
+widens one thing only: **what is worth saving. Here, project state is.**
+Where the work stands, results with their numbers, decisions with their
+reasons, and what comes next are saved, even where the harness's own
+guidance would skip them as status, as a record of finished work, or
+because the project's committed log also holds them. What the code, the
+git history and the instruction files already say stays out, as that
+guidance has it. Whatever it would save is saved too, so nothing is
+retained less than under either rule alone.
+
+Each thing is written once per place. In memory, update the file that
+already covers a topic. The committed log (§Written artifacts and logs)
+is the full record; memory carries what a resuming session needs — the
+state, the key numbers, the decision and its reason — and points to that
+record.
+
+Use it freely: dump at natural checkpoints — a result logged, a decision
+taken, before a long or risky step — and at context saturation;
+auto-compaction keeps a session going but writes nothing to project
+memory. Spin up on resume when asked to do so.
 
 If `mindfunnel` is not available, fall back to any project-committed
 notes file (e.g. `NOTES.md`, `CHANGELOG.md`) or the agent's native

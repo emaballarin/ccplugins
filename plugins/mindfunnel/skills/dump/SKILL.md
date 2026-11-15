@@ -15,6 +15,7 @@ Write the current session's non-derivable state to the project's auto-memory dir
 3. **SOUL.md and the user-global AGENTS.md are sacred.** Propose edits, never apply silently, and only when the insight is genuinely general. The user-global AGENTS.md lives at `~/.mindfunnel/AGENTS.md` (reached via `~/.claude/CLAUDE.md`); the per-project `./AGENTS.md` is a small project-scoped stub owned by the project — don't treat them as the same file.
 4. **Convert every "today" / "tomorrow" to an absolute date** before writing. Run `date -I` if uncertain.
 5. **Append atomic assertions to the ledger, don't narrate them.** Claims, decisions, and learnings that carry a trust level and provenance go to `ledger.jsonl` (Step 5b); the narrative stays in Markdown. Never double-log one as the other — cross-reference.
+6. **Project state is memory here.** Claude Code's own memory guidance leaves out status and records of finished work. A dump saves them: where the work stands, results with their numbers, decisions with their reasons, next actions — also when the project's committed log records them in full, in which case memory carries the digest and points to the log. Everything that guidance would save is saved as well. Item 2 still holds, and the file format, the index and updating in place follow Claude Code as given.
 
 ## Instructions
 
@@ -60,7 +61,18 @@ Skip anything derivable from `git log`, the current code, or the primed config f
 
 ### Step 5: Write using the auto-memory type taxonomy
 
-Every memory file has YAML frontmatter with `name`, `description`, `type`. The four types:
+Every memory file carries the YAML frontmatter that Claude Code's own memory instructions specify for the session. Use that shape — at present:
+
+```yaml
+---
+name: <short-kebab-case-slug>
+description: <one line; it decides relevance at recall>
+metadata:
+    type: project | feedback | user | reference
+---
+```
+
+Leave in place any other key Claude Code has added to a file. When you update a file that still has a top-level `type:`, move it under `metadata:`. The four types:
 
 - **`project`** — ongoing work state, results, decisions, deadlines, pending experiments. High churn.
 - **`feedback`** — behavioural guidance (both corrections _and_ validated choices). Each entry: rule + **Why:** + **How to apply:**. Moderate churn.
