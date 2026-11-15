@@ -1,6 +1,6 @@
 ---
 name: figure-composer
-description: "Compose one publication-grade multi-panel figure. Entry from a one-line claim + data refs, OR from an existing figure via `derive_outline_task(png)`. Runs a per-figure loop: outline (12-col grid, per-panel ask + label_budget) → fan-out one subagent per panel (each loads `figure-style`) → tile + stamp letters → adversarial composite review with two-tier feedback (Tier-1 outline_revisions / Tier-2 per-panel violations) → regen affected panels, ≤3 rounds. Kernel exposes panel_task / compose_figure / compose_crops / composite_review_task / derive_outline_task / finalize_outline (import by absolute path). For one standalone plot use `figure-style`; for whole-paper figure ordering use `paper-narrative`."
+description: "Compose one publication-grade multi-panel figure, from a one-line claim + data refs OR from an existing figure. Runs a per-figure loop: outline → fan-out one subagent per panel (each loads `figure-style`) → tile + stamp letters → adversarial composite review → regen affected panels, ≤3 rounds. For one standalone plot use `figure-style`; for whole-paper figure ordering use `paper-narrative`."
 license: Apache-2.0
 ---
 

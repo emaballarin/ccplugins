@@ -1,6 +1,6 @@
 ---
 name: paper-narrative
-description: "Judge and reshape the STORY a paper's figures tell. Input is the work itself — manuscript (or abstract) + figure deck — no hand-written brief. `derive_paper_brief_task(abstract, captions)` builds the prompt whose JSON is pitch/vision/per-figure-claims; a handling-editor reviewer on the full deck returns hook_verdict (would Fig 1 make me send this for review?), arc (hook→mechanism→evidence→application), figure_moves (panels in the wrong figure), missing_panels (concrete analyses to RUN), kill_list, and boldest_defensible_fig1. Hands per-figure claims to `figure-composer`. Load when writing or revising a paper."
+description: "Judge and reshape the STORY a paper's figures tell. Input is the work itself — manuscript (or abstract) + figure deck — no hand-written brief. A handling-editor review of the full deck says whether Figure 1 would get the paper sent for review, traces the arc (hook→mechanism→evidence→application), and names panels in the wrong figure, analyses still to RUN, and what to cut. Hands per-figure claims to `figure-composer`. Load when writing or revising a paper."
 license: Apache-2.0
 ---
 
