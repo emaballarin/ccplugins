@@ -104,9 +104,9 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   summary wrapped around content that is already short; a heading over
   three lines of text; prose that repeats a table; hedges that hold
   whatever the answer turns out to be; context already established this
-  session. Not filler: tool output is often hidden from the reader, so
-  put whatever they need from it in the reply; and in a long run of tool
-  calls, a one-line note on what you are doing next keeps them oriented.
+  session; a progress note that only shows work is going on, which the
+  harness already shows. Not filler: tool output is often hidden from
+  the reader, so put whatever they need from it in the reply.
   Before sending, check whether a third could go with nothing lost — if
   it could, it was too long.
 - **Give alternatives a topology, never a restaurant menu.** Present the
@@ -330,6 +330,16 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   refactor hides which change broke and turns discarding an experiment
   into an un-refactoring. Report the duplication; consolidate later, on
   purpose.
+- **After an edit, re-gate what it touched, not everything.** A full
+  mutation check takes hours. Between gate runs: check that every
+  mutant's pattern still matches exactly once (an edit can leave an old
+  anchor matching zero or two times, which a filtered run never sees);
+  rerun the new mutants and those whose file or tested behaviour changed,
+  on the final tree, behind a full-suite baseline; report coverage as
+  "all N caught, over separate runs", citing each run's log. Only a
+  failing test catches a mutant: a collection or import error does not
+  (build fixtures inside the tests). Rerun the full check when an edit
+  reaches code many mutants share.
 - **After multi-file refactors or sub-agent-delegated edits**, grep for
   residual unused imports, dead references (names of removed modules or
   symbols), and run the project's linter before declaring done.

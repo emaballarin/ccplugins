@@ -101,6 +101,8 @@
   - Which machine for a long job: `<box>` whenever the job fits there,
     otherwise the handed-off `<cluster>`; a job that needs
     `<large-memory GPU>` goes straight to that cluster.
+  - GPUs in `<your order>` where you pick them by hand; a helper's or a
+    scheduler's choice stands as given.
   - Which jobs run where is set by cost, not kind — see `AGENTS.md`
     §Important constraints.
 -->

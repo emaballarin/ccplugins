@@ -3,7 +3,11 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 0.8.3 — 2026-11-16
+
+Project memory follows Claude Code's own format and keeps project state in
+it; `AGENTS.md` catches up with the live baseline, and the `SOUL.md` and
+`USER.md` examples follow.
 
 Templates:
 
@@ -12,28 +16,34 @@ Templates:
   §Important constraints and the machine notes `USER.md` points at, so
   `SOUL.md` no longer restates it. The rhythm example loses its "paste results"
   step to match: edit → run → interpret → next.
-- **`AGENTS.md` re-synced with the live baseline:** four new rules — judge a
+- **`AGENTS.md` re-synced with the live baseline.** Eight new rules: judge a
   change by everything it moves, not only what it aimed at; a tie in the
-  average can hide a difference at the extremes (both under Evidence and
-  interpretation); keep what later steps depend on outside the session
-  scratchpad (Planning & execution); a verified derivation holds only within
-  its assumptions (Autonomy and asking).
-- **`AGENTS.md` re-synced again.** Three more rules: data that made a choice
-  cannot judge it (Evidence and interpretation); a time written into a log
-  comes from the clock (Written artifacts and logs); call the established
-  rule, don't restate it (Handling existing code). Three rewordings: the
-  docstring rule says which scripts need docstrings — those meant to be run by
-  someone else, later, or more than a few times — and absorbs the separate
-  "leave experimental scripts undocumented" bullet; "Be direct" says that
-  calling a disaster a disaster and a provisional signal provisional are the
-  same honesty; "30 seconds of verification" becomes "checking the primary
-  source".
+  average can hide a difference at the extremes; data that made a choice
+  cannot judge it (all three under Evidence and interpretation); a time
+  written into a log comes from the clock (Written artifacts and logs); keep
+  what later steps depend on outside the session scratchpad (Planning &
+  execution); a verified derivation holds only within its assumptions
+  (Autonomy and asking); after an edit, re-gate what it touched, not
+  everything; call the established rule, don't restate it (both under
+  Handling existing code). Four changed rules, two of which reverse earlier
+  guidance. Docstrings: any script that will be met again — run by someone
+  else, later, or more than a few times — now carries them, and only a
+  one-off for the agent's own immediate use goes without; the separate "Leave
+  experimental scripts undocumented" bullet, which exempted every
+  experimental script, is removed. Progress notes: a note that only shows
+  work is going on is now filler, where a one-line progress note was
+  explicitly exempt. "Be direct" says that calling a disaster a disaster and
+  a provisional signal provisional are the same honesty. "30 seconds of
+  verification" becomes "checking the primary source".
 - **`AGENTS.md` §Memory system rewritten.** Project memory is the harness's
   own — directory, file format, index — and mindfunnel widens one thing only:
   project state, results and decisions are saved even where the harness's own
   guidance would skip them as status, as a record of finished work, or because
   the project's committed log also holds them. The log is the full record;
   memory carries what a resuming session needs and points to it.
+- **`USER.md`: the compute example gains one line** — the order in which to
+  take GPUs where you pick them by hand, and that a helper's or a scheduler's
+  choice stands as given.
 
 Skills:
 
@@ -44,11 +54,13 @@ Skills:
   "Important" item states the one deliberate difference from Claude Code's own
   memory guidance: project state is saved.
 
-Existing machines keep their current `~/.mindfunnel/AGENTS.md` and `SOUL.md` —
-`/mf:setup` never overwrites either — so copy the new `AGENTS.md` rules and its
-Memory system section across by hand to pick them up; the `SOUL.md` change
-touches only a commented-out example and needs no action. Existing memory
-files need no migration.
+Existing machines keep their current `~/.mindfunnel/AGENTS.md`, `SOUL.md` and
+`USER.md` — `/mf:setup` never overwrites them. To pick the `AGENTS.md` changes
+up, copy the eight new rules, the four changed ones and the Memory system
+section across by hand, and delete the "Leave experimental scripts
+undocumented" bullet; or diff `templates/AGENTS.md` against your copy. The
+`SOUL.md` and `USER.md` changes touch only commented-out examples and need no
+action. Existing memory files need no migration.
 
 ## 0.8.2 — 2026-10-19
 
