@@ -23,6 +23,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 | `ws`    | **whetstone** — sharpen the thinking before the work, and the work before it lands. `/ws:grill` interviews a plan until nothing is silently assumed; `/ws:test-gate` holds every new test to one value bar; `/ws:test-audit` prunes and consolidates an existing suite, evidence first; `/ws:deslop` cleans AI slop from a diff before review; `/ws:review-gate` puts a change in front of a fresh-context reviewer before it is acted on. | [plugins/whetstone](plugins/whetstone/README.md)       |
 | `ccbar` | **ccbar** — a quiet status band above the prompt, drawn natively by function hooks: model and effort, repository (optionally linked) and diff counter, a context bar in the `/context` colours, new session tokens (or all metered ones, when set) counted once per response, and the session and weekly rate limits with reset countdowns. No skills; four hooks.                                                                         | [plugins/ccbar](plugins/ccbar/README.md)               |
 | `dm42`  | **dm42** — write, review and debug HP-42S-family RPN programs, the SwissMicros DM42n first. `/dm42:rpn` is the workflow and the verified reference, with a round-trip check for the lines the text parser drops; `/dm42:setup` builds `dm42sim`, SwissMicros' own Free42 core compiled as for the device and driven headless by action scripts that return JSON.                                                                           | [plugins/dm42dev](plugins/dm42dev/README.md)           |
+| `hup`   | **cchupipe** — the built-in "You should know" heads-ups, piped to Claude mid-turn as fallible notes it checks, with a lookup tool. By default each then leaves your screen and Claude tells you about it, leaving out only its own simply fixed slips or passing mishaps, never your work or choices, a choice of its own that changes what you get, or a decision of yours. Function hooks only.                                          | [plugins/cchupipe](plugins/cchupipe/README.md)         |
 
 ## Install a plugin
 
@@ -34,6 +35,7 @@ Then install individual plugins with `/plugin install <name>@ccplugins`.
 /plugin install ws@ccplugins
 /plugin install ccbar@ccplugins
 /plugin install dm42@ccplugins
+/plugin install hup@ccplugins
 ```
 
 ## Layout
@@ -90,13 +92,19 @@ ccplugins/
     │   ├── hooks/{hooks.json,register.tsx,band.ts,lib.ts}
     │   ├── types/index.d.ts
     │   └── tests/{lib,layout}.test.ts + band.test.tsx
-    └── dm42dev/                             # plugin name: dm42
+    ├── dm42dev/                             # plugin name: dm42
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
+    │   ├── skills/{rpn,setup}/SKILL.md
+    │   ├── references/{rpn-semantics,dm42n,dm42sim}.md
+    │   └── scripts/{build.sh,dm42sim.sh,roundtrip.py,smoke.py,smoke.42}
+    │       └── sim/{dm42sim.cc,io.cc,io.h,core_display.patch}
+    └── cchupipe/                            # plugin name: hup
         ├── .claude-plugin/plugin.json
-        ├── README.md  CHANGELOG.md  LICENSE  NOTICE  # MIT
-        ├── skills/{rpn,setup}/SKILL.md
-        ├── references/{rpn-semantics,dm42n,dm42sim}.md
-        └── scripts/{build.sh,dm42sim.sh,roundtrip.py,smoke.py,smoke.42}
-            └── sim/{dm42sim.cc,io.cc,io.h,core_display.patch}
+        ├── README.md  CHANGELOG.md  tsconfig.json  # MIT (repository LICENSE)
+        ├── hooks/{hooks.json,register.ts,core.ts}
+        ├── types/index.d.ts
+        └── tests/core.test.ts
 ```
 
 New plugins go under `plugins/<name>/` and get an entry in `.claude-plugin/marketplace.json`.
@@ -125,8 +133,9 @@ local-only check: the shipped `mf` `AGENTS.md` template against the live
 `~/.mindfunnel/AGENTS.md`, skipped where that file is absent. Details:
 [`tests/README.md`](tests/README.md).
 
-`ccbar` is TypeScript run by Claude Code itself, so its checks need Claude Code
-and stay outside CI. Run them before a `ccbar` release:
+`ccbar` and `hup` are TypeScript run by Claude Code itself, so their checks need
+Claude Code and stay outside CI. Run them before a release of either (shown for
+`ccbar`; `hup` is `plugins/cchupipe`):
 
 ```
 claude plugin validate plugins/ccbar
@@ -136,7 +145,7 @@ tsc -p plugins/ccbar
 
 ## License
 
-The marketplace and the `mf` and `ccbar` plugins are MIT — see [LICENSE](LICENSE). The `ccsci`
+The marketplace and the `mf`, `ccbar` and `hup` plugins are MIT — see [LICENSE](LICENSE). The `ccsci`
 plugin is **Apache-2.0** with its own [plugins/ccscience/LICENSE](plugins/ccscience/LICENSE). The
 `ar` plugin is **MIT** with its own [LICENSE](plugins/autoresearch/LICENSE) and a
 [NOTICE](plugins/autoresearch/NOTICE) crediting the three MIT upstreams whose

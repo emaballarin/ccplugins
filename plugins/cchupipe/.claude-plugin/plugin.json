@@ -1,0 +1,29 @@
+{
+    "name": "hup",
+    "version": "0.2.1",
+    "description": "hup — the built-in \"You should know\" heads-ups, piped to Claude. Each heads-up the side agent raises reaches the main agent mid-turn, behind its next tool result, as a fallible note to check before acting on it; Claude looks up the explainer with a tool and tells you about the heads-up: it may leave out only a slip of its own it has simply fixed, or a passing mishap, never one about your work or choices, a choice of its own that changes what you get, or a decision that is yours, now or later. By default the heads-up then leaves your screen, so it never counts as ignored. Function hooks only: one lookup tool, no command hooks, no MCP server, no settings patching.",
+    "author": {
+        "name": "Emanuele Ballarin",
+        "email": "emanuele@ballarin.cc"
+    },
+    "homepage": "https://github.com/emaballarin/ccplugins/tree/main/plugins/cchupipe",
+    "repository": "https://github.com/emaballarin/ccplugins",
+    "license": "MIT",
+    "keywords": ["hup", "heads-up", "you-should-know", "side-agent", "function-hooks", "mod"],
+    "types": "./types/index.d.ts",
+    "userConfig": {
+        "push": {
+            "type": "string",
+            "title": "Which heads-ups to send to Claude",
+            "description": "all (default): every heads-up goes to Claude. heads-up: only \"Heads up\" lines (about the work); \"You should know\" ones stay on screen and in the lookup tool. none: never send; the lookup tool only.",
+            "options": ["all", "heads-up", "none"],
+            "default": "all"
+        },
+        "swallow": {
+            "type": "boolean",
+            "title": "Hide heads-ups once Claude has them",
+            "description": "On (default): a heads-up sent to Claude leaves your screen once Claude's next request carries it, so it never counts as ignored, and Claude tells you about it: it may leave out only a slip of its own it has simply fixed, or a passing mishap, never one about your work or choices, a choice of its own that changes what you get, or a decision that is yours, now or later. Off: it stays on screen as well.",
+            "default": true
+        }
+    }
+}

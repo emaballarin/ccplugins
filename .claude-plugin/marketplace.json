@@ -105,6 +105,13 @@
             "description": "dm42: write, review and debug HP-42S-family RPN programs, the SwissMicros DM42n first (also DM42, Free42, Plus42). /dm42:rpn is the workflow and the verified reference — program-text rules, stack lift, flags, locals, menus, GETKEY vs GETKEY1, PIXEL/AGRAPH, the DM42 virtual variables and graphics modes — with a round-trip check for the lines the text parser drops silently. /dm42:setup builds dm42sim: SwissMicros' own Free42 core compiled as for the device, driven headless by action scripts that return JSON. No hooks, no MCP.",
             "category": "development",
             "keywords": ["dm42", "dm42n", "swissmicros", "hp-42s", "free42", "rpn", "calculator", "emulator"]
+        },
+        {
+            "name": "hup",
+            "source": "./plugins/cchupipe",
+            "description": "hup: the built-in \"You should know\" heads-ups, piped to Claude. Each heads-up the side agent raises reaches the main agent mid-turn, behind its next tool result, as a fallible note to check before acting on it; Claude looks up the explainer with a tool and tells you about the heads-up: it may leave out only a slip of its own it has simply fixed, or a passing mishap, never one about your work or choices, a choice of its own that changes what you get, or a decision that is yours, now or later. By default the heads-up then leaves your screen, so it never counts as ignored. Function hooks only: one lookup tool, no command hooks, no MCP server, no settings patching.",
+            "category": "productivity",
+            "keywords": ["hup", "heads-up", "you-should-know", "side-agent", "function-hooks", "mod"]
         }
     ]
 }

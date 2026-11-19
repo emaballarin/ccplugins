@@ -3,11 +3,12 @@
 ## What this project is
 
 `ccplugins`: a personal Claude Code plugin marketplace, developed in the
-open. Seven plugins: `mf` (mindfunnel), `ccsci` (ccscience), `ar`
+open. Eight plugins: `mf` (mindfunnel), `ccsci` (ccscience), `ar`
 (autoresearch), `tml` (tuneml), `ws` (whetstone), `ccbar` (ccbar), `dm42`
-(dm42dev). `ccbar` is the one function-hook plugin: TypeScript hooks, no
-skills. `dm42` is the one that compiles native code: `/dm42:setup` builds a
-C++ emulator into the user's cache directory, outside the repository.
+(dm42dev), `hup` (cchupipe). `ccbar` and `hup` are the function-hook
+plugins: TypeScript hooks, no skills. `dm42` is the one that compiles
+native code: `/dm42:setup` builds a C++ emulator into the user's cache
+directory, outside the repository.
 
 ## Source layout
 
@@ -18,9 +19,9 @@ plugins/<descriptive-name>/       # one plugin each
 ├── skills/<skill>/SKILL.md       # auto-discovered — no "skills" key in plugin.json
 ├── agents/ references/ templates/ scripts/
 └── README.md CHANGELOG.md [LICENSE] [NOTICE]
-plugins/ccbar/                    # function hooks instead of skills:
+plugins/ccbar/ plugins/cchupipe/  # function hooks instead of skills:
 ├── hooks/hooks.json + *.ts(x)    #   the hooks module and its helpers
-├── types/index.d.ts              #   its $.state contract
+├── types/index.d.ts              #   its type contract: $.state (ccbar), its tool (hup)
 └── tests/*.test.ts(x)            #   run by `claude plugin test`, not CI
 tests/                            # Tier-1 static + Tier-2 behavioural validation
 docs/roadmap.md                   # deferred and parked ideas
@@ -31,8 +32,8 @@ docs/roadmap.md                   # deferred and parked ideas
 - Tests, from the repo root (Python 3.14+ is the declared floor; CI pins
   it): `pip install -r tests/requirements.txt && python -m pytest tests/ -q`.
   What each module checks: `tests/README.md`.
-- `ccbar` (TypeScript, run by Claude Code), not in CI and part of every
-  `ccbar` release:
+- `ccbar` and `hup` (TypeScript, run by Claude Code), not in CI and part of
+  every release of either (`hup`: `plugins/cchupipe`):
 
     ```
     claude plugin validate plugins/ccbar
@@ -74,12 +75,20 @@ docs/roadmap.md                   # deferred and parked ideas
 
 ## Known pitfalls
 
-- `ccbar` stands on the function-hook API, which is early access and moves
-  between Claude Code releases; it also sits behind a rollout switch, so an
-  install can load nothing. Re-run the three `ccbar` checks after a Claude Code
+- `ccbar` and `hup` stand on the function-hook API, which is early access and
+  moves between Claude Code releases; it also sits behind a rollout switch, so
+  an install can load nothing. Re-run their three checks after a Claude Code
   update. The validator's one non-obvious rule: `$` is only ever spelled
   `$.noun.method(…)` where it is called (`read`/`update` excepted), never
-  stored, passed or returned.
+  stored or returned, and passed only to a function of the module's own:
+  declared at the top of the same file (a function declaration or a const
+  bound to one) or imported from another of its files, which the validator
+  then checks too (Claude Code 2.1.328).
+- `hup` reads the built-in "You should know" plugin's private `$.store`
+  record (`sessions`): re-check it live after a Claude Code update. A shape
+  change hup recognises shows as `formatMisses` in its own store and one
+  toast; one it cannot (fields that keep their shape but change meaning)
+  shows as heads-ups that stop arriving while `yskWrites` keeps climbing.
 - Nothing checks the root README's prose, layout tree or license paragraph:
   grep it on every plugin or skill change.
 - `test_referenced_paths.py` checks that a referenced file exists, not that
