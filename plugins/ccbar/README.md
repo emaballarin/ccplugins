@@ -169,6 +169,8 @@ tsc -p plugins/ccbar
 ```
 
 These checks need Claude Code itself and are not part of the repository's CI, which is Python-only: run all three
-before a release. One rule the validator enforces trips most first attempts. `$` is never stored, passed to a
-function of your own, or returned; it is only ever spelled `$.noun.method(…)` where it is called. The state helpers
-`read` and `update` are the exception. That is why the refreshers are closures inside the `session.start` hook.
+before a release. One rule the validator enforces trips most first attempts. `$` is never stored or returned; it is
+only ever spelled `$.noun.method(…)` where it is called, or passed to a function of the module's own: one declared at
+the top of the same file (a function declaration or a const bound to one) or imported from another of its files,
+which the validator then checks too (Claude Code 2.1.328). The state helpers `read` and `update` are the exception.
+ccbar's refreshers are closures inside the `session.start` hook, a form every build accepts.

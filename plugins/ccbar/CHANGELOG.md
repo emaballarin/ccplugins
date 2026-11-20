@@ -3,6 +3,21 @@
 All notable changes to the `ccbar` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.3.2 — 2026-11-20
+
+README: the validator's rule on `$` as Claude Code 2.1.328 applies it — `$`
+may also be passed to a function of the module's own, declared at the top of
+the same file or imported from another of its files.
+
+Tests: the `AbovePrompt` fixture in `band.test.tsx` gains `isCollapsed`, which
+Claude Code 2.1.328's props require; `claude plugin validate` reported its
+absence 14 times.
+
+Also part of the coordinated marketplace version alignment alongside the new
+`hup` plugin (the built-in "You should know" heads-ups, piped to Claude), the
+`mf` 0.8.4 release (`AGENTS.md` re-synced) and the `ccsci` 0.10.3 release
+(four skill descriptions that route). No hook logic changed.
+
 ## 0.3.1 — 2026-10-19
 
 Housekeeping — coordinated marketplace version alignment alongside the `mf`

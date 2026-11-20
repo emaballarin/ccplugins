@@ -3,6 +3,14 @@
 All notable changes to the `ar` (autoresearch) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.4.12 — 2026-11-20
+
+Housekeeping — coordinated marketplace version alignment alongside the new
+`hup` plugin (the built-in "You should know" heads-ups, piped to Claude), the
+`mf` 0.8.4 release (`AGENTS.md` re-synced) and the `ccsci` 0.10.3 release
+(four skill descriptions that route). Nothing in this plugin was edited. No
+skill logic changed.
+
 ## 0.4.11 — 2026-10-19
 
 Housekeeping — coordinated marketplace version alignment alongside the `mf`

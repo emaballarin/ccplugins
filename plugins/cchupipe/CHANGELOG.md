@@ -3,6 +3,12 @@
 All notable changes to the `hup` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.2.2 — 2026-11-20
+
+Housekeeping — coordinated marketplace version alignment alongside the `mf` 0.8.4 release (`AGENTS.md` re-synced) and
+the `ccsci` 0.10.3 release (four skill descriptions that route, a note in `deep-researcher`). Nothing in this plugin
+was edited since 0.2.1. No hook logic changed.
+
 ## 0.2.1 — 2026-11-20
 
 First release (0.1.0 to 0.2.0 were local development builds). Pipes the heads-ups of Claude Code's built-in "You

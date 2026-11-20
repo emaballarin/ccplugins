@@ -1,6 +1,6 @@
 {
     "name": "hup",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "hup — the built-in \"You should know\" heads-ups, piped to Claude. Each heads-up the side agent raises reaches the main agent mid-turn, behind its next tool result, as a fallible note to check before acting on it; Claude looks up the explainer with a tool and tells you about the heads-up: it may leave out only a slip of its own it has simply fixed, or a passing mishap, never one about your work or choices, a choice of its own that changes what you get, or a decision that is yours, now or later. By default the heads-up then leaves your screen, so it never counts as ignored. Function hooks only: one lookup tool, no command hooks, no MCP server, no settings patching.",
     "author": {
         "name": "Emanuele Ballarin",

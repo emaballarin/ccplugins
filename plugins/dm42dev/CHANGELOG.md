@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3 — 2026-11-20
+
+Housekeeping — coordinated marketplace version alignment alongside the new `hup` plugin (the built-in "You should know" heads-ups, piped to Claude), the `mf` 0.8.4 release (`AGENTS.md` re-synced) and the `ccsci` 0.10.3 release (four skill descriptions that route). Nothing in this plugin was edited. No skill logic changed.
+
 ## 0.2.2 — 2026-10-26
 
 ### Added
