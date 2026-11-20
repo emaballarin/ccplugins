@@ -3,6 +3,20 @@
 All notable changes to the `mf` (mindfunnel) plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.8.4 — 2026-11-20
+
+`AGENTS.md` catches up with the live baseline; also part of the coordinated
+marketplace version alignment alongside the new `hup` plugin and the `ccsci`
+0.10.3 release.
+
+Templates:
+
+- **`AGENTS.md` re-synced with the live baseline.** One new rule under
+  Evidence and interpretation: an error estimate must keep the design's
+  dependence. Where the compared sides share a unit (data, subjects, seeds),
+  redraw or model that unit jointly, never each side alone, and test the
+  estimate on a thing against itself: it must never report a difference.
+
 ## 0.8.3 — 2026-11-16
 
 Project memory follows Claude Code's own format and keeps project state in

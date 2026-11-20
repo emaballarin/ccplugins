@@ -143,6 +143,10 @@ _state_ belongs in the agent's memory (§Memory system), never in these.
   statistical gate, estimate its false-alarm rate over many independent
   runs on known-good input. One passing run, or its margin, says nothing
   about calibration.
+- **An error estimate must keep the design's dependence.** Where the
+  compared sides share a unit (data, subjects, seeds), redraw or model
+  that unit jointly, never each side alone. Test it on a thing against
+  itself: it must never report a difference.
 - **Judge a change by everything it moves, not by what it aimed at.**
   Gains are rarely free. Before calling a change an improvement, look
   for what it could have made worse, and measure that too.
