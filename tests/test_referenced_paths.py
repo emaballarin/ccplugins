@@ -23,8 +23,7 @@ def _referenced_tokens(text: str) -> set[str]:
     for line in text.splitlines():
         if "http" in line:  # skip URLs
             continue
-        for m in _TOKEN.finditer(line):
-            tokens.add(m.group(0).rstrip("."))
+        tokens.update(m.group(0).rstrip(".") for m in _TOKEN.finditer(line))
     return tokens
 
 

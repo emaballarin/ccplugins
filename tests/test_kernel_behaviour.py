@@ -14,6 +14,7 @@ construction.
 
 import importlib.util
 import re
+from collections import UserDict
 
 import _util as u
 import pytest
@@ -1676,7 +1677,7 @@ def test_semantic_scholar_is_not_asked_without_a_key():
 
 
 def test_detex_reads_text_symbol_commands():
-    """L4: bibtex-tidy writes "®" as "\\textregistered{}"; both must compare equal."""
+    r"""L4: bibtex-tidy writes "®" as "\textregistered{}"; both must compare equal."""
     assert (
         bibaudit.detex(r"Foundations and Trends\textregistered{} in Machine Learning")
         == "Foundations and Trends® in Machine Learning"
@@ -1825,7 +1826,7 @@ class _Web:
         raise urllib.error.HTTPError(req.full_url, 404, "Not Found", email.message.Message(), None)
 
 
-class _NoGap(dict):
+class _NoGap(UserDict):
     def get(self, key, default=None):
         return 0.0
 
