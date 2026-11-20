@@ -3,6 +3,27 @@
 All notable changes to the `ccsci` plugin are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 0.10.3 — 2026-11-20
+
+Skill descriptions, a note in `deep-researcher` and a kernel tidy-up; also part
+of the coordinated marketplace version alignment alongside the new `hup` plugin
+and the `mf` 0.8.4 release. No skill logic changed.
+
+- **`pdf-explore`, `figure-style`, `figure-composer` and `paper-narrative` say
+  what the skill does and when to load it, and no longer list their API** (184 →
+  155, 125 → 100, 93 → 58 and 80 → 74 words in the listing every session
+  carries). The function inventories, review fields and install line were
+  already in the bodies; `figure-style`'s helper list and what
+  `apply_figure_style()` sets moved into its "Loading the kernel" section.
+- **`deep-researcher` says how to pin it to Opus, and why it stays at
+  `inherit`.** A comment under its `model:` line gives the one-line change and
+  Anthropic's published figures behind the choice: Opus 5.5 ahead of Fable 5.2
+  on research reports and on resisting indirect prompt injection, Fable 5.2
+  ahead on wide search. The plugin is public and the better choice depends on
+  the main model, so it stays at `inherit`.
+- **`bib-audit`'s kernel: linter tidy-ups** (paired appends as one `extend`, raw
+  docstrings where they quote LaTeX). No behaviour change.
+
 ## 0.10.2 — 2026-10-19
 
 `paper-review` gains the rules a journal review taught.

@@ -3380,8 +3380,7 @@ def protect_title(title: str) -> str:
     words are left to the style."""
     out, i = [], 0
     for m in re.finditer(r"\{(?:[^{}]|\{[^{}]*\})*\}|\$[^$]*\$|\\[A-Za-z]+", title):
-        out.append(_brace_words(title[i : m.start()]))
-        out.append(m.group(0))
+        out.extend((_brace_words(title[i : m.start()]), m.group(0)))
         i = m.end()
     out.append(_brace_words(title[i:]))
     return "".join(out)
@@ -3400,9 +3399,9 @@ def _brace_words(text: str) -> str:
 
 
 def _source_title_wins(entry_title: str | None, rec_title: str | None) -> bool:
-    """Whether a matched record's title should replace the entry's: not when they
+    r"""Whether a matched record's title should replace the entry's: not when they
     already agree, nor when the source dropped the entry's LaTeX math (Crossref
-    flattens `$\\ell_p$` to "l p") or renders the title in ALL CAPS."""
+    flattens `$\ell_p$` to "l p") or renders the title in ALL CAPS."""
     if not rec_title or title_match(entry_title, rec_title) == "exact":
         return False
     if entry_title and "$" in entry_title and "$" not in rec_title:
@@ -3553,8 +3552,8 @@ _CODE_HOST = re.compile(
 
 
 def normalise_entry(entry: dict) -> tuple[dict, list[dict]]:
-    """Source-independent hygiene: portable entry types, arXiv-as-journal to
-    @misc eprint, page ranges, restored all-caps names, web URLs out of \\url{}."""
+    r"""Source-independent hygiene: portable entry types, arXiv-as-journal to
+    @misc eprint, page ranges, restored all-caps names, web URLs out of \url{}."""
     t, f = entry["type"], dict(entry["fields"])
     changes: list[dict] = []
 
@@ -4216,8 +4215,8 @@ def find_bst(style: str, dirs=()) -> str | None:
 
 
 def validation_style(style: str | None, tex=()) -> tuple[str, str]:
-    """The BibTeX style to validate with and where it came from: `style` as given
-    (a name, or a path to a .bst), else the first `\\bibliographystyle` the .tex
+    r"""The BibTeX style to validate with and where it came from: `style` as given
+    (a name, or a path to a .bst), else the first `\bibliographystyle` the .tex
     files name that can be found, else plain. A given style that TeX cannot find
     is an error; one named in a .tex that cannot be found falls back to plain,
     noted."""
@@ -4284,8 +4283,8 @@ _CITE_CMD = re.compile(r"\\([A-Za-z]*cite[A-Za-z]*\*?|nocite)(?![A-Za-z])")
 
 
 def _map_cites(text: str, keymap: dict[str, str]) -> tuple[str, set[str], set[str]]:
-    """Rewrite every key inside \\cite-family commands (natbib and biblatex
-    variants, optional arguments, multi-key and \\cites-style multi-group forms).
+    r"""Rewrite every key inside \cite-family commands (natbib and biblatex
+    variants, optional arguments, multi-key and \cites-style multi-group forms).
     Each key is looked up once, so renames can never cascade. Returns the new
     text, the keys cited before and the keys cited after."""
     out, before, after = [], set(), set()
@@ -4346,7 +4345,7 @@ def rotate_backup(current: str, orig, prev) -> None:
 
 
 def rewrite_tex(tex_paths, keymap, bib_keys=None) -> dict:
-    """Migrate `\\cite{}` keys in .tex files through `keymap` (a dict, or the path
+    r"""Migrate `\cite{}` keys in .tex files through `keymap` (a dict, or the path
     of a `.keymap.tsv` written by `audit`). Each file keeps its original as `.orig.bak` and the version
     before this rewrite as `.prev.bak`. A file is
     left untouched if the rewrite would leave a key undefined that was defined
@@ -4504,7 +4503,7 @@ def audit(
     harmonise: bool = False,
     style: str | None = None,
 ) -> dict:
-    """Audit a .bib end to end and write the results.
+    r"""Audit a .bib end to end and write the results.
 
     Every entry is verified against one routed source (Crossref by DOI in
     batches, arXiv in batches, the NeurIPS/PMLR/JMLR indices, OpenReview and its
@@ -4515,7 +4514,7 @@ def audit(
     biber. Entries unchanged since a previous audit are not looked up again.
 
     Outputs: with `tex` files, the .bib is rewritten in place with the new keys
-    and the \\cite{} keys in those files are migrated (each keeps `.orig.bak` and `.prev.bak`).
+    and the \cite{} keys in those files are migrated (each keeps `.orig.bak` and `.prev.bak`).
     Without, the .bib is rewritten in place keeping its old keys (a drop-in: a
     merged duplicate stays as a copy under its old key), next to
     `<stem>.rekeyed.bib` with the new keys and `<stem>.keymap.tsv`. State —
@@ -5034,7 +5033,7 @@ def _report(s: dict, work: list[dict], finals: list[dict], deleted: list[dict], 
     rows = []
     for w in work:
         for c in w["changes"]:
-            if c["source"] in ("strip",) and c["field"] in _JUNK:
+            if c["source"] == "strip" and c["field"] in _JUNK:
                 continue
             rows.append(
                 f"| `{w['orig']['key']}` | {c['field']} | {cell(c['old'])} | {cell(c['new'])} | {cell(c['source'])} |"

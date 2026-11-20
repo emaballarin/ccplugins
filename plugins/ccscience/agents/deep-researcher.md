@@ -7,6 +7,16 @@ description: >-
     with sources. Use proactively for any request to "research", "do a literature
     review", "compare approaches across sources", or "find recent work on X".
 model: inherit
+# To pin deep research to Opus, replace the line above with:
+# model: opus
+# Anthropic's figures (Fable 5.2 system card; cost-optimisation docs; read
+# 13-17/11/2026): Opus 5.5 scores above Fable 5.2 on research reports (DRACO at
+# xhigh, 86.7% vs 85.2%; DeepResearch Bench II, Opus at medium 59.6% vs Fable at
+# high 57.7%), Fable 5.2 above Opus 5.5 on wide search (WANDR at xhigh, 80.6%
+# vs Opus's best, at max, 72.3%); Opus 5.5 resists indirect prompt injection
+# about 4x better (attack success within 15 attempts: 0.96% vs 4.09%). Kept at
+# `inherit` because the plugin is public and the better choice depends on the
+# main model.
 memory: user
 ---
 
